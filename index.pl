@@ -498,7 +498,7 @@ EOT
 	last SWITCH;
       }
       if ($fields[2] == 5) {
-	$gameset = "Intl. Tabletop Day 2016 Promo";
+	$gameset = "Intl. Tabletop Day 2016 (Promo)";
 	last SWITCH;
       }
       my $nothing=0;
@@ -541,7 +541,7 @@ print q \
   <option value="2" $selectedsets{2}>Expanding the House</option>
   <option value="3" $selectedsets{3}>Romantic Vacation</option>
   <option value="4" $selectedsets{4}>Oktoberfest</option>
-  <option value="5" $selectedsets{5}>Intl. Tabletop Day 2016 Promo</option>
+  <option value="5" $selectedsets{5}>Intl. Tabletop Day 2016 (Promo)</option>
   </select></td>
 
 <td align="center" valign="middle">&nbsp;&nbsp;
