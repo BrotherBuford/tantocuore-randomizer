@@ -183,6 +183,7 @@ EOT
 print q \
 
 <h2 style="font-family:Title;font-size:32px;color:#562271;font-weight:normal" align="center">Tanto Cuore <span style="color:#ff6699">&#9829;</span> Town Randomizer</h2>
+
   
 
 <div style="display: inline-block;">
@@ -198,11 +199,12 @@ print q \
 <small>Maid chief pairs will be randomly selected from all chosen sets</small>
 
 <table border="0" cellpadding="0" cellspacing="4">
-<tr><td><select title="Click to select set(s)" size="5" id="sets" class="sets" name="sets" multiple="multiple">
+<tr><td><select title="Click to select set(s)" size="6" id="sets" class="sets" name="sets" multiple="multiple">
   <option value="1" $selectedsets{1}>Tanto Cuore</option>
   <option value="2" $selectedsets{2}>Expanding the House</option>
   <option value="3" $selectedsets{3}>Romantic Vacation</option>
   <option value="4" $selectedsets{4}>Oktoberfest</option>
+  <option value="6" disabled="disabled">Winter Romance</option>
   <option value="5" $selectedsets{5}>Intl. Tabletop Day 2016 (Promo)</option>
   </select></td>
 
