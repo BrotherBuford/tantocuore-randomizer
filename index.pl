@@ -71,23 +71,6 @@ print q \
   <title>Tanto Cuore &#9829; Town Randomizer</title>
 
 
-<!--
-My Javascript and jQuery skill is not the finest but if you find something
-useful in here, feel free to take it and use it for your own purposes.  I
-mostly added it in as practice and to make the page a little more flashy.
-
-The majority of the tooltip code is not my own, but I don't recall exactly
-what tutorial I used for it.
-
-I have attempted to make this page fully XHTML 1.0 Transitional compliant.
-
-The backend of this script (the part that does the heavy lifting) uses Perl
-and a MySQL database.  The basic functionality of this page will work without
-Javascript enabled as all of the real work is done on the server side and the
-Javascript is just for UI enhancement.  The tooltips will even work without
-Javascript using a builtin browser method, but they will contain extraneous
-HTML used for formatting the popup balloons if viewed without Javascript.
--->
 
 <script type="text/javascript" src="./jquery-1.7.2.min.js"></script> 
 <script type="text/javascript" src="./tooltip.js"></script> 
