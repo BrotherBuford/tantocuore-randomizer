@@ -184,6 +184,8 @@ print q \
 
 <h2 style="font-family:Title;font-size:32px;color:#562271;font-weight:normal" align="center">Tanto Cuore <span style="color:#ff6699">&#9829;</span> Town Randomizer</h2>
 
+  <p style="font-family:Title;font-size:16px;color:#562271;font-weight:normal" align="center">Winter Romance will be coming in a future update!</p>
+
   
 
 <div style="display: inline-block;">
