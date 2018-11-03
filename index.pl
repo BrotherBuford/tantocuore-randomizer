@@ -23,8 +23,6 @@ $main::cgi = new CGI; # to take advantage of the "param" decoding method
 $main::dbh = DBI->connect('DBI:mysql:tantocuore:mysql.nekomusume.net', 'tantocuore','TantoCuorePass',
 		       { PrintError => 0}) || die $DBI::errstr;
 
-
-
 my %States;
 my $Current_Screen;
 
@@ -41,20 +39,16 @@ die "No screen for $Current_Screen" unless $States{$Current_Screen};
 my $cgi = new CGI;
 
 my $donate = q \
-
 <p style="font-size: 0.75em"><b>If you find this app useful, buy me a beer!<br />
-
 
 <script type="text/javascript" src="coinwidget/coin.js"></script>
 <script type="text/javascript" src="coinwidget/config.js"></script>
-
 
 </p>
 \;
   
 
 print header();
-
 
 print q \
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
@@ -70,49 +64,36 @@ print q \
   <link rel="stylesheet" type="text/css" href="./tc.css" />
   <title>Tanto Cuore &#9829; Town Randomizer</title>
 
-
-
 <script type="text/javascript" src="./jquery-1.7.2.min.js"></script> 
 <script type="text/javascript" src="./tooltip.js"></script> 
 
   </head>
 
-
 <body style="background-color:#ffccee;background-image:url('hearts.gif');">
 
 <div align="center">
-
 \;
 
-
-  print start_form();
+print start_form();
 
 while (my($screen_name, $function) = each %States) {
   $function->($screen_name eq $Current_Screen);
 }
 
-
 print end_form();
 $main::dbh->disconnect;
-
-
 
 print q \
 </div>
 
 </body>
 </html>
-    
-
 \;
 
 
 sub front_page {
   my $active = shift;
   return unless $active;
-
-  
-
 
   my @list;
   my @fields;
@@ -171,7 +152,6 @@ EOT
   
   $cursor->finish;
 
-
   
   my @selectedsets = param('sets');
   my %selectedsets;
@@ -181,13 +161,11 @@ EOT
 
 
 print q \
-
 <h2 style="font-family:Title;font-size:32px;color:#562271;font-weight:normal" align="center">Tanto Cuore <span style="color:#ff6699">&#9829;</span> Town Randomizer</h2>
 
   <p style="font-family:Title;font-size:16px;color:#562271;font-weight:normal" align="center">Winter Romance will be coming in a future update!</p>
 
   
-
 <div style="display: inline-block;">
 
 <div class="boxheader" style="background-color: #cc99ff; color: #000066;">
@@ -219,14 +197,10 @@ print q \
 </tr>
 </table>
 
-
-
 </div>
 </div>
-
    
 <br /><br />
-
 
 <div style="display: inline-block; border-radius: 100px;  background-color: #ff99cc; padding-left: 20px; padding-right: 20px; padding-top: 5px; padding-bottom:5px; margin-bottom:15px;">
 
@@ -242,8 +216,6 @@ print q \
     
     <div style="display: inline-block;" class="hiddenoptions">
 
-
-
 <div class="boxheader" style="background-color: #5544dd; color: #ffffff;"><b>Set-specific options</b></div>
 
 <div class="boxcontent">
@@ -256,7 +228,6 @@ print q \
 <div>&nbsp;</div>
 
 <div style="background-color: #ffccee;  padding: 10px;">
-
 
 <div style="border-style:solid; border-width:1px;">
 <div style="color: #ffffff; background-color: #096fb8"><b>Keeping the Crescent sisters together</b></div>
@@ -271,15 +242,10 @@ print q \
 </div>
 </div>
 
-
 </div>
     
 <br />
 </div>
-
-
-
-
 
 
 <div id="tcethbox">
@@ -305,8 +271,6 @@ print q \
 </div>
 
 
-
-
 <div id="tcobox">
 
 <div class="tabs" style="background-color: #ffccee;"><b>Tanto Cuore</b></div>
@@ -328,9 +292,6 @@ print q \
 <br />
 
 </div>
-
-
-
 
 
 <div id="ethbox">
@@ -413,25 +374,13 @@ print q \
 <br />
 
 
-
-
-
-
 </div>
-
-
 </div>
-
 </div>
-
-
-
-
   
 <br />
 
 <div class="boxheader" style="background-color: #cc6699; color: #ffffff;"><b>Maid cost requirements</b></div>
-
 
 
 <div class="boxcontent">
@@ -449,11 +398,8 @@ Require at least one general maid of each of the following employ costs:
 
 <br />    
 
-
-
 <div class="boxheader" style="background-color: #333333; color: #ffffff;"><b>Attack cards</b></div>
 
-  
 <div class="boxcontent">
 <table>
   <tr><td valign="middle"><input type="radio" name="attack" id="attack0" value="0" checked="checked" />&nbsp;</td><td valign="bottom" align="left"><label for="attack0">No preference on attack cards</label></td></tr> 
@@ -471,9 +417,7 @@ Require at least one general maid of each of the following employ costs:
 <div class="boxcontent">
 Select maids to <i>not</i> include in results:<br /><select size="5" name="banned" id="banned" class="banned" multiple="multiple">
 <option value="0" id="pleaseselect" disabled="disabled" style="display:none">Please select a game set</option>
-
 \;
-
 
 
   foreach my $listitem (@list) {
@@ -504,11 +448,6 @@ $(".banlistnoscript").remove();
 </script>
 
 
-
-
-
-   
-
 <!-- 
 <p>&nbsp;</p>
 
@@ -516,7 +455,6 @@ $(".banlistnoscript").remove();
 <p><b><a style="color: #ffffff; text-decoration: none" href="https://www.kickstarter.com/projects/370924922/tanto-cuore-winter-romance">Tanto Cuore: Winter Romance is now up on Kickstarter!</a></b></p>
 </div>
 -->
-
 
 
 <p>&nbsp;</p>
@@ -528,166 +466,13 @@ $(".banlistnoscript").remove();
 <p style="font-size: 0.55em">This game utility is a fan work not affiliated with Arclight, Inc. or Japanime Games.<br /><a href="http://www.tantocuore.com/">Tanto Cuore Official English Website</a> &#8226; <a href="http://www.arclight.co.jp/ag/tc/">Tanto Cuore Official Japanese Website</a><br /><a href="https://www.facebook.com/JapanimeGames/">Japanime Games Facebook Page</a></p>
 
 
-
-
-
 <!-- <p>
       <a href="http://validator.w3.org/check?uri=referer"><img
           src="./xhtml1.0.png"
           alt="Valid XHTML 1.0" height="15" width="80" /></a>
 </p> -->
 
-<script type="text/javascript">
-//<![CDATA[
-
-$(document).ready(function () {
-  
-
-  $('#attack2').attr('disabled', 'disabled');
-  $('#attack2').prop('checked', false);
-
-  $('#optionnote').fadeIn(0);
-
-  $('.hiddenoptions').fadeOut(0);
-
-  $('.love').attr('disabled', 'disabled');
-
-  $('.topage').attr('disabled', 'disabled');
-
-  
-  $('#tcbox').fadeTo('slow',0.3);
-  $('#crescent').attr('disabled', 'disabled');
-
-
-
-  $('#tcethbox').fadeTo('slow',0.3);
-  $('#private').attr('disabled', 'disabled');
-
-  $('#tcobox').fadeTo('slow',0.3);
-  $('#events').attr('disabled', 'disabled');
-
-  $('#obox').fadeTo('slow',0.3);
-  $('.beer').attr('disabled', 'disabled');
-  $('#apprentice').attr('disabled', 'disabled');
-
-
-  $('#ethbox').fadeTo('slow',0.3);
-  $('#buildings').attr('disabled', 'disabled');
-
-  $('#rvbox').fadeTo('slow',0.3);
-  $('.reminiscences').attr('disabled', 'disabled');
-
-  
-  $('#attack2text').fadeTo('slow',0.3);
-
-
-  var $category = $('#sets'),
-      $article = null;
-  
-
-   $('#sets').change(function() {
-
-      $('.hiddenoptions').fadeIn();
-      $('#optionnote').fadeOut(0);
-
-
-      var categoryName = $category.val();
-
-
-      if(categoryName == '1,2,3' || categoryName == '1,3,4' || categoryName == '2,4' || categoryName == '1,2,3,4' || categoryName == '1,2,3,5' || categoryName == '1,,3,4,5' || categoryName == '2,4,5' || categoryName == '1,2,3,4,5'){
-            $('#attack2').removeAttr('disabled');
-	    $('#attack2text').fadeTo('fast',1);
-        } else{
-            $('#attack2').attr('disabled', 'disabled');
-            $('#attack2').prop('checked', false);
-	    $('#attack2text').fadeTo('fast',0.3);
-        }
-
-      $('#banned').empty();
-      $('<option disabled="disabled" value="0" id="pleaseselect">Please select a game set</option>').appendTo('#banned');
-
-      $('#tcbox').fadeTo(0,0.3);
-      $('#crescent').attr('disabled', 'disabled');
-
-      $('#tcethbox').fadeTo(0,0.3);
-      $('#private').attr('disabled', 'disabled');
-
-      $('#tcobox').fadeTo(0,0.3);
-      $('#events').attr('disabled', 'disabled');
-
-      $('#obox').fadeTo(0,0.3);
-      $('.beer').attr('disabled', 'disabled');
-      $('#apprentice').attr('disabled', 'disabled');
-
-      $('#ethbox').fadeTo(0,0.3);
-      $('#buildings').attr('disabled', 'disabled');
-
-      $('#rvbox').fadeTo(0,0.3);
-      $('.reminiscences').attr('disabled', 'disabled');
-
-      $('.love').attr('disabled', 'disabled');
-      $('.topage').attr('disabled', 'disabled');
-
-      $('#love6').attr('disabled', 'disabled');
-      $('#love6').prop('selected', false);
-      
-
-      jQuery.each(categoryName, function(){
-
-	 switch($.trim(this)) {
-	    case '1':
-	       $('#tcbox,#tcethbox,#tcobox').fadeTo('fast',1);
-	       $('#crescent').removeAttr('disabled');
-	       $('#events').removeAttr('disabled');
-	       $('#love6').removeAttr('disabled');
-	       $('#private').removeAttr('disabled');
-	       break;
-	    case '2':
-	       $('#ethbox,#tcethbox').fadeTo('fast',1);
-	       $('#buildings').removeAttr('disabled');
-	       $('#private').removeAttr('disabled');
-	       break;
-	    case '3':
-	       $('#rvbox').fadeTo('fast',1);
-	       $('.reminiscences').removeAttr('disabled');
-	       $('#love6').removeAttr('disabled');
-	       break;
-	    case '4':
-	       $('#tcobox,#obox').fadeTo('fast',1);
-	       $('#love6').removeAttr('disabled');
-	       $('#events').removeAttr('disabled');
-	       $('.beer').removeAttr('disabled');
-	       $('#apprentice').removeAttr('disabled');
-	       break;
-	 }
-
-
-	 $('.topage').removeAttr('disabled');
-	 $('.love').removeAttr('disabled');
-	 $('#pleaseselect').remove();
-
-
-	 // grab the object
-	 var p = $('.banlist'+this);
-
-	 // clone it
-	 var c = p.clone();
-
-	 // grab the inner html (wrap it so we can get the HTML)
-	 var html = $('<div>').append(c).html();
-
-	 $(html).appendTo('#banned');
-
-
-      });
-
-   });
-  
-});
-//]]>
-</script>
-
-
+<script type="text/javascript" src="functions.js"></script>
 \;
 
 }
@@ -1152,15 +937,9 @@ EOT
 	}
 	
 
-
-
-
-
-
 	redo if ((param('crescent') eq "1") and ($counter == 10) and (!(exists $cache{14}) or !(exists $cache{15}) or !(exists $cache{16})) and ($num == 14 or $num == 15 or $num == 16));
 
 	redo if ((param('crescent') eq "2") and ($counter > 8) and (!(exists $cache{14}) or !(exists $cache{15}) or !(exists $cache{16})) and (($num == 14) or ($num == 15) or ($num == 16)));
-
 
 
 	redo if exists $cache{$num}; # redo the loop if the number already exists
@@ -1168,7 +947,6 @@ EOT
 
 	$listkey[$counter] = $num;
 	$counter++;
-
 
 
 	if ((param('beer') eq "1") and ($counter != 11) and (!(exists $cache{55}) and !(exists $cache{56}))) {
@@ -1317,10 +1095,6 @@ EOT
 
 
 
-
-
-
-
       if ((@removebuffer and !param('private')) or @removerembuffer or @removeeventsbuffer) {
 	print "<tr bgcolor=\"#000000\"><th colspan=\"3\"><font color=\"#ffffff\">Remove the following from game:</font></th></tr>";
 	if (@removebuffer and !param('private')) {
@@ -1381,10 +1155,6 @@ EOT
     }
       
       
-    
-    
-    
-
   }
   if ($newbutton) { print "<p>" . to_page("New Randomization Criteria") . "</p>\n"; }
       
@@ -1394,10 +1164,7 @@ EOT
 }
 
 
-
-
 sub to_page { submit(-NAME => ".State", -CLASS => "topage", -VALUE => shift) }
-
 
 
 # fisher_yates_shuffle( \@array ) : generates a random permutation of
@@ -1411,8 +1178,3 @@ sub fisher_yates_shuffle {
     @$array[$i,$j] = @$array[$j,$i];
   }
 }
-
-
-
-
-  
