@@ -61,7 +61,7 @@ print q \
 <meta name="description" content="A card randomizer utility for the games Tanto Cuore, Tanto Cuore: Expanding the House, Tanto Cuore: Romantic Vacation, and Tanto Cuore: Oktoberfest." />
 
   <link rel="shortcut icon" href="./images/favicon.ico" />
-  <link rel="stylesheet" type="text/css" href="./tc.css" />
+  <link rel="stylesheet" type="text/css" href="./css/tc.css" />
   <title>Tanto Cuore &#9829; Town Randomizer</title>
 
 <script type="text/javascript" src="./js/jquery-1.7.2.min.js"></script> 
