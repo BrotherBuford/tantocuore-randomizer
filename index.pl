@@ -60,7 +60,7 @@ print q \
 
 <meta name="description" content="A card randomizer utility for the games Tanto Cuore, Tanto Cuore: Expanding the House, Tanto Cuore: Romantic Vacation, and Tanto Cuore: Oktoberfest." />
 
-  <link rel="shortcut icon" href="./favicon.ico" />
+  <link rel="shortcut icon" href="./images/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="./tc.css" />
   <title>Tanto Cuore &#9829; Town Randomizer</title>
 
@@ -69,7 +69,7 @@ print q \
 
   </head>
 
-<body style="background-color:#ffccee;background-image:url('hearts.gif');">
+<body style="background-color:#ffccee;background-image:url('images/hearts.gif');">
 
 <div align="center">
 \;
@@ -464,7 +464,7 @@ $(".banlistnoscript").remove();
 
 <!-- <p>
       <a href="http://validator.w3.org/check?uri=referer"><img
-          src="./xhtml1.0.png"
+          src="./images/xhtml1.0.png"
           alt="Valid XHTML 1.0" height="15" width="80" /></a>
 </p> -->
 
