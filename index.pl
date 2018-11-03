@@ -64,8 +64,8 @@ print q \
   <link rel="stylesheet" type="text/css" href="./tc.css" />
   <title>Tanto Cuore &#9829; Town Randomizer</title>
 
-<script type="text/javascript" src="./jquery-1.7.2.min.js"></script> 
-<script type="text/javascript" src="./tooltip.js"></script> 
+<script type="text/javascript" src="./js/jquery-1.7.2.min.js"></script> 
+<script type="text/javascript" src="./js/tooltip.js"></script> 
 
   </head>
 
@@ -468,7 +468,7 @@ $(".banlistnoscript").remove();
           alt="Valid XHTML 1.0" height="15" width="80" /></a>
 </p> -->
 
-<script type="text/javascript" src="functions.js"></script>
+<script type="text/javascript" src="./js/functions.js"></script>
 \;
 
 }
