@@ -58,7 +58,7 @@ print q \
 <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<meta name="description" content="A card randomizer utility for the games Tanto Cuore, Tanto Cuore: Expanding the House, Tanto Cuore: Romantic Vacation, and Tanto Cuore: Oktoberfest." />
+<meta name="description" content="A card randomizer utility for the games Tanto Cuore, Tanto Cuore: Expanding the House, Tanto Cuore: Romantic Vacation, Tanto Cuore: Oktoberfest, and Tanto Cuore: Winter Romance." />
 
   <link rel="shortcut icon" href="./images/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="./css/tc.css" />
@@ -162,8 +162,6 @@ EOT
 
 print q \
 <h2 style="font-family:Title;font-size:32px;color:#562271;font-weight:normal" align="center">Tanto Cuore <span style="color:#ff6699">&#9829;</span> Town Randomizer</h2>
-
-  <p style="font-family:Title;font-size:16px;color:#562271;font-weight:normal" align="center">Winter Romance will be coming in a future update!</p>
 
   
 <div style="display: inline-block;">
