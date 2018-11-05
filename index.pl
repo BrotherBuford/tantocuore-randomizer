@@ -136,11 +136,15 @@ EOT
 	$gameset = "Romantic Vacation";
 	last SWITCH;
       }
-      if ($fields[2] == 4) {
+       if ($fields[2] == 4) {
 	$gameset = "Oktoberfest";
 	last SWITCH;
       }
-      if ($fields[2] == 5) {
+       if ($fields[2] == 5) {
+	$gameset = "Winter Romance";
+	last SWITCH;
+      }
+      if ($fields[2] == 6) {
 	$gameset = "Intl. Tabletop Day 2016 (Promo)";
 	last SWITCH;
       }
@@ -182,8 +186,8 @@ print q \
   <option value="2" $selectedsets{2}>Expanding the House</option>
   <option value="3" $selectedsets{3}>Romantic Vacation</option>
   <option value="4" $selectedsets{4}>Oktoberfest</option>
-  <option value="6" disabled="disabled">Winter Romance</option>
-  <option value="5" $selectedsets{5}>Intl. Tabletop Day 2016 (Promo)</option>
+  <option value="5" $selectedsets{5}>Winter Romance</option>
+  <option value="6" $selectedsets{6}>Intl. Tabletop Day 2016 (Promo)</option>
   </select></td>
 
 <td align="center" valign="middle">&nbsp;&nbsp;
