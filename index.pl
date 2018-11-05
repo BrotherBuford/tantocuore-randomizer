@@ -450,13 +450,6 @@ $(".banlistnoscript").remove();
 </script>
 
 
-<!-- 
-<p>&nbsp;</p>
-
-<div style="display: inline-block; border-radius: 100px;  background-color: #15143e; padding-left: 20px; padding-right: 20px; padding-top: 5px; padding-bottom:5px; margin-bottom:15px;">
-<p><b><a style="color: #ffffff; text-decoration: none" href="https://www.kickstarter.com/projects/370924922/tanto-cuore-winter-romance">Tanto Cuore: Winter Romance is now up on Kickstarter!</a></b></p>
-</div>
--->
 
 
 <p>&nbsp;</p>
