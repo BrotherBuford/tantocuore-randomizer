@@ -140,7 +140,7 @@ EOT
 	$gameset = "Oktoberfest";
 	last SWITCH;
       }
-      if ($fields[2] == 5) {
+      if ($fields[2] == 101) {
 	$gameset = "Intl. Tabletop Day 2016 (Promo)";
 	last SWITCH;
       }
@@ -181,7 +181,7 @@ print q \
   <option value="2" $selectedsets{2}>Expanding the House</option>
   <option value="3" $selectedsets{3}>Romantic Vacation</option>
   <option value="4" $selectedsets{4}>Oktoberfest</option>
-  <option value="5" $selectedsets{5}>Intl. Tabletop Day 2016 (Promo)</option>
+  <option value="101" $selectedsets{101}>Intl. Tabletop Day 2016 (Promo)</option>
   </select></td>
 
 <td align="center" valign="middle">&nbsp;&nbsp;
@@ -489,7 +489,7 @@ sub randomize {
 
       $setlistSQL .= " or gameset = \"$elem\"";
       $sets{$elem} = 1;
-      if ($elem ne "5") {
+      if ($elem ne "101") {
 	push @chiefs, $elem;
       }
       my $hidden = hidden(-name=>'sets');
@@ -539,7 +539,7 @@ sub randomize {
     
     
     my $eventsSQL;
-    if (param('events') or (!exists $sets{1} and exists $sets{5})) {
+    if (param('events') or (!exists $sets{1} and exists $sets{101})) {
       param(-name=>'events',
 	    -value=>param('events'));
       $eventsSQL = " and (events != \"y\")";
@@ -683,7 +683,7 @@ EOT
 	  $gameset = "-IV";
 	  $color = "#DDAA88";
 	}
-	if ($fields[2] == 5) {
+	if ($fields[2] == 101) {
 	  $prgameset = "PR";
 	  $gameset = "";
 	  $color = "#FFFFAA";
