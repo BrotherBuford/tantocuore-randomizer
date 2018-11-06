@@ -368,7 +368,7 @@ Require at least one general maid/butler of each of the following employ costs:
 <div class="boxcontent">
 <table>
   <tr><td valign="middle"><input type="radio" name="attack" id="attack0" value="0" checked="checked" />&nbsp;</td><td valign="bottom" align="left"><label for="attack0">No preference on attack cards</label></td></tr> 
-  <tr><td valign="top"><input type="radio" name="attack" id="attack1" value="1" />&nbsp;</td><td valign="bottom" align="left"><label for="attack1"><b>No attack cards.</b> Exclude <u>all</u> cards of any type that can affect other players' VP or deck/hand<br /><small>Please be aware that as <b>Event</b> cards are strictly attack cards this option assumes you are <i>not</i> using them<br />and excludes any maids that affect <b>Events</b> even if the maids themselves are not inherently attack cards.</small></label></td></tr>
+  <tr><td valign="top"><input type="radio" name="attack" id="attack1" value="1" />&nbsp;</td><td valign="bottom" align="left"><label for="attack1"><b>No attack cards.</b> Exclude <u>all</u> cards of any type that can affect other players' VP or deck/hand<br /><small>Please be aware that as <b>Event</b> cards are strictly attack cards this option assumes you are <i>not</i> using them<br />and excludes any cards that affect <b>Events</b> even if the cards themselves are not inherently attack cards.</small></label></td></tr>
   <tr><td valign="top"><input type="radio" name="attack" id="attack2" value="2" /></td><td valign="middle" align="left"><span id="attack2text"><label for="attack2"><b>ONLY attack cards.</b> Include <u>only</u> general maids that can affect other players' VP or deck/hand</label></span><br /><small><i>Note: This option is only available if there are at least 10 qualifying cards across the set(s) chosen</i></small></td></tr>
 </table> 
 </div>
@@ -380,7 +380,7 @@ Require at least one general maid/butler of each of the following employ costs:
 
 
 <div class="boxcontent">
-Select maids to <i>not</i> include in results:<br /><select size="5" name="banned" id="banned" class="banned" multiple="multiple">
+Select cards to <i>not</i> include in results:<br /><select size="5" name="banned" id="banned" class="banned" multiple="multiple">
 <option value="0" id="pleaseselect" disabled="disabled" style="display:none">Please select a game set</option>
 \;
 
