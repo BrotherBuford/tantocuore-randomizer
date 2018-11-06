@@ -83,6 +83,9 @@ $(document).ready(function () {
       $('#rvbox').fadeTo(0,0.3);
       $('.reminiscences').attr('disabled', 'disabled');
 
+      $('#wrbox').fadeTo(0,0.3);
+      $('#drama').attr('disabled', 'disabled');
+      
       $('.love').attr('disabled', 'disabled');
       $('.topage').attr('disabled', 'disabled');
 
@@ -121,10 +124,10 @@ $(document).ready(function () {
 	       $('#apprentice').removeAttr('disabled');
 	       break;
 	    case '5':
-	       $('#tcobox').fadeTo('fast',1);
+	       $('#tcobox,#wrbox').fadeTo('fast',1);
 	       $('#love6').removeAttr('disabled');
 	       $('#love8').removeAttr('disabled');
-	       $('#events').removeAttr('disabled');
+	       $('#events,#drama').removeAttr('disabled');
 	       break;
 	 }
 
