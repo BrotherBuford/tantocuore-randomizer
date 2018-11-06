@@ -352,7 +352,7 @@ print q \
 </div>
 </div>
 
-<br />
+
 
 </div>
 
