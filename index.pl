@@ -690,6 +690,11 @@ EOT
 	  $color = "#DDAA88";
 	}
 	if ($fields[2] == 5) {
+	  $prgameset = "";
+	  $gameset = "-V";
+	  $color = "#339999";
+	}
+	if ($fields[2] == 6) {
 	  $prgameset = "PR";
 	  $gameset = "";
 	  $color = "#FFFFAA";
@@ -1134,6 +1139,7 @@ EOT
       print "<tr><td width=\"25\" bgcolor=\"#ffddbb\">&nbsp;</td><td>Expanding the House</td></tr>\n";
       print "<tr><td width=\"25\" bgcolor=\"#cceeff\">&nbsp;</td><td>Romantic Vacation</td></tr>\n";
       print "<tr><td width=\"25\" bgcolor=\"#DDAA88\">&nbsp;</td><td>Oktoberfest</td></tr>\n";
+      print "<tr><td width=\"25\" bgcolor=\"#339999\">&nbsp;</td><td>Winter Romance</td></tr>\n";
       print "<tr><td width=\"25\" bgcolor=\"#FFFFAA\">&nbsp;</td><td>Promo Card</td></tr>\n";
       print "</table>\n";
       print "<br /><table><tr><th colspan=\"2\">Text Legend:</th></tr><tr><td>Red:</td><td><font color=\"#990000\">Card can negatively affect other players</font></td></tr><tr><td>Bold:</td><td><b>Card has a VP indicator</b></td></tr><tr><td>Italics:</td><td><i>Chambermaid</i></td></tr></table>\n";
