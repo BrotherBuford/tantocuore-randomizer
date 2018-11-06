@@ -838,6 +838,12 @@ EOT
 	push @costlist, "2" if ((param('reminiscences') eq "2") and !exists $costignore{2} and (param('attack') ne "1"));
 	last SWITCH;
       }
+      if ($chiefs == 5) {
+	$chiefsoutput = "<tr bgcolor=\"#339999\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-V.jpg' width='125' height='179'></td><td><b><u>Leopold Niebling</u></b><br /><i>Butler Chief</i><br /><hr />VP: 6<hr /><b>------ At the end of the game ------</b><br />-1 VP for each Couple you have in your Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-V</td><td><b>Leopold Niebling (Butler Chief)</b></td><td align=\"center\">10</td></tr>\n";
+	$chiefsoutput .= "<tr bgcolor=\"#339999\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-V.jpg' width='125' height='179'></td><td><b><u>Beverly Snowfeldt</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br /><br />This card can not be used in an Approach.<br /><br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Gain 2 VP if you have one or more Leopold cards.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-V</td><td><b><i>Beverly Snowfeldt (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
+	push @costlist, "2" if ((param('reminiscences') eq "2") and !exists $costignore{2});
+	last SWITCH;
+      }
       my $nothing = 0;
     }
 
