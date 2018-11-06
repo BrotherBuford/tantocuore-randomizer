@@ -250,7 +250,7 @@ print q \
 <div style="color: #ffffff; background-color: #1f1a23"><b>Private Maids</b></div>
 <div style="background-color: #ffffff;">
 <table>
-  <tr><td valign="top"><input type="checkbox" name="private" id="private" value="1" />&nbsp;</td><td valign="top" align="left"><label for="private">Exclude all maids that affect or require Private Maids</label><br /><small><i>Select this option if using Tanto Cuore and/or Expanding the House <b>without</b> Private Maids</i></small></td></tr>
+  <tr><td valign="top"><input type="checkbox" name="private" id="private" value="1" />&nbsp;</td><td valign="top" align="left"><label for="private">Exclude all cards that affect or require Private Maids</label><br /><small><i>Select this option if using Tanto Cuore and/or Expanding the House <b>without</b> Private Maids</i></small></td></tr>
 </table> 
 </div>
 </div>
@@ -266,7 +266,7 @@ print q \
 <div style="color: #ffffff; background-color: #8652a1"><b>Events</b></div>
 <div style="background-color: #ffffff;">
 <table>
-  <tr><td valign="top"><input type="checkbox" name="events" id="events" value="1" />&nbsp;</td><td valign="top" align="left"><label for="events">Exclude all maids that affect or require Event cards</label><br /><small><i>Select this option if using Tanto Cuore and/or Oktoberfest <b>without</b> Event cards</i></small></td></tr>
+  <tr><td valign="top"><input type="checkbox" name="events" id="events" value="1" />&nbsp;</td><td valign="top" align="left"><label for="events">Exclude all cards that affect or require Event cards</label><br /><small><i>Select this option if using Tanto Cuore and/or Oktoberfest <b>without</b> Event cards</i></small></td></tr>
 </table> 
 </div>
 </div>
@@ -282,7 +282,7 @@ print q \
 <div style="color: #ffffff; background-color: #f37a45"><b>Buildings</b></div>
 <div style="background-color: #ffffff;">
 <table>
-  <tr><td valign="top"><input type="checkbox" name="buildings" id="buildings" value="1" />&nbsp;</td><td valign="top" align="left"><label for="buildings">Exclude all maids that affect or require Building cards</label><br /><small><i>Select this option if using Expanding the House <b>without</b> Building cards</i></small></td></tr>
+  <tr><td valign="top"><input type="checkbox" name="buildings" id="buildings" value="1" />&nbsp;</td><td valign="top" align="left"><label for="buildings">Exclude all cards that affect or require Building cards</label><br /><small><i>Select this option if using Expanding the House <b>without</b> Building cards</i></small></td></tr>
 </table> 
 </div>
 </div>
@@ -300,7 +300,7 @@ print q \
 <table>
   <tr><td valign="middle"><input type="radio" name="reminiscences" class="reminiscences" id="reminiscences0" value="0" checked="checked" />&nbsp;</td><td valign="bottom" align="left"><label for="reminiscences0">No preference on Reminiscence cards</label></td></tr>
   <tr><td valign="middle"><input type="radio" name="reminiscences" id="reminiscences2" class="reminiscences" value="2" />&nbsp;</td><td valign="bottom" align="left"><label for="reminiscences2">Ensure a cost spread that permits all Reminiscence cards to be played</label></td></tr>
-  <tr><td valign="top"><input type="radio" name="reminiscences" class="reminiscences" id="reminiscences1" value="1" />&nbsp;</td><td valign="top" align="left"><label for="reminiscences1">Exclude all maids that affect or require Reminiscence cards</label><br /><small><i>Select this option if using Romantic Vacation <b>without</b> Reminiscence cards</i></small></td></tr>
+  <tr><td valign="top"><input type="radio" name="reminiscences" class="reminiscences" id="reminiscences1" value="1" />&nbsp;</td><td valign="top" align="left"><label for="reminiscences1">Exclude all cards that affect or require Reminiscence cards</label><br /><small><i>Select this option if using Romantic Vacation <b>without</b> Reminiscence cards</i></small></td></tr>
 </table> 
 </div>  
 
@@ -344,11 +344,11 @@ print q \
   
 <br />
 
-<div class="boxheader" style="background-color: #cc6699; color: #ffffff;"><b>Maid cost requirements</b></div>
+<div class="boxheader" style="background-color: #cc6699; color: #ffffff;"><b>Maid/butler cost requirements</b></div>
 
 
 <div class="boxcontent">
-Require at least one general maid of each of the following employ costs:
+Require at least one general maid/butler of each of the following employ costs:
   <br /><select size="6" name="cost" multiple="multiple">
   <option value="2" class="love">2 Love</option>
   <option value="3" class="love">3 Love</option>
@@ -841,11 +841,11 @@ EOT
     
   SWITCH: {
       if (keys %list < 10) {
-	print "<p class=\"error\"><b>Error:</b> Less than 10 maids available to randomize.</p>\n";
+	print "<p class=\"error\"><b>Error:</b> Less than 10 cards available to randomize.</p>\n";
 	last SWITCH;
       }
       if ($costerror) {
-	print "<p class=\"error\"><b>Error:</b> No maids of one or more required cost(s) in pool of available maids.</p>\n";
+	print "<p class=\"error\"><b>Error:</b> No cards of one or more required cost(s) in pool of available maids.</p>\n";
 	last SWITCH;
       }
       if ($crescenterror) {
@@ -853,23 +853,23 @@ EOT
 	last SWITCH;
       }
       if ($barmaiderror) {
-	print "<p class=\"error\"><b>Error:</b> No Bar Maids in pool of available maids. (Beer cards are unusable)</p>\n";
+	print "<p class=\"error\"><b>Error:</b> No Bar Maids in pool of available cards. (Beer cards are unusable)</p>\n";
 	last SWITCH;
       }
       if ($apprenticeerror) {
-	print "<p class=\"error\"><b>Error:</b> Nicole Schmieg is not available in the pool of available maids but is required by the option selections.</p>\n";
+	print "<p class=\"error\"><b>Error:</b> Nicole Schmieg is not available in the pool of available cards but is required by the option selections.</p>\n";
 	last SWITCH;
       }
       
       print "<table cellpadding=\"10\" bgcolor=\"#ffffff\">\n";
       print "<tr><td valign=\"top\"><table cellpadding=\"3\">\n";
-      print "<tr bgcolor=\"#036a76\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Maid Chiefs</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+      print "<tr bgcolor=\"#036a76\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Maid/Butler Chiefs</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
 
 
      
       print $chiefsoutput;
 
-      print "<tr bgcolor=\"#096fb8\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">General Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+      print "<tr bgcolor=\"#096fb8\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">General Maids/Butlers</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
       
 
       my @IDnumbers = keys %list;
