@@ -266,7 +266,7 @@ print q \
 <div style="color: #ffffff; background-color: #8652a1"><b>Events</b></div>
 <div style="background-color: #ffffff;">
 <table>
-  <tr><td valign="top"><input type="checkbox" name="events" id="events" value="1" />&nbsp;</td><td valign="top" align="left"><label for="events">Exclude all cards that affect or require Event cards</label><br /><small><i>Select this option if using Tanto Cuore and/or Oktoberfest <b>without</b> Event cards</i></small></td></tr>
+  <tr><td valign="top"><input type="checkbox" name="events" id="events" value="1" />&nbsp;</td><td valign="top" align="left"><label for="events">Exclude all cards that affect or require Event cards</label><br /><small><i>Select this option if using Tanto Cuore, Oktoberfest, and/or Winter Romance <b>without</b> Event cards</i></small></td></tr>
 </table> 
 </div>
 </div>

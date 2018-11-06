@@ -117,6 +117,11 @@ $(document).ready(function () {
 	       $('.beer').removeAttr('disabled');
 	       $('#apprentice').removeAttr('disabled');
 	       break;
+	    case '5':
+	       $('#tcobox').fadeTo('fast',1);
+	       $('#love6').removeAttr('disabled');
+	       $('#events').removeAttr('disabled');
+	       break;
 	 }
 
 
