@@ -88,6 +88,9 @@ $(document).ready(function () {
 
       $('#love6').attr('disabled', 'disabled');
       $('#love6').prop('selected', false);
+
+      $('#love8').attr('disabled', 'disabled');
+      $('#love8').prop('selected', false);
       
 
       jQuery.each(categoryName, function(){
@@ -120,6 +123,7 @@ $(document).ready(function () {
 	    case '5':
 	       $('#tcobox').fadeTo('fast',1);
 	       $('#love6').removeAttr('disabled');
+	       $('#love8').removeAttr('disabled');
 	       $('#events').removeAttr('disabled');
 	       break;
 	 }

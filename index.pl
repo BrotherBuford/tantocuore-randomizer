@@ -349,13 +349,14 @@ print q \
 
 <div class="boxcontent">
 Require at least one general maid/butler of each of the following employ costs:
-  <br /><select size="6" name="cost" multiple="multiple">
+  <br /><select size="7" name="cost" multiple="multiple">
   <option value="2" class="love">2 Love</option>
   <option value="3" class="love">3 Love</option>
   <option value="4" class="love">4 Love</option>
   <option value="5" class="love">5 Love</option>
   <option value="6" id="love6">6 Love</option>
   <option value="7" class="love">7 Love</option>
+  <option value="8" id="love8">8 Love</option>
   </select>
 
 </div>    
