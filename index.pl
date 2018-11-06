@@ -178,7 +178,7 @@ print q \
 
 <div class="boxcontent">
 
-<small>Maid chief pairs will be randomly selected from all chosen sets</small>
+<small>Maid/butler chief pairs will be randomly selected from all chosen sets</small>
 
 <table border="0" cellpadding="0" cellspacing="4">
 <tr><td><select title="Click to select set(s)" size="6" id="sets" class="sets" name="sets" multiple="multiple">
