@@ -226,11 +226,6 @@ print q \
 
 <div id="tcbox">
 
-<div class="tabs" style="background-color: #ffccee;"><b>Tanto Cuore</b></div>
-<div>&nbsp;</div>
-
-<div style="background-color: #ffccee;  padding: 10px;">
-
 <div style="border-style:solid; border-width:1px;">
 <div style="color: #ffffff; background-color: #096fb8"><b>Keeping the Crescent sisters together</b></div>
 <div style="background-color: #ffffff; padding-top:5px; padding-bottom:5px;">
@@ -244,19 +239,12 @@ print q \
 </div>
 </div>
 
-</div>
-    
 <br />
 </div>
 
 
 <div id="tcethbox">
 
-<div class="tabs" style="background-color: #ffccee;"><b>Tanto Cuore</b></div>
-<div class="tabs" style="background-color: #ffddbb;"><b>Expanding the House</b></div>
-<div>&nbsp;</div>
-
-<div class="tcethblend" style="padding: 10px;">
 
 <div style="border-style:solid; border-width:1px;">
 <div style="color: #ffffff; background-color: #1f1a23"><b>Private Maids</b></div>
@@ -264,7 +252,6 @@ print q \
 <table>
   <tr><td valign="top"><input type="checkbox" name="private" id="private" value="1" />&nbsp;</td><td valign="top" align="left"><label for="private">Exclude all maids that affect or require Private Maids</label><br /><small><i>Select this option if using Tanto Cuore and/or Expanding the House <b>without</b> Private Maids</i></small></td></tr>
 </table> 
-</div>
 </div>
 </div>
 
@@ -275,19 +262,12 @@ print q \
 
 <div id="tcobox">
 
-<div class="tabs" style="background-color: #ffccee;"><b>Tanto Cuore</b></div>
-<div class="tabs" style="background-color: #DDAA88;"><b>Oktoberfest</b></div>
-<div>&nbsp;</div>
-
-<div class="tcoblend" style="padding: 10px;">
-
 <div style="border-style:solid; border-width:1px;">
 <div style="color: #ffffff; background-color: #8652a1"><b>Events</b></div>
 <div style="background-color: #ffffff;">
 <table>
   <tr><td valign="top"><input type="checkbox" name="events" id="events" value="1" />&nbsp;</td><td valign="top" align="left"><label for="events">Exclude all maids that affect or require Event cards</label><br /><small><i>Select this option if using Tanto Cuore and/or Oktoberfest <b>without</b> Event cards</i></small></td></tr>
 </table> 
-</div>
 </div>
 </div>
 
@@ -298,18 +278,12 @@ print q \
 
 <div id="ethbox">
 
-<div class="tabs" style="background-color: #ffddbb;"><b>Expanding the House</b></div>
-<div>&nbsp;</div>
-
-<div style="background-color: #ffddbb;  padding: 10px;">
-
 <div style="border-style:solid; border-width:1px;">
 <div style="color: #ffffff; background-color: #f37a45"><b>Buildings</b></div>
 <div style="background-color: #ffffff;">
 <table>
   <tr><td valign="top"><input type="checkbox" name="buildings" id="buildings" value="1" />&nbsp;</td><td valign="top" align="left"><label for="buildings">Exclude all maids that affect or require Building cards</label><br /><small><i>Select this option if using Expanding the House <b>without</b> Building cards</i></small></td></tr>
 </table> 
-</div>
 </div>
 </div>
 
@@ -320,11 +294,6 @@ print q \
 
 <div id="rvbox">
 
-<div class="tabs" style="background-color: #cceeff;"><b>Romantic Vacation</b></div>
-<div>&nbsp;</div>
-
-<div style="background-color: #cceeff;  padding: 10px;">
-
 <div style="border-style:solid; border-width:1px;">
 <div style="color: #ffffff; background-color: #fbb450"><b>Reminiscences</b></div>
 <div style="background-color: #ffffff; padding-right:5px;">
@@ -334,7 +303,6 @@ print q \
   <tr><td valign="top"><input type="radio" name="reminiscences" class="reminiscences" id="reminiscences1" value="1" />&nbsp;</td><td valign="top" align="left"><label for="reminiscences1">Exclude all maids that affect or require Reminiscence cards</label><br /><small><i>Select this option if using Romantic Vacation <b>without</b> Reminiscence cards</i></small></td></tr>
 </table> 
 </div>  
-</div>
 
 </div>
 <br />
@@ -342,11 +310,6 @@ print q \
 
 
 <div id="obox">
-
-<div class="tabs" style="background-color: #DDAA88;"><b>Oktoberfest</b></div>
-<div>&nbsp;</div>
-
-<div style="background-color: #DDAA88;  padding: 10px;">
 
 <div style="border-style:solid; border-width:1px;">
 <div style="color: #ffffff; background-color: #DE9D0F"><b>Beer</b></div>
@@ -367,7 +330,6 @@ print q \
 <table>
   <tr><td valign="top"><input type="checkbox" name="apprentice" id="apprentice" value="1" />&nbsp;</td><td valign="top" align="left"><label for="apprentice">Require Nicole Schmieg in the results if <i><u>and only if</u></i> Anja Brunner is selected as the Maid Chief<br /><small><i>Note: Nicole is treated as an attack card as she can be placed in any player's deck, so this option is mutually<br />exclusive with the "No attack cards" option.</i></small></label></td></tr>
 </table> 
-</div>
 </div>
 
 
