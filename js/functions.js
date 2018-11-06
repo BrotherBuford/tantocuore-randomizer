@@ -52,7 +52,7 @@ $(document).ready(function () {
       var categoryName = $category.val();
 
 
-      if(categoryName == '1,2,3' || categoryName == '1,3,4' || categoryName == '2,4' || categoryName == '1,2,3,4' || categoryName == '1,2,3,5' || categoryName == '1,,3,4,5' || categoryName == '2,4,5' || categoryName == '1,2,3,4,5'){
+      if(categoryName == '1,2,3' || categoryName == '1,3,4' || categoryName == '2,4' || categoryName == '1,2,3,4' || categoryName == '1,2,3,101' || categoryName == '1,,3,4,101' || categoryName == '2,4,101' || categoryName == '1,2,3,4,101'){
             $('#attack2').removeAttr('disabled');
 	    $('#attack2text').fadeTo('fast',1);
         } else{
