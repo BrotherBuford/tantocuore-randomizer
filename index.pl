@@ -846,11 +846,11 @@ EOT
 	last SWITCH;
       }
       if ($costerror) {
-	print "<p class=\"error\"><b>Error:</b> No cards of one or more required cost(s) in pool of available maids.</p>\n";
+	print "<p class=\"error\"><b>Error:</b> No cards of one or more required cost(s) in pool of available cards.</p>\n";
 	last SWITCH;
       }
       if ($crescenterror) {
-	print "<p class=\"error\"><b>Error:</b> Not enough Crescent sisters in pool of available maids to meet selected minimum.</p>\n";
+	print "<p class=\"error\"><b>Error:</b> Not enough Crescent sisters in pool of available cards to meet selected minimum.</p>\n";
 	last SWITCH;
       }
       if ($barmaiderror) {
