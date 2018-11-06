@@ -862,23 +862,23 @@ EOT
     
   SWITCH: {
       if (keys %list < 10) {
-	print "<p class=\"error\"><b>Error:</b> Less than 10 maids available to randomize.</p>\n";
+	print "<p class=\"error\"><b>Error:</b> Less than 10 cards available to randomize.</p>\n";
 	last SWITCH;
       }
       if ($costerror) {
-	print "<p class=\"error\"><b>Error:</b> No maids of one or more required cost(s) in pool of available maids.</p>\n";
+	print "<p class=\"error\"><b>Error:</b> No cards of one or more required cost(s) in pool of available cards.</p>\n";
 	last SWITCH;
       }
       if ($crescenterror) {
-	print "<p class=\"error\"><b>Error:</b> Not enough Crescent sisters in pool of available maids to meet selected minimum.</p>\n";
+	print "<p class=\"error\"><b>Error:</b> Not enough Crescent sisters in pool of available cards to meet selected minimum.</p>\n";
 	last SWITCH;
       }
       if ($barmaiderror) {
-	print "<p class=\"error\"><b>Error:</b> No Bar Maids in pool of available maids. (Beer cards are unusable)</p>\n";
+	print "<p class=\"error\"><b>Error:</b> No Bar Maids in pool of available cards. (Beer cards are unusable)</p>\n";
 	last SWITCH;
       }
       if ($apprenticeerror) {
-	print "<p class=\"error\"><b>Error:</b> Nicole Schmieg is not available in the pool of available maids but is required by the option selections.</p>\n";
+	print "<p class=\"error\"><b>Error:</b> Nicole Schmieg is not available in the pool of available cards but is required by the option selections.</p>\n";
 	last SWITCH;
       }
       
