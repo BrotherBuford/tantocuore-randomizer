@@ -144,7 +144,7 @@ EOT
 	$gameset = "Winter Romance";
 	last SWITCH;
       }
-      if ($fields[2] == 6) {
+      if ($fields[2] == 101) {
 	$gameset = "Intl. Tabletop Day 2016 (Promo)";
 	last SWITCH;
       }
@@ -545,7 +545,7 @@ sub randomize {
     
     
     my $eventsSQL;
-    if (param('events') or (!exists $sets{1} and exists $sets{5})) {
+    if (param('events') or (!exists $sets{1} and exists $sets{101})) {
       param(-name=>'events',
 	    -value=>param('events'));
       $eventsSQL = " and (events != \"y\")";
