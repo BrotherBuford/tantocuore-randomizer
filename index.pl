@@ -187,7 +187,7 @@ print q \
   <option value="3" $selectedsets{3}>Romantic Vacation</option>
   <option value="4" $selectedsets{4}>Oktoberfest</option>
   <option value="5" $selectedsets{5}>Winter Romance</option>
-  <option value="6" $selectedsets{6}>Intl. Tabletop Day 2016 (Promo)</option>
+  <option value="101" $selectedsets{101}>Intl. Tabletop Day 2016 (Promo)</option>
   </select></td>
 
 <td align="center" valign="middle">&nbsp;&nbsp;
@@ -495,7 +495,7 @@ sub randomize {
 
       $setlistSQL .= " or gameset = \"$elem\"";
       $sets{$elem} = 1;
-      if ($elem ne "5") {
+      if ($elem ne "101") {
 	push @chiefs, $elem;
       }
       my $hidden = hidden(-name=>'sets');
@@ -694,7 +694,7 @@ EOT
 	  $gameset = "-V";
 	  $color = "#339999";
 	}
-	if ($fields[2] == 6) {
+	if ($fields[2] == 101) {
 	  $prgameset = "PR";
 	  $gameset = "";
 	  $color = "#FFFFAA";
