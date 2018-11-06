@@ -64,76 +64,39 @@ $(document).ready(function () {
       $('#banned').empty();
       $('<option disabled="disabled" value="0" id="pleaseselect">Please select a game set</option>').appendTo('#banned');
 
-      $('#tcbox').fadeTo(0,0.3);
-      $('#crescent').attr('disabled', 'disabled');
+      $('#tcbox,#tcethbox,#tcobox,#obox,#ethbox,#rvbox,#wrbox').fadeTo(0,0.3);
 
-      $('#tcethbox').fadeTo(0,0.3);
-      $('#private').attr('disabled', 'disabled');
+      $('#crescent,#private,#events,.beer,#apprentice,#buildings,.reminiscences,#drama,.love,.topage,#love6,#love8').attr('disabled', 'disabled');
 
-      $('#tcobox').fadeTo(0,0.3);
-      $('#events').attr('disabled', 'disabled');
-
-      $('#obox').fadeTo(0,0.3);
-      $('.beer').attr('disabled', 'disabled');
-      $('#apprentice').attr('disabled', 'disabled');
-
-      $('#ethbox').fadeTo(0,0.3);
-      $('#buildings').attr('disabled', 'disabled');
-
-      $('#rvbox').fadeTo(0,0.3);
-      $('.reminiscences').attr('disabled', 'disabled');
-
-      $('#wrbox').fadeTo(0,0.3);
-      $('#drama').attr('disabled', 'disabled');
-      
-      $('.love').attr('disabled', 'disabled');
-      $('.topage').attr('disabled', 'disabled');
-
-      $('#love6').attr('disabled', 'disabled');
-      $('#love6').prop('selected', false);
-
-      $('#love8').attr('disabled', 'disabled');
-      $('#love8').prop('selected', false);
-      
+      $('#love6,#love8').prop('selected', false);
 
       jQuery.each(categoryName, function(){
 
 	 switch($.trim(this)) {
 	    case '1':
 	       $('#tcbox,#tcethbox,#tcobox').fadeTo('fast',1);
-	       $('#crescent').removeAttr('disabled');
-	       $('#events').removeAttr('disabled');
-	       $('#love6').removeAttr('disabled');
-	       $('#private').removeAttr('disabled');
+	       $('#crescent,#events,#love6,#private').removeAttr('disabled');
 	       break;
 	    case '2':
 	       $('#ethbox,#tcethbox').fadeTo('fast',1);
-	       $('#buildings').removeAttr('disabled');
-	       $('#private').removeAttr('disabled');
+	       $('#buildings,#private').removeAttr('disabled');
 	       break;
 	    case '3':
 	       $('#rvbox').fadeTo('fast',1);
-	       $('.reminiscences').removeAttr('disabled');
-	       $('#love6').removeAttr('disabled');
+	       $('.reminiscences,#love6').removeAttr('disabled');
 	       break;
 	    case '4':
 	       $('#tcobox,#obox').fadeTo('fast',1);
-	       $('#love6').removeAttr('disabled');
-	       $('#events').removeAttr('disabled');
-	       $('.beer').removeAttr('disabled');
-	       $('#apprentice').removeAttr('disabled');
+	       $('#love6,#events,.beer,#apprentice').removeAttr('disabled');
 	       break;
 	    case '5':
 	       $('#tcobox,#wrbox').fadeTo('fast',1);
-	       $('#love6').removeAttr('disabled');
-	       $('#love8').removeAttr('disabled');
-	       $('#events,#drama').removeAttr('disabled');
+	       $('#events,#drama,#love6,#love8').removeAttr('disabled');
 	       break;
 	 }
 
 
-	 $('.topage').removeAttr('disabled');
-	 $('.love').removeAttr('disabled');
+	 $('.topage,.love').removeAttr('disabled');
 	 $('#pleaseselect').remove();
 
 
