@@ -1097,7 +1097,7 @@ EOT
 
       print "<td align=\"center\" valign=\"top\" width=\"310\">\n";
 
-      print "<small><b>Touch or hover over each individual maid's name for information on her card's effects.</b><br /><br /></small>\n";
+      print "<small><b>Touch or hover over each card name for information on the card's effects.</b><br /><br /></small>\n";
 
       print "<table>\n";
 
