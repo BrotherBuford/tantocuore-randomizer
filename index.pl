@@ -344,10 +344,10 @@ print q \
 <div id="wrbox">
 
 <div style="border-style:solid; border-width:1px;">
-<div style="color: #ffffff; background-color: #ad9c92"><b>Drama</b></div>
+<div style="color: #ffffff; background-color: #ad9c92"><b>Couples</b></div>
 <div style="background-color: #ffffff;">
 <table>
-  <tr><td valign="top"><input type="checkbox" name="drama" id="drama" value="1" />&nbsp;</td><td valign="top" align="left"><label for="drama">Exclude all cards that affect or require Drama cards</label><br /><small><i>Select this option if using Winter Romance <b>without</b> Drama cards</i></small></td></tr>
+  <tr><td valign="top"><input type="checkbox" name="couples" id="couples" value="1" />&nbsp;</td><td valign="top" align="left"><label for="couples">Do not use Winter Romance approach/couple mechanics</label><br /><small><i>(Friends, Trial, Drama cards, Meetup Spot cards, Chapel, and Social Bonus)</i></small></td></tr>
 </table> 
 </div>
 </div>
