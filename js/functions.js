@@ -1,43 +1,16 @@
 $(document).ready(function () {
   
 
-  $('#attack2').attr('disabled', 'disabled');
+  $('#attack2,.love,.topage,#crescent,#private,#events,.beer,#apprentice,#buildings,.reminiscences').attr('disabled', 'disabled');
+
   $('#attack2').prop('checked', false);
 
   $('#optionnote').fadeIn(0);
 
   $('.hiddenoptions').fadeOut(0);
 
-  $('.love').attr('disabled', 'disabled');
-
-  $('.topage').attr('disabled', 'disabled');
-
+  $('#tcbox,#tcethbox,#tcobox,#obox,#ethbox,#rvbox,#wrbox,#attack2text').fadeTo('slow',0.3);
   
-  $('#tcbox').fadeTo('slow',0.3);
-  $('#crescent').attr('disabled', 'disabled');
-
-
-
-  $('#tcethbox').fadeTo('slow',0.3);
-  $('#private').attr('disabled', 'disabled');
-
-  $('#tcobox').fadeTo('slow',0.3);
-  $('#events').attr('disabled', 'disabled');
-
-  $('#obox').fadeTo('slow',0.3);
-  $('.beer').attr('disabled', 'disabled');
-  $('#apprentice').attr('disabled', 'disabled');
-
-
-  $('#ethbox').fadeTo('slow',0.3);
-  $('#buildings').attr('disabled', 'disabled');
-
-  $('#rvbox').fadeTo('slow',0.3);
-  $('.reminiscences').attr('disabled', 'disabled');
-
-  
-  $('#attack2text').fadeTo('slow',0.3);
-
 
   var $category = $('#sets'),
       $article = null;
