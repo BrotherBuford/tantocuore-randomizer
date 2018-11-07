@@ -1084,7 +1084,8 @@ EOT
 
 
       if ((@removebuffer and !param('private')) or @removerembuffer or @removeeventsbuffer) {
-	print "<tr bgcolor=\"#000000\"><th colspan=\"3\"><font color=\"#ffffff\">Remove the following from game:</font></th></tr>";
+	print "<tr bgcolor=\"#ffffff\"><th colspan=\"3\"></td>&nbsp;</tr>
+               <tr bgcolor=\"#000000\"><th colspan=\"3\"><font color=\"#ffffff\">Remove the following from game:</font></th></tr>";
 	if (@removebuffer and !param('private')) {
 	  print "<tr bgcolor=\"#1f1a23\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Private Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
 	  foreach my $elem (@removebuffer) {
