@@ -266,7 +266,7 @@ print q \
 <div style="color: #ffffff; background-color: #8652a1"><b>Events</b></div>
 <div style="background-color: #ffffff;">
 <table>
-  <tr><td valign="top"><input type="checkbox" name="events" id="events" value="1" />&nbsp;</td><td valign="top" align="left"><label for="events">Exclude all cards that affect or require Event cards</label><br /><small><i>Select this option if using Tanto Cuore, Oktoberfest, and/or Winter Romance <b>without</b> Event cards</i></small></td></tr>
+  <tr><td valign="top"><input type="checkbox" name="events" id="events" value="1" />&nbsp;</td><td valign="top" align="left"><label for="events">Exclude all cards that affect or require Event cards</label><br /><small><i>Select this option if using Tanto Cuore, Oktoberfest, and/or Winter Romance <b>without</b> Event cards<br /><b>NOTE:</b> Winter Romance "Drama" cards are treated as Event cards.</i></small></td></tr>
 </table> 
 </div>
 </div>
@@ -344,7 +344,7 @@ print q \
 <div id="wrbox">
 
 <div style="border-style:solid; border-width:1px;">
-<div style="color: #ffffff; background-color: #3A677D"><b>Drama</b></div>
+<div style="color: #ffffff; background-color: #ad9c92"><b>Drama</b></div>
 <div style="background-color: #ffffff;">
 <table>
   <tr><td valign="top"><input type="checkbox" name="drama" id="drama" value="1" />&nbsp;</td><td valign="top" align="left"><label for="drama">Exclude all cards that affect or require Drama cards</label><br /><small><i>Select this option if using Winter Romance <b>without</b> Drama cards</i></small></td></tr>
