@@ -39,7 +39,7 @@ die "No screen for $Current_Screen" unless $States{$Current_Screen};
 my $cgi = new CGI;
 
 my $donate = q \
-<p style="font-size: 0.75em"><b>If you find this app useful, buy me a beer!<br />
+<p style="font-size: 0.75em"><b>If you find this app useful, buy me a beer!</b><br />
 
 <script type="text/javascript" src="coinwidget/coin.js"></script>
 <script type="text/javascript" src="coinwidget/config.js"></script>
