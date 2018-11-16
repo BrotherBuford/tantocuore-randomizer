@@ -282,7 +282,7 @@ print q \
 <div style="color: #ffffff; background-color: #f37a45"><b>Buildings</b></div>
 <div style="background-color: #ffffff;">
 <table>
-  <tr><td valign="top"><input type="checkbox" name="buildings" id="buildings" value="1" />&nbsp;</td><td valign="top" align="left"><label for="buildings">Exclude all cards that affect or require Building cards</label><br /><small><i>Select this option if using Expanding the House <b>without</b> Building cards</i></small></td></tr>
+  <tr><td valign="top"><input type="checkbox" name="buildings" id="buildings" value="1" />&nbsp;</td><td valign="top" align="left"><label for="buildings">Exclude all cards that affect or require Building cards</label><br /><small><i>Select this option if using Expanding the House, Oktoberfest, and/or Winter Romance <b>without</b> Building cards</i></small></td></tr>
 </table> 
 </div>
 </div>

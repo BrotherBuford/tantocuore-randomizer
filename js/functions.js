@@ -59,12 +59,12 @@ $(document).ready(function () {
 	       $('.reminiscences,#love6').removeAttr('disabled');
 	       break;
 	    case '4':
-	       $('#tcobox,#obox').fadeTo('fast',1);
-	       $('#love6,#events,.beer,#apprentice').removeAttr('disabled');
+	       $('#tcobox,#obox,#ethbox').fadeTo('fast',1);
+	       $('#love6,#events,.beer,#apprentice,#buildings').removeAttr('disabled');
 	       break;
 	    case '5':
-	       $('#tcobox,#wrbox').fadeTo('fast',1);
-	       $('#events,#drama,#love6,#love8').removeAttr('disabled');
+	       $('#tcobox,#wrbox,#ethbox').fadeTo('fast',1);
+	       $('#events,#drama,#love6,#love8,#buildings').removeAttr('disabled');
 	       break;
 	 }
 
