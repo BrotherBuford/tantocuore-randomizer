@@ -24,15 +24,10 @@ $(document).ready(function () {
 
       var categoryName = $category.val();
 
-
-      if(categoryName == '1,2,3' || categoryName == '1,3,4' || categoryName == '2,4' || categoryName == '1,2,3,4' || categoryName == '1,2,3,101' || categoryName == '1,3,4,101' || categoryName == '2,4,101' || categoryName == '1,2,3,4,101'){
-            $('#attack2').removeAttr('disabled');
-	    $('#attack2text').fadeTo('fast',1);
-        } else{
-            $('#attack2').attr('disabled', 'disabled');
-            $('#attack2').prop('checked', false);
-	    $('#attack2text').fadeTo('fast',0.3);
-        }
+       // removed condition to check for correct sets due to increasing unmanagability
+       // enable option choice by default and just let the Perl functions take care of it on submit
+      $('#attack2').removeAttr('disabled');
+      $('#attack2text').fadeTo('fast',1);
 
       $('#banned').empty();
       $('<option disabled="disabled" value="0" id="pleaseselect">Please select a game set</option>').appendTo('#banned');
