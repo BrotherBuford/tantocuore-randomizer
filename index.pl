@@ -527,7 +527,8 @@ sub randomize {
     
     
     my $eventsSQL;
-    if (param('events') or (!exists $sets{1} and exists $sets{101})) {
+#    if (param('events') or (!exists $sets{1} and exists $sets{101})) {
+    if (param('events')) {
       param(-name=>'events',
 	    -value=>param('events'));
       $eventsSQL = " and (events != \"y\")";
@@ -633,7 +634,7 @@ EOT
     if ($beerSQL) {
       $SQL .= $beerSQL;
     }
-    
+
     my $cursor = $main::dbh->prepare($SQL);
     
     $cursor->execute;
