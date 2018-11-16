@@ -1035,6 +1035,7 @@ EOT
       my @removebuffer;
       my @removerembuffer;
       my @removeeventsbuffer;
+      my @removebuildingsbuffer;
       if (exists $sets{1}) {
 	if (param('events') or (param('attack') eq "1")) {
 	  push(@removebuffer, ("<tr bgcolor=\"#ffccee\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20.jpg' width='125' height='179'></td><td><b><u>Nord Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -4<br /><b>------ During your Starting Phase ------</b><br />You may discard all but one card from your hand.  If you do, send two illnesses from the town onto one maid in any Private Quarters of your choice.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20</td><td><b><i><font color=\"#990000\">Nord Twilight (Black Maid)</font></i></b></td><td align=\"center\">4</td></tr>\n"));
@@ -1087,6 +1088,9 @@ EOT
 		  push(@removeeventsbuffer, ("<tr bgcolor=\"#339999\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-V.jpg' width='125' height='179'></td><td><b><u>Blizzard</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />Play this card on top of a Building card.  Any VP and any ability from cards underneath this card are lost.<br /><b>------ Employ Phase ------</b><br />You may discard any four Love cards to return this card to the town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-V</td><td><font color=\"#990000\">Blizzard</font></td><td align=\"center\">6</td></tr>\n"));
 	      }
 	  }
+	  if ((!param('couples') and (param('attack') == "1" or param('events'))) and !param('buildings')) {
+	      push(@removebuildingsbuffer, ("<tr bgcolor=\"#ffffaa\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR43.jpg' width='125' height='179'></td><td><b><u>Chapel</u></b><br /><i>Building</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr /><br />When another player is playing an Event card against you, you may remove this Chapel card from the game.  If you do, ignore the effects of that Event card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR43</td><td><font color=\"#000000\">Chapel</font></td><td align=\"center\">6</td></tr>\n"));
+	  }
       }
 
 
@@ -1116,6 +1120,13 @@ EOT
 	  }
 	}
 
+	if (@removebuildingsbuffer) {
+	  print "<tr bgcolor=\"#f37a45\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Buildings</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+	  foreach my $elem (@removebuildingsbuffer) {
+	    print $elem;
+	  }
+	}
+	
 	
 
       }
