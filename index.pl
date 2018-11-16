@@ -587,6 +587,17 @@ sub randomize {
     }
 
 
+    my $couplesSQL;
+    if (param('couples')) {
+      param(-name=>'couples',
+	    -value=>param('couples'));
+      $privateSQL = " and (couples != \"y\")";
+      my $hidden = hidden(-name=>'couples');
+      $hidden =~ s/>$/ \/>/;
+      print $hidden;
+    }
+    
+
     my %costlist;
     
     
@@ -608,7 +619,8 @@ sub randomize {
    buildings,
    reminiscences,
    description,
-   private
+   private,
+   couples
 	  FROM cardlist WHERE
 EOT
 
@@ -633,6 +645,9 @@ EOT
     }
     if ($beerSQL) {
       $SQL .= $beerSQL;
+    }
+    if ($couplesSQL) {
+      $SQL .= $couplesSQL;
     }
 
     my $cursor = $main::dbh->prepare($SQL);
