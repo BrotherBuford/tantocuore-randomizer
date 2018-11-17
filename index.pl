@@ -74,6 +74,7 @@ print q \
 <div align="center">
 \;
 
+
 print start_form();
 
 while (my($screen_name, $function) = each %States) {
@@ -89,6 +90,7 @@ print q \
 </body>
 </html>
 \;
+
 
 
 sub front_page {
@@ -122,31 +124,31 @@ EOT
   
   while ( @fields = $cursor->fetchrow ) {
      
-    my $gameset;
-  SWITCH: {
+      my $gameset;
+    SWITCH: {
       if ($fields[2] == 1) {
-	$gameset = "Tanto Cuore";
-	last SWITCH;
+	  $gameset = "Tanto Cuore";
+	  last SWITCH;
       }
       if ($fields[2] == 2) {
-	$gameset = "Expanding the House";
-	last SWITCH;
+	  $gameset = "Expanding the House";
+	  last SWITCH;
       }
       if ($fields[2] == 3) {
-	$gameset = "Romantic Vacation";
-	last SWITCH;
+	  $gameset = "Romantic Vacation";
+	  last SWITCH;
       }
-       if ($fields[2] == 4) {
-	$gameset = "Oktoberfest";
-	last SWITCH;
+      if ($fields[2] == 4) {
+	  $gameset = "Oktoberfest";
+	  last SWITCH;
       }
-       if ($fields[2] == 5) {
-	$gameset = "Winter Romance";
-	last SWITCH;
+      if ($fields[2] == 5) {
+	  $gameset = "Winter Romance";
+	  last SWITCH;
       }
       if ($fields[2] == 101) {
-	$gameset = "Intl. Tabletop Day 2016 (Promo)";
-	last SWITCH;
+	  $gameset = "Intl. Tabletop Day 2016 (Promo)";
+	  last SWITCH;
       }
       my $nothing=0;
     }
