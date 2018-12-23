@@ -439,7 +439,7 @@ $(".banlistnoscript").remove();
 
 \.$donate.q \
 <p>&nbsp;</p>
-<p><small>Find a bug?  Email <a href="mailto:buford@nekomusume.net">buford@nekomusume.net</a></small></p>
+<p><small>Find a bug?  Submit an issue on <a href="https://github.com/BrotherBuford/tantocuore-randomizer" target="_new">GitHub</a></small></p>
 
 <p style="font-size: 0.55em">This game utility is a fan work not affiliated with Arclight, Inc. or Japanime Games.<br /><a href="http://www.tantocuore.com/">Tanto Cuore Official English Website</a> &#8226; <a href="http://www.arclight.co.jp/ag/tc/">Tanto Cuore Official Japanese Website</a><br /><a href="https://www.facebook.com/JapanimeGames/">Japanime Games Facebook Page</a></p>
 
