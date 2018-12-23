@@ -1,0 +1,4 @@
+*.pl linguist-language=Perl
+js/jquery-1.7.2.min.js linguist-vendored
+coinwidget/* linguist-vendored
+coinwidget/code-sample.html linguist-documentation
