@@ -2,14 +2,13 @@
 
 package TantoCuoreRandomizer;
 
-use lib qw( /home/brotherbuford/perlmods/lib/perl/5.14
-	    /home/brotherbuford/perlmods/lib/perl/5.14.2
-	    /home/brotherbuford/perlmods/share/perl/5.14
-	    /home/brotherbuford/perlmods/share/perl/5.14.2
-	    /home/brotherbuford/perlmods/local/share/perl/5.14.2
-	    /home/brotherbuford/perlmods/local/lib/perl/5.14.2 );
+use lib qw( ../../perlmods/lib/perl/5.14
+	    ../../perlmods/lib/perl/5.14.2
+	    ../../perlmods/share/perl/5.14
+	    ../../perlmods/share/perl/5.14.2
+	    ../../perlmods/local/share/perl/5.14.2
+	    ../../perlmods/local/lib/perl/5.14.2 );
 
-# use FCGI;
 use Socket qw( :crlf ); # server agnostic line endings in $CRLF
 
 use strict;
