@@ -38,10 +38,30 @@ die "No screen for $Current_Screen" unless $States{$Current_Screen};
 my $cgi = new CGI;
 
 my $donate = q \
-<p style="font-size: 0.75em"><b>Please help keep this site alive:</b><br />
+
+
+<div style="display: inline-block;">
+
+<div class="boxheader" style="background-color: #e17000; color: #ffffff;">
+
+<b>&nbsp;&nbsp;&nbsp;&nbsp;Please help keep this site alive:&nbsp;&nbsp;&nbsp;&nbsp;</b>
+
+</div>
+
+<div class="boxcontent"  style="background-color: #ffffff; color: #000000;">
+
+<table border="0" cellpadding="0" cellspacing="4">
+<tr><td>
 
 <script type="text/javascript" src="coinwidget/coin.js"></script>
 <script type="text/javascript" src="coinwidget/config.js"></script>
+
+</td>
+</tr>
+</table>
+
+</div>
+</div>
 
 </p>
 \;
@@ -436,7 +456,6 @@ $(".banlistnoscript").remove();
 
 
 <p>&nbsp;</p>
-
 \.$donate.q \
 <p>&nbsp;</p>
 <p><small>Find a bug?  Submit an issue on <a href="https://github.com/BrotherBuford/tantocuore-randomizer" target="_new">GitHub</a></small></p>
@@ -1192,7 +1211,7 @@ EOT
   if ($newbutton) { print "<p>" . to_page("New Randomization Criteria") . "</p>\n"; }
       
   
-  print $donate;
+  print "<br />".$donate;
   
 }
 
