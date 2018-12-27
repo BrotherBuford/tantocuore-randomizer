@@ -44,7 +44,7 @@ my $donate = q \
 
 <div class="boxheader" style="background-color: #e17000; color: #ffffff;">
 
-<b>&nbsp;&nbsp;&nbsp;&nbsp;Please help keep this site alive:&nbsp;&nbsp;&nbsp;&nbsp;</b>
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your donations help keep this site alive!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
 
 </div>
 
