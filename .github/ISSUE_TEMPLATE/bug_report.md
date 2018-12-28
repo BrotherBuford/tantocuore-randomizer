@@ -1,9 +1,9 @@
 ---
 name: Bug report
 about: Create a report for any issues
-title: ''
+title: "[BUG] "
 labels: ''
-assignees: ''
+assignees: BrotherBuford
 
 ---
 
