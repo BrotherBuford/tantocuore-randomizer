@@ -19,7 +19,9 @@ use HTML::Entities;
       
 $main::cgi = new CGI; # to take advantage of the "param" decoding method
 
-$main::dbh = DBI->connect('DBI:mysql:tantocuore:mysql.nekomusume.net', 'tantocuore','TantoCuorePass',
+my %config = do 'config.pl';
+
+$main::dbh = DBI->connect("DBI:mysql:$config{database}:$config{server}", "$config{username}","$config{password}",
 		       { PrintError => 0}) || die $DBI::errstr;
 
 my %States;

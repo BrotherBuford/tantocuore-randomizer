@@ -11,3 +11,6 @@ server.  The database structure and contents is in sql/cardlist.sql.
 
 Several library directories are set at the beginning of the index.pl
 script that are only necessary for my hosting setup.
+
+MySQL configuration options are contained in the file config.pl
+A sample file is included.
