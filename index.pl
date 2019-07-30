@@ -18,13 +18,13 @@ use Apache::DBI();
 use HTML::Entities;
 use File::Basename qw();
       
-$main::cgi = new CGI; # to take advantage of the "param" decoding method
+$TantocuoreRandomizer::cgi = new CGI; # to take advantage of the "param" decoding method
 
 my ($name, $path, $suffix) = File::Basename::fileparse($0);
 
 my %config = do "$path/config.pl";
 
-$main::dbh = DBI->connect("DBI:mysql:$config{database}:$config{server}", "$config{username}","$config{password}",
+$TantoCuoreRandomizer::dbh = DBI->connect("DBI:mysql:$config{database}:$config{server}", "$config{username}","$config{password}",
 		       { PrintError => 0}) || die $DBI::errstr;
 
 my %States;
@@ -106,7 +106,7 @@ while (my($screen_name, $function) = each %States) {
 }
 
 print end_form();
-$main::dbh->disconnect;
+$TantoCuoreRandomizer::dbh->disconnect;
 
 print q \
 </div>
@@ -133,7 +133,7 @@ sub front_page {
 	  FROM cardlist order by gameset, name
 EOT
   
-  my $cursor = $main::dbh->prepare($SQL);
+  my $cursor = $TantoCuoreRandomizer::dbh->prepare($SQL);
 
   $cursor->execute;
 
@@ -686,7 +686,7 @@ EOT
       $SQL .= $couplesSQL;
     }
 
-    my $cursor = $main::dbh->prepare($SQL);
+    my $cursor = $TantoCuoreRandomizer::dbh->prepare($SQL);
     
     $cursor->execute;
     
