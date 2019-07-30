@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-use lib qw( ../../perlmods/lib/perl/5.14
+use lib qw( ../../perl5/lib/perl5
+    ../../perlmods/lib/perl/5.14
     ../../perlmods/lib/perl/5.14.2
     ../../perlmods/share/perl/5.14
     ../../perlmods/share/perl/5.14.2
