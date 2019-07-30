@@ -16,6 +16,7 @@ use CGI::Carp qw(fatalsToBrowser);
 use Apache::DBI();
 use HTML::Entities;
 use File::Basename qw();
+use Readonly;
 
 my ( $name, $path, $suffix ) = File::Basename::fileparse($0);
 
@@ -40,7 +41,7 @@ croak "No screen for $Current_Screen" unless $States{$Current_Screen};
 
 my $cgi = CGI->new;
 
-my $donate = q \
+Readonly my $DONATE => <<'END_DONATE';
 
 
 <div style="display: inline-block;">
@@ -66,12 +67,12 @@ my $donate = q \
 </div>
 </div>
 
-</p>
-\;
+    </p>
+END_DONATE
 
 print header();
 
-print q \
+print <<'PAGE_HEADING_END';
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -93,7 +94,7 @@ print q \
 <body style="background-color:#ffccee;background-image:url('images/hearts.gif');">
 
 <div align="center">
-\;
+PAGE_HEADING_END
 
 print start_form();
 
@@ -104,12 +105,12 @@ while ( my ( $screen_name, $function ) = each %States ) {
 print end_form();
 $dbh->disconnect;
 
-print q \
+print <<'FOOTER_END';
 </div>
 
 </body>
 </html>
-\;
+FOOTER_END
 
 sub front_page {
     my $active = shift;
@@ -118,14 +119,14 @@ sub front_page {
     my @list;
     my @fields;
 
-    my $SQL = <<EOT;
+    my $SQL = <<'END_SQL';
 	  SELECT
    ID,
    name,
    gameset,
    title
 	  FROM cardlist order by gameset, name
-EOT
+END_SQL
 
     my $cursor = $dbh->prepare($SQL);
 
@@ -178,12 +179,8 @@ EOT
 
     my @selectedsets = param('sets');
     my %selectedsets;
-    foreach my $elem (@selectedsets) {
 
-        #    $selectedsets{$elem} = "SELECTED";
-    }
-
-    print q \
+    print <<"INTRO_END";
 <h2 style="font-family:Title;font-size:32px;color:#562271;font-weight:normal" align="center">Tanto Cuore <span style="color:#ff6699">&#9829;</span> Town Randomizer</h2>
 
   
@@ -201,20 +198,20 @@ EOT
 
 <table border="0" cellpadding="0" cellspacing="4">
 <tr><td><select title="Click to select set(s)" size="6" id="sets" class="sets" name="sets" multiple="multiple">
-  <option value="1" \ . $selectedsets{1} . q\>Tanto Cuore</option>
-  <option value="2" \ . $selectedsets{2} . q\>Expanding the House</option>
-  <option value="3" \ . $selectedsets{3} . q\>Romantic Vacation</option>
-  <option value="4" \ . $selectedsets{4} . q\>Oktoberfest</option>
-  <option value="5" \ . $selectedsets{5} . q\>Winter Romance</option>
-  <option value="101" \
-        . $selectedsets{101} . q\>Intl. Tabletop Day 2016 (Promo)</option>
+  <option value="1" $selectedsets{1} >Tanto Cuore</option>
+  <option value="2" $selectedsets{2} >Expanding the House</option>
+  <option value="3" $selectedsets{3} >Romantic Vacation</option>
+  <option value="4" $selectedsets{4} >Oktoberfest</option>
+  <option value="5" $selectedsets{5} >Winter Romance</option>
+  <option value="101" $selectedsets{101} >Intl. Tabletop Day 2016 (Promo)</option>
   </select></td>
 
 <td align="center" valign="middle">&nbsp;&nbsp;
-\;
+INTRO_END
+
     print to_page("Randomize");
 
-    print q \
+    print <<'OPTIONS_END';
 </td>
 </tr>
 </table>
@@ -421,11 +418,11 @@ Require at least one general maid/butler of each of the following employ costs:
 <div class="boxcontent">
 Select cards to <i>not</i> include in results:<br /><select size="5" name="banned" id="banned" class="banned" multiple="multiple">
 <option value="0" id="pleaseselect" disabled="disabled" style="display:none">Please select a game set</option>
-\;
+OPTIONS_END
 
     foreach my $listitem (@list) {
         my $item = $listitem;
-        $item =~ s/banlist.?/banlistnoscript/;
+        $item =~ s{banlist.?}{banlistnoscript}xm;
         print $item;
     }
 
@@ -441,7 +438,7 @@ Select cards to <i>not</i> include in results:<br /><select size="5" name="banne
     }
     print "</select>\n";
 
-    print q \
+    print <<"PAGE_FOOTER_END";
 <script type="text/javascript">
 //<![CDATA[
 document.getElementById('pleaseselect').style.display = 'block';
@@ -450,10 +447,8 @@ $(".banlistnoscript").remove();
 </script>
 
 
-
-
 <p>&nbsp;</p>
-\ . $donate . q \
+ $DONATE
 <p>&nbsp;</p>
 <p><small>Find a bug?  Submit an issue on <a href="https://github.com/BrotherBuford/tantocuore-randomizer" target="_new">GitHub</a></small></p>
 
@@ -467,7 +462,7 @@ $(".banlistnoscript").remove();
 </p> -->
 
 <script type="text/javascript" src="./js/functions.js"></script>
-\;
+PAGE_FOOTER_END
 
     return;
 }
@@ -572,7 +567,7 @@ sub randomize {
         }
 
         my $beerSQL;
-        if ( param('beer') == "2" ) {
+        if ( param('beer') eq "2" ) {
             param(
                 -name  => 'beer',
                 -value => param('beer')
@@ -898,7 +893,7 @@ EOT
         my $apprenticeerror;
         if (   ( param('apprentice') == 1 )
             && ( !$list{66} )
-            && $chiefs == "4" )
+            && $chiefs eq "4" )
         {
             $apprenticeerror = 1;
         }
@@ -974,7 +969,7 @@ EOT
                 my $num;
 
                 $num = 66
-                    if ( $chiefs == "4"
+                    if ( $chiefs eq "4"
                     && param('apprentice') eq "1"
                     && !( exists $cache{66} )
                     && !( exists $banlist{66} )
@@ -1225,7 +1220,7 @@ EOT
                 );
             }
             if ( exists $sets{4} ) {
-                if ((   (   (   param('beer') == "2" && !(
+                if ((   (   (   param('beer') eq "2" && !(
                                     (   exists $sets{2} || ( exists $sets{5}
                                             && !param('couples') )
                                     )
@@ -1248,7 +1243,7 @@ EOT
                         )
                     );
                 }
-                if (   ( param('beer') == "2" )
+                if (   ( param('beer') eq "2" )
                     && ( !( param('events') || param('attack') == 1 ) ) )
                 {
                     push(
@@ -1269,7 +1264,7 @@ EOT
                 }
                 if ( exists $sets{2} || exists $sets{4} ) { $blizzard = 0; }
                 if ((   !exists $sets{2} && ( !exists $sets{4}
-                            || ( exists $sets{4} && param('beer') == "2" ) )
+                            || ( exists $sets{4} && param('beer') eq "2" ) )
                     )
                     && ( param('couples') || param('buildings') )
                     )
@@ -1295,7 +1290,7 @@ EOT
 
                 }
                 if ((   !param('couples')
-                        && ( param('attack') == "1" || param('events') )
+                        && ( param('attack') eq "1" || param('events') )
                     )
                     && !param('buildings')
                     )
@@ -1313,8 +1308,7 @@ EOT
                 || @removeeventsbuffer )
             {
                 print
-                    "<tr bgcolor=\"#ffffff\"><th colspan=\"3\"></td>&nbsp;</tr>
-               <tr bgcolor=\"#000000\"><th colspan=\"3\"><font color=\"#ffffff\">Remove the following from game:</font></th></tr>";
+                    "<tr bgcolor=\"#ffffff\"><th colspan=\"3\"></td>&nbsp;</tr><tr bgcolor=\"#000000\"><th colspan=\"3\"><font color=\"#ffffff\">Remove the following from game:</font></th></tr>";
                 if ( @removebuffer && !param('private') ) {
                     print
                         "<tr bgcolor=\"#1f1a23\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Private Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
@@ -1389,7 +1383,7 @@ EOT
         print "<p>" . to_page("New Randomization Criteria") . "</p>\n";
     }
 
-    print "<br />" . $donate;
+    print "<br />" . $DONATE;
 
     return;
 }
