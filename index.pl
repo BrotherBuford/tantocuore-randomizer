@@ -11,6 +11,7 @@ use lib qw( ../../perlmods/lib/perl/5.14
 
 use Socket qw( :crlf );    # server agnostic line endings in $CRLF
 
+use warnings;
 use strict;
 use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser);
@@ -19,7 +20,7 @@ use HTML::Entities;
 use File::Basename qw();
 
 $TantocuoreRandomizer::cgi
-    = new CGI;             # to take advantage of the "param" decoding method
+    = CGI->new;             # to take advantage of the "param" decoding method
 
 my ( $name, $path, $suffix ) = File::Basename::fileparse($0);
 
@@ -28,7 +29,7 @@ my %config = do "$path/config.pl";
 $TantoCuoreRandomizer::dbh
     = DBI->connect( "DBI:mysql:$config{database}:$config{server}",
     "$config{username}", "$config{password}", { PrintError => 0 } )
-    || die $DBI::errstr;
+    || croak $DBI::errstr;
 
 my %States;
 my $Current_Screen;
@@ -41,9 +42,9 @@ my $Current_Screen;
 );
 
 $Current_Screen = param(".State") || "Default";
-die "No screen for $Current_Screen" unless $States{$Current_Screen};
+croak "No screen for $Current_Screen" unless $States{$Current_Screen};
 
-my $cgi = new CGI;
+my $cgi = CGI->new;
 
 my $donate = q \
 
@@ -475,6 +476,7 @@ $(".banlistnoscript").remove();
 <script type="text/javascript" src="./js/functions.js"></script>
 \;
 
+    return;
 }
 
 sub randomize {
@@ -564,7 +566,7 @@ sub randomize {
 
         my $eventsSQL;
 
-       #    if (param('events') or (!exists $sets{1} and exists $sets{101})) {
+       #    if (param('events') || (!exists $sets{1} && exists $sets{101})) {
         if ( param('events') ) {
             param(
                 -name  => 'events',
@@ -765,7 +767,7 @@ EOT
         $cursor->finish;
 
         my $barmaiderror;
-        if ( ( param('beer') == 1 ) and ( !$list{55} and !$list{56} ) ) {
+        if ( ( param('beer') == 1 ) && ( !$list{55} && !$list{56} ) ) {
             $barmaiderror = 1;
         }
 
@@ -778,15 +780,15 @@ EOT
         SWITCH: {
                 if ( param('crescent') eq "1" ) {
                 CRESCENT: {
-                        if ( $list{14} and !( $list{15} or $list{16} ) ) {
+                        if ( $list{14} && !( $list{15} || $list{16} ) ) {
                             $crescenterror = 1;
                             last CRESCENT;
                         }
-                        if ( $list{15} and !( $list{14} or $list{16} ) ) {
+                        if ( $list{15} && !( $list{14} || $list{16} ) ) {
                             $crescenterror = 1;
                             last CRESCENT;
                         }
-                        if ( $list{16} and !( $list{14} or $list{15} ) ) {
+                        if ( $list{16} && !( $list{14} || $list{15} ) ) {
                             $crescenterror = 1;
                             last CRESCENT;
                         }
@@ -795,8 +797,8 @@ EOT
                     last SWITCH;
                 }
                 if (    ( param('crescent') eq "2" )
-                    and ( $list{14} or $list{15} or $list{16} )
-                    and !( $list{14} and $list{15} and $list{16} ) )
+                    && ( $list{14} || $list{15} || $list{16} )
+                    && !( $list{14} && $list{15} && $list{16} ) )
                 {
                     $crescenterror = 1;
                     last SWITCH;
@@ -839,7 +841,7 @@ EOT
 
         push @costlist, "5"
             if ( ( param('reminiscences') eq "2" )
-            and !exists $costignore{5} );
+            && !exists $costignore{5} );
 
         my $chiefsindex = rand @chiefs;
         my $chiefs      = $chiefs[$chiefsindex];
@@ -852,8 +854,8 @@ EOT
                     .= "<tr bgcolor=\"$color{1}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02.jpg' width='125' height='179'></td><td><b><u>Colette Framboise</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ At the end of the game ------</b><br />If you have more Colettes employed than any other player, you gain a bonus 5 VP.  (You gain 5 VP total, not per Colette)</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02</td><td><b><i>Colette Framboise (Chambermaid Chief)</i></b></td><td align=\"center\">3</td></tr>\n";
                 push @costlist, "2"
                     if (( param('reminiscences') eq "2" )
-                    and !exists $costignore{2}
-                    and ( param('attack') ne "1" ) );
+                    && !exists $costignore{2}
+                    && ( param('attack') ne "1" ) );
                 last SWITCH;
             }
             if ( $chiefs == 2 ) {
@@ -863,7 +865,7 @@ EOT
                     .= "<tr bgcolor=\"$color{2}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-II.jpg' width='125' height='179'></td><td><b><u>Aline du Roi</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-II</td><td><b><i>Aline du Roi (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
                 push @costlist, "3"
                     if ( ( param('reminiscences') eq "2" )
-                    and !exists $costignore{3} );
+                    && !exists $costignore{3} );
                 last SWITCH;
             }
             if ( $chiefs == 3 ) {
@@ -873,7 +875,7 @@ EOT
                     .= "<tr bgcolor=\"$color{3}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-III.jpg' width='125' height='179'></td><td><b><u>Beatrice Escudo</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: ?<br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Each Beatrice: 2 VP</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-III</td><td><b><i>Beatrice Escudo (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
                 push @costlist, "3"
                     if ( ( param('reminiscences') eq "2" )
-                    and !exists $costignore{3} );
+                    && !exists $costignore{3} );
                 last SWITCH;
             }
             if ( $chiefs == 4 ) {
@@ -883,8 +885,8 @@ EOT
                     .= "<tr bgcolor=\"$color{4}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-IV.jpg' width='125' height='179'></td><td><b><u>Matilde Wiese</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ During your Starting Phase ------</b><br />You may put a chambermaided Matilde into your Discard pile.  If you do, choose a card from your hand and put it back to the Town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-IV</td><td><b><i>Matilde Wiese (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
                 push @costlist, "3"
                     if (( param('reminiscences') eq "2" )
-                    and !exists $costignore{3}
-                    and ( param('attack') ne "1" ) );
+                    && !exists $costignore{3}
+                    && ( param('attack') ne "1" ) );
                 last SWITCH;
             }
             if ( $chiefs == 5 ) {
@@ -894,7 +896,7 @@ EOT
                     .= "<tr bgcolor=\"$color{5}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-V.jpg' width='125' height='179'></td><td><b><u>Beverly Snowfeldt</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br /><br />This card can not be used in an Approach.<br /><br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Gain 2 VP if you have one or more Leopold cards.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-V</td><td><b><i>Beverly Snowfeldt (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
                 push @costlist, "3"
                     if ( ( param('reminiscences') eq "2" )
-                    and !exists $costignore{3} );
+                    && !exists $costignore{3} );
                 last SWITCH;
             }
             my $nothing = 0;
@@ -902,8 +904,8 @@ EOT
 
         my $apprenticeerror;
         if (    ( param('apprentice') == 1 )
-            and ( !$list{66} )
-            and $chiefs == "4" )
+            && ( !$list{66} )
+            && $chiefs == "4" )
         {
             $apprenticeerror = 1;
         }
@@ -912,7 +914,7 @@ EOT
         print $hidden;
 
         my $costerror;
-        if ( param('cost') or ( param('reminiscences') eq "2" ) ) {
+        if ( param('cost') || ( param('reminiscences') eq "2" ) ) {
             my %counter;
             foreach my $elem ( values %costlist ) {
                 foreach my $elem2 (@costlist) {
@@ -980,10 +982,10 @@ EOT
 
                 $num = 66
                     if ($chiefs == "4"
-                    and param('apprentice') eq "1"
-                    and !( exists $cache{66} )
-                    and !( exists $banlist{66} )
-                    and $counter != 11 );
+                    && param('apprentice') eq "1"
+                    && !( exists $cache{66} )
+                    && !( exists $banlist{66} )
+                    && $counter != 11 );
 
                 if ( $num != 66 ) {
                     if (@costlist) {
@@ -1006,21 +1008,21 @@ EOT
                 redo
                     if (
                         ( param('crescent') eq "1" )
-                    and ( $counter == 10 )
-                    and (  !( exists $cache{14} )
-                        or !( exists $cache{15} )
-                        or !( exists $cache{16} ) )
-                    and ( $num == 14 or $num == 15 or $num == 16 )
+                    && ( $counter == 10 )
+                    && (  !( exists $cache{14} )
+                        || !( exists $cache{15} )
+                        || !( exists $cache{16} ) )
+                    && ( $num == 14 || $num == 15 || $num == 16 )
                     );
 
                 redo
                     if (
                         ( param('crescent') eq "2" )
-                    and ( $counter > 8 )
-                    and (  !( exists $cache{14} )
-                        or !( exists $cache{15} )
-                        or !( exists $cache{16} ) )
-                    and ( ( $num == 14 ) or ( $num == 15 ) or ( $num == 16 ) )
+                    && ( $counter > 8 )
+                    && (  !( exists $cache{14} )
+                        || !( exists $cache{15} )
+                        || !( exists $cache{16} ) )
+                    && ( ( $num == 14 ) || ( $num == 15 ) || ( $num == 16 ) )
                     );
 
                 redo
@@ -1032,14 +1034,14 @@ EOT
                 $counter++;
 
                 if (    ( param('beer') eq "1" )
-                    and ( $counter != 11 )
-                    and ( !( exists $cache{55} ) and !( exists $cache{56} ) )
+                    && ( $counter != 11 )
+                    && ( !( exists $cache{55} ) && !( exists $cache{56} ) )
                     )
                 {
                     my @barmaidIDs = ( 55, 56 );
                     my $newnum     = $barmaidIDs[ rand @barmaidIDs ];
                     if (    !( exists $cache{$newnum} )
-                        and !( exists $banlist{$newnum} ) )
+                        && !( exists $banlist{$newnum} ) )
                     {
                         $cache{$newnum} = 1;
                         $listkey[$counter] = $newnum;
@@ -1049,8 +1051,8 @@ EOT
 
             CRESCENT: {
                     if (    ( param('crescent') eq "1" )
-                        and ( $num == 14 )
-                        and ( $counter != 11 ) )
+                        && ( $num == 14 )
+                        && ( $counter != 11 ) )
                     {
                         my @crescentIDs = ( 15, 16 );
                         my $newnum      = $crescentIDs[ rand @crescentIDs ];
@@ -1063,8 +1065,8 @@ EOT
                         last CRESCENT;
                     }
                     if (    ( param('crescent') eq "1" )
-                        and ( $num == 15 )
-                        and ( $counter != 11 ) )
+                        && ( $num == 15 )
+                        && ( $counter != 11 ) )
                     {
                         my @crescentIDs = ( 14, 16 );
                         my $newnum      = $crescentIDs[ rand @crescentIDs ];
@@ -1077,8 +1079,8 @@ EOT
                         last CRESCENT;
                     }
                     if (    ( param('crescent') eq "1" )
-                        and ( $num == 16 )
-                        and ( $counter != 11 ) )
+                        && ( $num == 16 )
+                        && ( $counter != 11 ) )
                     {
                         my @crescentIDs = ( 14, 15 );
                         my $newnum      = $crescentIDs[ rand @crescentIDs ];
@@ -1091,8 +1093,8 @@ EOT
                         last CRESCENT;
                     }
                     if (    ( param('crescent') eq "2" )
-                        and ( $num == 14 )
-                        and ( $counter < 10 ) )
+                        && ( $num == 14 )
+                        && ( $counter < 10 ) )
                     {
                         if ( !( exists $cache{$15} ) ) {
                             $cache{15} = 1;
@@ -1107,8 +1109,8 @@ EOT
                         last CRESCENT;
                     }
                     if (    ( param('crescent') eq "2" )
-                        and ( $num == 15 )
-                        and ( $counter < 10 ) )
+                        && ( $num == 15 )
+                        && ( $counter < 10 ) )
                     {
                         if ( !( exists $cache{$14} ) ) {
                             $cache{14} = 1;
@@ -1123,8 +1125,8 @@ EOT
                         last CRESCENT;
                     }
                     if (    ( param('crescent') eq "2" )
-                        and ( $num == 16 )
-                        and ( $counter < 10 ) )
+                        && ( $num == 16 )
+                        && ( $counter < 10 ) )
                     {
                         if ( !( exists $cache{$14} ) ) {
                             $cache{14} = 1;
@@ -1153,7 +1155,7 @@ EOT
             my @removeeventsbuffer;
             my @removebuildingsbuffer;
             if ( exists $sets{1} ) {
-                if ( param('events') or ( param('attack') eq "1" ) ) {
+                if ( param('events') || ( param('attack') eq "1" ) ) {
                     push(
                         @removebuffer,
                         (   "<tr bgcolor=\"$color{1}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20.jpg' width='125' height='179'></td><td><b><u>Nord Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -4<br /><b>------ During your Starting Phase ------</b><br />You may discard all but one card from your hand.  If you do, send two illnesses from the town onto one maid in any Private Quarters of your choice.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20</td><td><b><i><font color=\"#990000\">Nord Twilight (Black Maid)</font></i></b></td><td align=\"center\">4</td></tr>\n"
@@ -1195,8 +1197,8 @@ EOT
                 }
             }
 
-            if (   ( exists $sets{3} and param('reminiscences') eq "1" )
-                or ( !exists $sets{3} ) )
+            if (   ( exists $sets{3} && param('reminiscences') eq "1" )
+                || ( !exists $sets{3} ) )
             {
                 push(
                     @removebuffer,
@@ -1205,8 +1207,8 @@ EOT
                 );
             }
             if (exists $sets{3}
-                and (   ( param('attack') eq "1" )
-                    and ( param('reminiscences') ne "1" ) )
+                && (   ( param('attack') eq "1" )
+                    && ( param('reminiscences') ne "1" ) )
                 )
             {
                 push(
@@ -1216,8 +1218,8 @@ EOT
                 );
             }
 
-            if ( ( exists $sets{4} and param('beer') eq "2" )
-                or !exists $sets{4} )
+            if ( ( exists $sets{4} && param('beer') eq "2" )
+                || !exists $sets{4} )
             {
                 push(
                     @removebuffer,
@@ -1231,23 +1233,23 @@ EOT
                 );
             }
             if ( exists $sets{4} ) {
-                if ((   (   (   param('beer') == "2" and !(
+                if ((   (   (   param('beer') == "2" && !(
                                     (   exists $sets{2}
-                                        or ( exists $sets{5}
-                                            and !param('couples') )
+                                        || ( exists $sets{5}
+                                            && !param('couples') )
                                     )
-                                    or !(
+                                    || !(
                                         !exists $sets{2}
-                                        or ( exists $sets{5}
-                                            and param('couples') )
+                                        || ( exists $sets{5}
+                                            && param('couples') )
                                     )
                                 )
                             )
-                            or ( param('buildings') )
+                            || ( param('buildings') )
                         )
-                        and !( param('events') or param('attack') == 1 )
+                        && !( param('events') || param('attack') == 1 )
                     )
-                    and !( param('attack') == 2 and !param('buildings') )
+                    && !( param('attack') == 2 && !param('buildings') )
                     )
                 {
                     push(
@@ -1257,7 +1259,7 @@ EOT
                     );
                 }
                 if (    ( param('beer') == "2" )
-                    and ( !( param('events') or param('attack') == 1 ) ) )
+                    && ( !( param('events') || param('attack') == 1 ) ) )
                 {
                     push(
                         @removeeventsbuffer,
@@ -1271,26 +1273,26 @@ EOT
 
                 my $blizzard = 0;
                 if ( param("couples")
-                    and ( !exists $sets{2} or !exists $sets{4} ) )
+                    && ( !exists $sets{2} || !exists $sets{4} ) )
                 {
                     $blizzard = 1;
                 }
-                if ( exists $sets{2} or exists $sets{4} ) { $blizzard = 0; }
+                if ( exists $sets{2} || exists $sets{4} ) { $blizzard = 0; }
                 if ((   !exists $sets{2}
-                        and ( !exists $sets{4}
-                            or ( exists $sets{4} and param('beer') == "2" ) )
+                        && ( !exists $sets{4}
+                            || ( exists $sets{4} && param('beer') == "2" ) )
                     )
-                    and ( param('couples') or param('buildings') )
+                    && ( param('couples') || param('buildings') )
                     )
                 {
                     $blizzard = 1;
                 }
-                if ( ( exists $sets{2} or exists $sets{4} )
-                    and param('buildings') )
+                if ( ( exists $sets{2} || exists $sets{4} )
+                    && param('buildings') )
                 {
                     $blizzard = 1;
                 }
-                if ( param('events') or param('attack') == 1 ) {
+                if ( param('events') || param('attack') == 1 ) {
                     $blizzard = 0;
                 }
 
@@ -1304,9 +1306,9 @@ EOT
 
                 }
                 if ((   !param('couples')
-                        and ( param('attack') == "1" or param('events') )
+                        && ( param('attack') == "1" || param('events') )
                     )
-                    and !param('buildings')
+                    && !param('buildings')
                     )
                 {
                     push(
@@ -1317,14 +1319,14 @@ EOT
                 }
             }
 
-            if (   ( @removebuffer and !param('private') )
-                or @removerembuffer
-                or @removeeventsbuffer )
+            if (   ( @removebuffer && !param('private') )
+                || @removerembuffer
+                || @removeeventsbuffer )
             {
                 print
                     "<tr bgcolor=\"#ffffff\"><th colspan=\"3\"></td>&nbsp;</tr>
                <tr bgcolor=\"#000000\"><th colspan=\"3\"><font color=\"#ffffff\">Remove the following from game:</font></th></tr>";
-                if ( @removebuffer and !param('private') ) {
+                if ( @removebuffer && !param('private') ) {
                     print
                         "<tr bgcolor=\"#1f1a23\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Private Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
                     foreach my $elem (@removebuffer) {
@@ -1400,10 +1402,11 @@ EOT
 
     print "<br />" . $donate;
 
+    return;
 }
 
 sub to_page {
-    submit( -NAME => ".State", -CLASS => "topage", -VALUE => shift );
+    return submit( -NAME => ".State", -CLASS => "topage", -VALUE => shift );
 }
 
 # fisher_yates_shuffle( \@array ) : generates a random permutation of
@@ -1416,4 +1419,6 @@ sub fisher_yates_shuffle {
         next if $i == $j;
         @$array[ $i, $j ] = @$array[ $j, $i ];
     }
+    
+    return;
 }
