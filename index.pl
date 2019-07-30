@@ -636,7 +636,7 @@ sub randomize {
         my @fields;
         my @list;
         my %list;
-        my $SQL = <<EOT;
+        my $SQL = <<'END_SQL';
 	  SELECT
    ID,
    name,
@@ -654,7 +654,7 @@ sub randomize {
    private,
    couples
 	  FROM cardlist WHERE
-EOT
+END_SQL
 
         $SQL .= "(" . $setlistSQL . ")";
         if ($banlistSQL) {
