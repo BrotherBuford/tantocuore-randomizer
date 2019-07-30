@@ -21,8 +21,7 @@ my ( $name, $path, $suffix ) = File::Basename::fileparse($0);
 
 my %config = do "$path/config.pl";
 
-my $dbh
-    = DBI->connect( "DBI:mysql:$config{database}:$config{server}",
+my $dbh = DBI->connect( "DBI:mysql:$config{database}:$config{server}",
     "$config{username}", "$config{password}", { PrintError => 0 } )
     || croak $DBI::errstr;
 
@@ -208,8 +207,7 @@ EOT
   <option value="4" \ . $selectedsets{4} . q\>Oktoberfest</option>
   <option value="5" \ . $selectedsets{5} . q\>Winter Romance</option>
   <option value="101" \
-        . $selectedsets{101}
-        . q\>Intl. Tabletop Day 2016 (Promo)</option>
+        . $selectedsets{101} . q\>Intl. Tabletop Day 2016 (Promo)</option>
   </select></td>
 
 <td align="center" valign="middle">&nbsp;&nbsp;
@@ -561,7 +559,7 @@ sub randomize {
 
         my $eventsSQL;
 
-       #    if (param('events') || (!exists $sets{1} && exists $sets{101})) {
+        #    if (param('events') || (!exists $sets{1} && exists $sets{101})) {
         if ( param('events') ) {
             param(
                 -name  => 'events',
@@ -791,7 +789,7 @@ EOT
                     }
                     last SWITCH;
                 }
-                if (    ( param('crescent') eq "2" )
+                if (   ( param('crescent') eq "2" )
                     && ( $list{14} || $list{15} || $list{16} )
                     && !( $list{14} && $list{15} && $list{16} ) )
                 {
@@ -848,7 +846,7 @@ EOT
                 $chiefsoutput
                     .= "<tr bgcolor=\"$color{1}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02.jpg' width='125' height='179'></td><td><b><u>Colette Framboise</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ At the end of the game ------</b><br />If you have more Colettes employed than any other player, you gain a bonus 5 VP.  (You gain 5 VP total, not per Colette)</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02</td><td><b><i>Colette Framboise (Chambermaid Chief)</i></b></td><td align=\"center\">3</td></tr>\n";
                 push @costlist, "2"
-                    if (( param('reminiscences') eq "2" )
+                    if ( ( param('reminiscences') eq "2" )
                     && !exists $costignore{2}
                     && ( param('attack') ne "1" ) );
                 last SWITCH;
@@ -879,7 +877,7 @@ EOT
                 $chiefsoutput
                     .= "<tr bgcolor=\"$color{4}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-IV.jpg' width='125' height='179'></td><td><b><u>Matilde Wiese</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ During your Starting Phase ------</b><br />You may put a chambermaided Matilde into your Discard pile.  If you do, choose a card from your hand and put it back to the Town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-IV</td><td><b><i>Matilde Wiese (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
                 push @costlist, "3"
-                    if (( param('reminiscences') eq "2" )
+                    if ( ( param('reminiscences') eq "2" )
                     && !exists $costignore{3}
                     && ( param('attack') ne "1" ) );
                 last SWITCH;
@@ -898,7 +896,7 @@ EOT
         }
 
         my $apprenticeerror;
-        if (    ( param('apprentice') == 1 )
+        if (   ( param('apprentice') == 1 )
             && ( !$list{66} )
             && $chiefs == "4" )
         {
@@ -976,7 +974,7 @@ EOT
                 my $num;
 
                 $num = 66
-                    if ($chiefs == "4"
+                    if ( $chiefs == "4"
                     && param('apprentice') eq "1"
                     && !( exists $cache{66} )
                     && !( exists $banlist{66} )
@@ -1002,9 +1000,9 @@ EOT
 
                 redo
                     if (
-                        ( param('crescent') eq "1" )
+                       ( param('crescent') eq "1" )
                     && ( $counter == 10 )
-                    && (  !( exists $cache{14} )
+                    && (   !( exists $cache{14} )
                         || !( exists $cache{15} )
                         || !( exists $cache{16} ) )
                     && ( $num == 14 || $num == 15 || $num == 16 )
@@ -1012,9 +1010,9 @@ EOT
 
                 redo
                     if (
-                        ( param('crescent') eq "2" )
+                       ( param('crescent') eq "2" )
                     && ( $counter > 8 )
-                    && (  !( exists $cache{14} )
+                    && (   !( exists $cache{14} )
                         || !( exists $cache{15} )
                         || !( exists $cache{16} ) )
                     && ( ( $num == 14 ) || ( $num == 15 ) || ( $num == 16 ) )
@@ -1028,14 +1026,13 @@ EOT
                 $listkey[$counter] = $num;
                 $counter++;
 
-                if (    ( param('beer') eq "1" )
+                if (   ( param('beer') eq "1" )
                     && ( $counter != 11 )
-                    && ( !( exists $cache{55} ) && !( exists $cache{56} ) )
-                    )
+                    && ( !( exists $cache{55} ) && !( exists $cache{56} ) ) )
                 {
                     my @barmaidIDs = ( 55, 56 );
                     my $newnum     = $barmaidIDs[ rand @barmaidIDs ];
-                    if (    !( exists $cache{$newnum} )
+                    if (   !( exists $cache{$newnum} )
                         && !( exists $banlist{$newnum} ) )
                     {
                         $cache{$newnum} = 1;
@@ -1045,7 +1042,7 @@ EOT
                 }
 
             CRESCENT: {
-                    if (    ( param('crescent') eq "1" )
+                    if (   ( param('crescent') eq "1" )
                         && ( $num == 14 )
                         && ( $counter != 11 ) )
                     {
@@ -1059,7 +1056,7 @@ EOT
                         }
                         last CRESCENT;
                     }
-                    if (    ( param('crescent') eq "1" )
+                    if (   ( param('crescent') eq "1" )
                         && ( $num == 15 )
                         && ( $counter != 11 ) )
                     {
@@ -1073,7 +1070,7 @@ EOT
                         }
                         last CRESCENT;
                     }
-                    if (    ( param('crescent') eq "1" )
+                    if (   ( param('crescent') eq "1" )
                         && ( $num == 16 )
                         && ( $counter != 11 ) )
                     {
@@ -1087,7 +1084,7 @@ EOT
                         }
                         last CRESCENT;
                     }
-                    if (    ( param('crescent') eq "2" )
+                    if (   ( param('crescent') eq "2" )
                         && ( $num == 14 )
                         && ( $counter < 10 ) )
                     {
@@ -1103,7 +1100,7 @@ EOT
                         }
                         last CRESCENT;
                     }
-                    if (    ( param('crescent') eq "2" )
+                    if (   ( param('crescent') eq "2" )
                         && ( $num == 15 )
                         && ( $counter < 10 ) )
                     {
@@ -1119,7 +1116,7 @@ EOT
                         }
                         last CRESCENT;
                     }
-                    if (    ( param('crescent') eq "2" )
+                    if (   ( param('crescent') eq "2" )
                         && ( $num == 16 )
                         && ( $counter < 10 ) )
                     {
@@ -1229,13 +1226,11 @@ EOT
             }
             if ( exists $sets{4} ) {
                 if ((   (   (   param('beer') == "2" && !(
-                                    (   exists $sets{2}
-                                        || ( exists $sets{5}
+                                    (   exists $sets{2} || ( exists $sets{5}
                                             && !param('couples') )
                                     )
                                     || !(
-                                        !exists $sets{2}
-                                        || ( exists $sets{5}
+                                        !exists $sets{2} || ( exists $sets{5}
                                             && param('couples') )
                                     )
                                 )
@@ -1253,7 +1248,7 @@ EOT
                         )
                     );
                 }
-                if (    ( param('beer') == "2" )
+                if (   ( param('beer') == "2" )
                     && ( !( param('events') || param('attack') == 1 ) ) )
                 {
                     push(
@@ -1273,8 +1268,7 @@ EOT
                     $blizzard = 1;
                 }
                 if ( exists $sets{2} || exists $sets{4} ) { $blizzard = 0; }
-                if ((   !exists $sets{2}
-                        && ( !exists $sets{4}
+                if ((   !exists $sets{2} && ( !exists $sets{4}
                             || ( exists $sets{4} && param('beer') == "2" ) )
                     )
                     && ( param('couples') || param('buildings') )
@@ -1414,6 +1408,6 @@ sub fisher_yates_shuffle {
         next if $i == $j;
         @$array[ $i, $j ] = @$array[ $j, $i ];
     }
-    
+
     return;
 }
