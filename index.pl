@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-package TantoCuoreRandomizer;
-
 use lib qw( ../../perlmods/lib/perl/5.14
     ../../perlmods/lib/perl/5.14.2
     ../../perlmods/share/perl/5.14
@@ -19,14 +17,11 @@ use Apache::DBI();
 use HTML::Entities;
 use File::Basename qw();
 
-$TantocuoreRandomizer::cgi
-    = CGI->new;             # to take advantage of the "param" decoding method
-
 my ( $name, $path, $suffix ) = File::Basename::fileparse($0);
 
 my %config = do "$path/config.pl";
 
-$TantoCuoreRandomizer::dbh
+my $dbh
     = DBI->connect( "DBI:mysql:$config{database}:$config{server}",
     "$config{username}", "$config{password}", { PrintError => 0 } )
     || croak $DBI::errstr;
@@ -35,10 +30,10 @@ my %States;
 my $Current_Screen;
 
 %States = (
-    'Default'                           => \&TantoCuoreRandomizer::front_page,
-    'New Randomization Criteria'        => \&TantoCuoreRandomizer::front_page,
-    'Randomize'                         => \&TantoCuoreRandomizer::randomize,
-    'Randomize Again With Same Options' => \&TantoCuoreRandomizer::randomize
+    'Default'                           => \&front_page,
+    'New Randomization Criteria'        => \&front_page,
+    'Randomize'                         => \&randomize,
+    'Randomize Again With Same Options' => \&randomize
 );
 
 $Current_Screen = param(".State") || "Default";
@@ -108,7 +103,7 @@ while ( my ( $screen_name, $function ) = each %States ) {
 }
 
 print end_form();
-$TantoCuoreRandomizer::dbh->disconnect;
+$dbh->disconnect;
 
 print q \
 </div>
@@ -133,7 +128,7 @@ sub front_page {
 	  FROM cardlist order by gameset, name
 EOT
 
-    my $cursor = $TantoCuoreRandomizer::dbh->prepare($SQL);
+    my $cursor = $dbh->prepare($SQL);
 
     $cursor->execute;
 
@@ -693,7 +688,7 @@ EOT
             $SQL .= $couplesSQL;
         }
 
-        my $cursor = $TantoCuoreRandomizer::dbh->prepare($SQL);
+        my $cursor = $dbh->prepare($SQL);
 
         $cursor->execute;
 
