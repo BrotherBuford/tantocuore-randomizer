@@ -16,10 +16,13 @@ use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser);
 use Apache::DBI();
 use HTML::Entities;
+use File::Basename qw();
       
 $main::cgi = new CGI; # to take advantage of the "param" decoding method
 
-my %config = do './config.pl';
+my ($name, $path, $suffix) = File::Basename::fileparse($0);
+
+my %config = do "$path/config.pl";
 
 $main::dbh = DBI->connect("DBI:mysql:$config{database}:$config{server}", "$config{username}","$config{password}",
 		       { PrintError => 0}) || die $DBI::errstr;
