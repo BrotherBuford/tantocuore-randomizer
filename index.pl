@@ -168,9 +168,8 @@ END_SQL
     $cursor->finish;
 
     my @selectedsets = param('sets');
-    my %selectedsets;
 
-    print <<"INTRO_END";
+    print <<'INTRO_END';
 <h2 style="font-family:Title;font-size:32px;color:#562271;font-weight:normal" align="center">Tanto Cuore <span style="color:#ff6699">&#9829;</span> Town Randomizer</h2>
 
   
@@ -188,12 +187,12 @@ END_SQL
 
 <table border="0" cellpadding="0" cellspacing="4">
 <tr><td><select title="Click to select set(s)" size="6" id="sets" class="sets" name="sets" multiple="multiple">
-  <option value="1" $selectedsets{1} >Tanto Cuore</option>
-  <option value="2" $selectedsets{2} >Expanding the House</option>
-  <option value="3" $selectedsets{3} >Romantic Vacation</option>
-  <option value="4" $selectedsets{4} >Oktoberfest</option>
-  <option value="5" $selectedsets{5} >Winter Romance</option>
-  <option value="101" $selectedsets{101} >Intl. Tabletop Day 2016 (Promo)</option>
+  <option value="1">Tanto Cuore</option>
+  <option value="2">Expanding the House</option>
+  <option value="3">Romantic Vacation</option>
+  <option value="4">Oktoberfest</option>
+  <option value="5">Winter Romance</option>
+  <option value="101">Intl. Tabletop Day 2016 (Promo)</option>
   </select></td>
 
 <td align="center" valign="middle">&nbsp;&nbsp;
