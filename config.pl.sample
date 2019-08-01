@@ -1,5 +1,0 @@
-# mysql database configuration
-server   => '',
-database => '',
-username => '',
-password => '',

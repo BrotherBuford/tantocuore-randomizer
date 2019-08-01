@@ -1,0 +1,6 @@
+# Sample mysql database configuration
+# Change the following values and rename file to config.yaml
+server  : servername.example.com
+database: mydatabase
+username: myusername
+password: mypassword

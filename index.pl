@@ -18,13 +18,14 @@ use Apache::DBI();
 use HTML::Entities;
 use File::Basename qw();
 use Readonly;
+use YAML::XS 'LoadFile';
 
 my ( $name, $path, $suffix ) = File::Basename::fileparse($0);
 
-my %config = do "$path/config.pl";
+my $config = LoadFile("$path/config.yaml");
 
-my $dbh = DBI->connect( "DBI:mysql:$config{database}:$config{server}",
-    "$config{username}", "$config{password}", { PrintError => 0 } )
+my $dbh = DBI->connect( "DBI:mysql:$config->{database}:$config->{server}",
+    "$config->{username}", "$config->{password}", { PrintError => 0 } )
     || croak $DBI::errstr;
 
 my %States;
