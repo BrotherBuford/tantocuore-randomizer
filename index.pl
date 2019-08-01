@@ -493,11 +493,9 @@ sub randomize {
             if ( $elem ne "101" ) {
                 push @chiefs, $elem;
             }
-            my $hidden = hidden( -name => 'sets' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'sets' );
         }
-        $setlistSQL =~ s/^ or//;
+        $setlistSQL =~ s{\A\sor}{}xm;
 
         my @banned = param('banned');
 
@@ -512,11 +510,9 @@ sub randomize {
             );
             $banlist{$elem} = 1;
             $banlistSQL .= " and ID != \"$elem\"";
-            my $hidden = hidden( -name => 'banned' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'banned' );
         }
-        $banlistSQL =~ s/^ and//;
+        $banlistSQL =~ s{\A\sand}{}xm;
 
         my $attackSQL;
         if ( param('attack') ) {
@@ -536,9 +532,7 @@ sub randomize {
                 }
                 my $nothing = 0;
             }
-            my $hidden = hidden( -name => 'attack' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'attack' );
         }
 
         my $eventsSQL;
@@ -549,9 +543,7 @@ sub randomize {
                 -value => param('events')
             );
             $eventsSQL = " and (events != \"y\")";
-            my $hidden = hidden( -name => 'events' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'events' );
         }
 
         my $beerSQL;
@@ -563,9 +555,7 @@ sub randomize {
             $beerSQL = " and (beer != \"y\")";
         }
         if ( param('beer') ) {
-            my $hidden = hidden( -name => 'beer' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'beer' );
         }
 
         my $buildingsSQL;
@@ -575,9 +565,7 @@ sub randomize {
                 -value => param('buildings')
             );
             $buildingsSQL = " and (buildings != \"y\")";
-            my $hidden = hidden( -name => 'buildings' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'buildings' );
         }
 
         my $privateSQL;
@@ -587,9 +575,7 @@ sub randomize {
                 -value => param('private')
             );
             $privateSQL = " and (private != \"y\")";
-            my $hidden = hidden( -name => 'private' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'private' );
         }
 
         my $reminiscencesSQL;
@@ -601,9 +587,7 @@ sub randomize {
                 -name  => 'reminiscences',
                 -value => param('reminiscences')
             );
-            my $hidden = hidden( -name => 'reminiscences' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'reminiscences' );
         }
 
         my $couplesSQL;
@@ -613,9 +597,7 @@ sub randomize {
                 -value => param('couples')
             );
             $privateSQL = " and (couples != \"y\")";
-            my $hidden = hidden( -name => 'couples' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'couples' );
         }
 
         my %costlist;
@@ -735,7 +717,6 @@ END_SQL
 
             my $cardnumber = sprintf( "%02d", $fields[4] );
 
-            $fields[12] =~ s/<br \/>/<br \/>\n/g;
             $list{ $fields[0] }
                 = "<tr bgcolor=\"$color{$fields[2]}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/$prgameset$cardnumber$gameset.jpg' width='125' height='179'></td><td><b><u>$fields[1]</u></b><br /><i>$fields[3]</i><br /><hr />$fields[12]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>$prgameset$cardnumber$gameset</td><td>$fontcolor$bold$italics$fields[1] ($fields[3])$italics_e$bold_e$fontcolor_e</td><td align=\"center\">$fields[5]</td></tr>\n";
         }
@@ -782,9 +763,7 @@ END_SQL
                 my $nothing = 0;
             }
 
-            my $hidden = hidden( -name => 'crescent' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'crescent' );
         }
 
         my @costlist = param('cost');
@@ -810,9 +789,7 @@ END_SQL
                 -name  => 'cost',
                 -value => "$elem"
             );
-            my $hidden = hidden( -name => 'cost' );
-            $hidden =~ s/>$/ \/>/;
-            print $hidden;
+            print hidden( -name => 'cost' );
         }
 
         push @costlist, "5"
@@ -885,9 +862,7 @@ END_SQL
         {
             $apprenticeerror = 1;
         }
-        my $hidden = hidden( -name => 'apprentice' );
-        $hidden =~ s/>$/ \/>/;
-        print $hidden;
+        print hidden( -name => 'apprentice' );
 
         my $costerror;
         if ( param('cost') || ( param('reminiscences') eq "2" ) ) {
