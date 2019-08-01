@@ -543,7 +543,6 @@ sub randomize {
 
         my $eventsSQL;
 
-        #    if (param('events') || (!exists $sets{1} && exists $sets{101})) {
         if ( param('events') ) {
             param(
                 -name  => 'events',
