@@ -409,7 +409,7 @@ Select cards to <i>not</i> include in results:<br /><select size="5" name="banne
 <option value="0" id="pleaseselect" disabled="disabled" style="display:none">Please select a game set</option>
 OPTIONS_END
 
-    foreach my $listitem (@list) {
+    for my $listitem (@list) {
         my $item = $listitem;
         $item =~ s{banlist.?}{banlistnoscript}xm;
         print $item;
@@ -422,7 +422,7 @@ OPTIONS_END
         "<p class=\"hiddenoptions\"><input type=\"reset\" value=\"Clear All Selections\" /></p>\n";
 
     print "<select id=\"banlist\" style=\"display: none\">\n";
-    foreach my $listitem (@list) {
+    for my $listitem (@list) {
         print $listitem;
     }
     print "</select>\n";
@@ -481,7 +481,7 @@ sub randomize {
         my %sets;
         my $setlistSQL;
         my @chiefs;
-        foreach my $elem (@sets) {
+        for my $elem (@sets) {
 
             param(
                 -name  => 'sets',
@@ -502,7 +502,7 @@ sub randomize {
         my %banlist;
 
         my $banlistSQL;
-        foreach my $elem (@banned) {
+        for my $elem (@banned) {
 
             param(
                 -name  => 'banned',
@@ -768,7 +768,7 @@ END_SQL
 
         my @costlist = param('cost');
         my %costignore;
-        foreach my $elem (@costlist) {
+        for my $elem (@costlist) {
         SWITCH: {
                 if ( $elem eq "2" ) {
                     $costignore{2} = 1;
@@ -867,8 +867,8 @@ END_SQL
         my $costerror;
         if ( param('cost') || ( param('reminiscences') eq "2" ) ) {
             my %counter;
-            foreach my $elem ( values %costlist ) {
-                foreach my $elem2 (@costlist) {
+            for my $elem ( values %costlist ) {
+                for my $elem2 (@costlist) {
                     if ( $elem eq $elem2 ) {
                         if ( !exists $counter{$elem2} ) {
                             $counter{$elem2} = 1;
@@ -878,7 +878,7 @@ END_SQL
                 }
             }
 
-            foreach my $elem (@costlist) {
+            for my $elem (@costlist) {
                 if ( !exists $counter{$elem} ) { $costerror = 1; }
             }
 
@@ -942,7 +942,7 @@ END_SQL
                     if (@costlist) {
                         my @costcache;
                         my $costtosearch = shift @costlist;
-                        foreach my $elem ( keys %costlist ) {
+                        for my $elem ( keys %costlist ) {
                             if ( $costlist{$elem} eq $costtosearch ) {
                                 push @costcache, $elem;
                             }
@@ -1096,7 +1096,7 @@ END_SQL
 
             my @listkeysorted = sort { $a <=> $b } @listkey;
 
-            foreach my $listitem (@listkeysorted) {
+            for my $listitem (@listkeysorted) {
                 print $list{$listitem};
             }
 
@@ -1275,7 +1275,7 @@ END_SQL
                 if ( @removebuffer && !param('private') ) {
                     print
                         "<tr bgcolor=\"#1f1a23\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Private Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
-                    foreach my $elem (@removebuffer) {
+                    for my $elem (@removebuffer) {
                         print $elem;
                     }
                 }
@@ -1283,7 +1283,7 @@ END_SQL
                 if (@removerembuffer) {
                     print
                         "<tr bgcolor=\"#fbb450\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th colspan=\"2\"><font color=\"#ffffff\">Reminiscences</font></th></tr>\n";
-                    foreach my $elem (@removerembuffer) {
+                    for my $elem (@removerembuffer) {
                         print $elem;
                     }
                 }
@@ -1291,7 +1291,7 @@ END_SQL
                 if (@removeeventsbuffer) {
                     print
                         "<tr bgcolor=\"#8652A1\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Events</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
-                    foreach my $elem (@removeeventsbuffer) {
+                    for my $elem (@removeeventsbuffer) {
                         print $elem;
                     }
                 }
@@ -1299,7 +1299,7 @@ END_SQL
                 if (@removebuildingsbuffer) {
                     print
                         "<tr bgcolor=\"#f37a45\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Buildings</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
-                    foreach my $elem (@removebuildingsbuffer) {
+                    for my $elem (@removebuildingsbuffer) {
                         print $elem;
                     }
                 }
