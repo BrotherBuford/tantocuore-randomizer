@@ -1,20 +1,13 @@
 #!/usr/bin/perl
 
-use lib qw( ../../perl5/lib/perl5
-    ../../perlmods/lib/perl/5.14
-    ../../perlmods/lib/perl/5.14.2
-    ../../perlmods/share/perl/5.14
-    ../../perlmods/share/perl/5.14.2
-    ../../perlmods/local/share/perl/5.14.2
-    ../../perlmods/local/lib/perl/5.14.2 );
-
-use Socket qw( :crlf );    # server agnostic line endings in $CRLF
+# for locally installed modules - change as necessary
+use lib qw( ../../perl5/lib/perl5 );
 
 use warnings;
 use strict;
 use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser);
-use Apache::DBI();
+use Apache::DBI qw();
 use HTML::Entities;
 use File::Basename qw();
 use Readonly;

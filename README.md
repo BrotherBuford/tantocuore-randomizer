@@ -12,6 +12,4 @@ A sample file (config.yaml.SAMPLE) is included.
 
 The database structure and contents is in sql/cardlist.sql.
 
-Several library directories are set at the beginning of the index.pl
-script that are only necessary for my specific hosting setup.
 
