@@ -1330,31 +1330,27 @@ END_SQL
                 }
 
             }
-            print "</table></td>\n";
 
-            print "<td align=\"center\" valign=\"top\" width=\"310\">\n";
+            print <<"COLORKEY_END";
+</table></td>
 
-            print
-                "<small><b>Touch or hover over each card name for information on the card's effects.</b><br /><br /></small>\n";
+<td align="center" valign="top" width="310">
 
-            print "<table>\n";
+<small><b>Touch or hover over each card name for information on the card's effects.</b><br /><br /></small>
 
-            print "<tr><th colspan=\"2\">Color Legend:</th></tr>\n";
-            print
-                "<tr><td width=\"25\" bgcolor=\"$color{1}\">&nbsp;</td><td>Tanto Cuore</td></tr>\n";
-            print
-                "<tr><td width=\"25\" bgcolor=\"$color{2}\">&nbsp;</td><td>Expanding the House</td></tr>\n";
-            print
-                "<tr><td width=\"25\" bgcolor=\"$color{3}\">&nbsp;</td><td>Romantic Vacation</td></tr>\n";
-            print
-                "<tr><td width=\"25\" bgcolor=\"$color{4}\">&nbsp;</td><td>Oktoberfest</td></tr>\n";
-            print
-                "<tr><td width=\"25\" bgcolor=\"$color{5}\">&nbsp;</td><td>Winter Romance</td></tr>\n";
-            print
-                "<tr><td width=\"25\" bgcolor=\"$color{101}\">&nbsp;</td><td>Promo Card</td></tr>\n";
-            print "</table>\n";
-            print
-                "<br /><table><tr><th colspan=\"2\">Text Legend:</th></tr><tr><td>Red:</td><td><font color=\"#990000\">Card can negatively affect other players</font></td></tr><tr><td>Bold:</td><td><b>Card has a VP indicator</b></td></tr><tr><td>Italics:</td><td><i>Chambermaid</i></td></tr></table>\n";
+<table>
+
+<tr><th colspan="2">Color Legend:</th></tr>
+<tr><td width="25" bgcolor="$color{1}">&nbsp;</td><td>Tanto Cuore</td></tr>
+<tr><td width="25" bgcolor="$color{2}">&nbsp;</td><td>Expanding the House</td></tr>
+<tr><td width="25" bgcolor="$color{3}">&nbsp;</td><td>Romantic Vacation</td></tr>
+<tr><td width="25" bgcolor="$color{4}">&nbsp;</td><td>Oktoberfest</td></tr>
+<tr><td width="25" bgcolor="$color{5}">&nbsp;</td><td>Winter Romance</td></tr>
+<tr><td width="25" bgcolor="$color{101}">&nbsp;</td><td>Promo Card</td></tr>
+</table>
+
+<br /><table><tr><th colspan="2">Text Legend:</th></tr><tr><td>Red:</td><td><font color="#990000">Card can negatively affect other players</font></td></tr><tr><td>Bold:</td><td><b>Card has a VP indicator</b></td></tr><tr><td>Italics:</td><td><i>Chambermaid</i></td></tr></table>
+COLORKEY_END
 
             print "<br /><p>"
                 . to_page("Randomize Again With Same Options")
