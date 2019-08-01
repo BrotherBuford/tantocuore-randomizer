@@ -662,33 +662,15 @@ END_SQL
 
             my $prgameset;
             my $gameset;
-        SWITCH: {
-                if ( $fields[2] == 1 ) {
-                    $prgameset = "";
-                    $gameset   = "";
-                }
-                if ( $fields[2] == 2 ) {
-                    $prgameset = "";
-                    $gameset   = "-II";
-                }
-                if ( $fields[2] == 3 ) {
-                    $prgameset = "";
-                    $gameset   = "-III";
-                }
-                if ( $fields[2] == 4 ) {
-                    $prgameset = "";
-                    $gameset   = "-IV";
-                }
-                if ( $fields[2] == 5 ) {
-                    $prgameset = "";
-                    $gameset   = "-V";
-                }
-                if ( $fields[2] == 101 ) {
-                    $prgameset = "PR";
-                    $gameset   = "";
-                }
-                my $nothing = 0;
-            }
+
+            ( $prgameset, $gameset )
+                = ( $fields[2] == 1 )   ? ( '',   '' )
+                : ( $fields[2] == 2 )   ? ( '',   '-II' )
+                : ( $fields[2] == 3 )   ? ( '',   '-III' )
+                : ( $fields[2] == 4 )   ? ( '',   '-IV' )
+                : ( $fields[2] == 5 )   ? ( '',   '-V' )
+                : ( $fields[2] == 101 ) ? ( 'PR', '' )
+                :                         ( $prgameset, $gameset );
 
             my $italics;
             my $italics_e;
