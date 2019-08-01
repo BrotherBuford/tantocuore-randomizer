@@ -36,8 +36,6 @@ croak "No screen for $Current_Screen" unless $States{$Current_Screen};
 my $cgi = CGI->new;
 
 Readonly my $DONATE => <<'END_DONATE';
-
-
 <div style="display: inline-block;">
 
 <div class="boxheader" style="background-color: #e17000; color: #ffffff;">
