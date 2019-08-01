@@ -130,11 +130,6 @@ END_SQL
     undef(@fields);
 
     my @selectedbans = param('banned');
-    my %selectedbans;
-    foreach my $elem (@selectedbans) {
-
-        #    $selectedbans{$elem} = "selected";
-    }
 
     while ( @fields = $cursor->fetchrow ) {
 
@@ -167,7 +162,7 @@ END_SQL
             my $nothing = 0;
         }
         push @list,
-            "<option class=\"banlist$fields[2]\" value=\"$fields[0]\" $selectedbans{$fields[0]}>$gameset - $fields[1] ($fields[3])</option>\n";
+            "<option class=\"banlist$fields[2]\" value=\"$fields[0]\">$gameset - $fields[1] ($fields[3])</option>\n";
     }
 
     $cursor->finish;
