@@ -8,7 +8,6 @@ use strict;
 use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser);
 use Apache::DBI qw();
-use HTML::Entities;
 use File::Basename qw();
 use Readonly;
 use YAML::XS 'LoadFile';
