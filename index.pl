@@ -10,15 +10,16 @@ use CGI::Carp qw(fatalsToBrowser);
 use Apache::DBI qw();
 use File::Basename qw();
 use Readonly;
-use YAML::XS 'LoadFile';
 
 my ( $name, $path, $suffix ) = File::Basename::fileparse($0);
 
-my $config = LoadFile("$path/config.yaml");
-
-my $dbh = DBI->connect( "DBI:mysql:$config->{database}:$config->{server}",
-    "$config->{username}", "$config->{password}", { PrintError => 0 } )
-    || croak $DBI::errstr;
+my $dbh = DBI->connect(
+    "DBI:SQLite:dbname=$path/cardlist.sqlite",
+    undef, undef,
+    {   sqlite_unicode    => 1,
+        ReadOnly   => 1,
+    }
+);
 
 my %States;
 my $Current_Screen;
