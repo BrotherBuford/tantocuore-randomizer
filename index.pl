@@ -10,31 +10,38 @@ use CGI::Carp qw(fatalsToBrowser);
 use Apache::DBI qw();
 use File::Basename qw();
 use Readonly;
+use English qw( -no_match_vars );
+use version; our $VERSION = qv(6.01);
 
-my ( $name, $path, $suffix ) = File::Basename::fileparse($0);
+my $cgi = CGI->new;
+
+my ( $name, $path, $suffix ) = File::Basename::fileparse($PROGRAM_NAME);
 
 my $dbh = DBI->connect(
     "DBI:SQLite:dbname=$path/cardlist.sqlite",
     undef, undef,
-    {   sqlite_unicode    => 1,
-        ReadOnly   => 1,
+    {   sqlite_unicode => 1,
+        ReadOnly       => 1,
     }
 );
 
-my %States;
-my $Current_Screen;
+my %states;
+my $current_screen;
 
-%States = (
+%states = (
     'Default'                           => \&front_page,
     'New Randomization Criteria'        => \&front_page,
     'Randomize'                         => \&randomize,
-    'Randomize Again With Same Options' => \&randomize
+    'Randomize Again With Same Options' => \&randomize,
 );
 
-$Current_Screen = param(".State") || "Default";
-croak "No screen for $Current_Screen" unless $States{$Current_Screen};
+$current_screen = param('.State') || 'Default';
 
-my $cgi = CGI->new;
+if ( !$states{$current_screen} ) {
+    croak "No screen for $current_screen";
+}
+
+Readonly my $CARD_MAX => 10;
 
 Readonly my $DONATE => <<'END_DONATE';
 <div style="display: inline-block;">
@@ -91,8 +98,8 @@ PAGE_HEADING_END
 
 print start_form();
 
-while ( my ( $screen_name, $function ) = each %States ) {
-    $function->( $screen_name eq $Current_Screen );
+while ( my ( $screen_name, $function ) = each %states ) {
+    $function->( $screen_name eq $current_screen );
 }
 
 print end_form();
@@ -107,12 +114,14 @@ FOOTER_END
 
 sub front_page {
     my $active = shift;
-    return unless $active;
+    if ( !$active ) {
+        return;
+    }
 
     my @list;
     my @fields;
 
-    my $SQL = <<'END_SQL';
+    my $sql = <<'END_SQL';
 	  SELECT
    ID,
    name,
@@ -121,11 +130,11 @@ sub front_page {
 	  FROM cardlist order by gameset, name
 END_SQL
 
-    my $cursor = $dbh->prepare($SQL);
+    my $cursor = $dbh->prepare($sql);
 
     $cursor->execute;
 
-    undef(@fields);
+    undef @fields;
 
     my @selectedbans = param('banned');
 
@@ -133,28 +142,28 @@ END_SQL
 
         my $gameset;
     SWITCH: {
-            if ( $fields[2] == 1 ) {
-                $gameset = "Tanto Cuore";
+            if ( $fields[2] eq '1' ) {
+                $gameset = 'Tanto Cuore';
                 last SWITCH;
             }
-            if ( $fields[2] == 2 ) {
-                $gameset = "Expanding the House";
+            if ( $fields[2] eq '2' ) {
+                $gameset = 'Expanding the House';
                 last SWITCH;
             }
-            if ( $fields[2] == 3 ) {
-                $gameset = "Romantic Vacation";
+            if ( $fields[2] eq '3' ) {
+                $gameset = 'Romantic Vacation';
                 last SWITCH;
             }
-            if ( $fields[2] == 4 ) {
-                $gameset = "Oktoberfest";
+            if ( $fields[2] eq '4' ) {
+                $gameset = 'Oktoberfest';
                 last SWITCH;
             }
-            if ( $fields[2] == 5 ) {
-                $gameset = "Winter Romance";
+            if ( $fields[2] eq '5' ) {
+                $gameset = 'Winter Romance';
                 last SWITCH;
             }
-            if ( $fields[2] == 101 ) {
-                $gameset = "Intl. Tabletop Day 2016 (Promo)";
+            if ( $fields[2] eq '101' ) {
+                $gameset = 'Intl. Tabletop Day 2016 (Promo)';
                 last SWITCH;
             }
             my $nothing = 0;
@@ -196,7 +205,7 @@ END_SQL
 <td align="center" valign="middle">&nbsp;&nbsp;
 INTRO_END
 
-    print to_page("Randomize");
+    print to_page('Randomize');
 
     print <<'OPTIONS_END';
 </td>
@@ -409,13 +418,13 @@ OPTIONS_END
 
     for my $listitem (@list) {
         my $item = $listitem;
-        $item =~ s{banlist.?}{banlistnoscript}xm;
+        $item =~ s{banlist.?}{banlistnoscript}xms;
         print $item;
     }
 
     print "</select></div></div>\n";
 
-    print "<p class=\"hiddenoptions\">" . to_page("Randomize") . "</p>\n";
+    print '<p class="hiddenoptions">' . to_page('Randomize') . "</p>\n";
     print
         "<p class=\"hiddenoptions\"><input type=\"reset\" value=\"Clear All Selections\" /></p>\n";
 
@@ -429,7 +438,7 @@ OPTIONS_END
 <script type="text/javascript">
 //<![CDATA[
 document.getElementById('pleaseselect').style.display = 'block';
-$(".banlistnoscript").remove();
+\$(".banlistnoscript").remove();
 //]]>
 </script>
 
@@ -456,17 +465,19 @@ PAGE_FOOTER_END
 
 sub randomize {
     my $active = shift;
-    return unless $active;
+    if ( !$active ) {
+        return;
+    }
 
     my $newbutton = 1;
 
     my %color = (
-        1   => "#ffccee",
-        2   => "#ffddbb",
-        3   => "#cceeff",
-        4   => "#ddaa88",
-        5   => "#5b97ab",
-        101 => "#ffffaa",
+        '1'   => '#ffccee',
+        '2'   => '#ffddbb',
+        '3'   => '#cceeff',
+        '4'   => '#ddaa88',
+        '5'   => '#5b97ab',
+        '101' => '#ffffaa',
     );
 
     if ( !param('sets') ) {
@@ -477,7 +488,7 @@ sub randomize {
 
         my @sets = param('sets');
         my %sets;
-        my $setlistSQL;
+        my $setlist_sql;
         my @chiefs;
         for my $elem (@sets) {
 
@@ -486,20 +497,20 @@ sub randomize {
                 -value => "$elem"
             );
 
-            $setlistSQL .= " or gameset = \"$elem\"";
+            $setlist_sql .= " or gameset = \"$elem\"";
             $sets{$elem} = 1;
-            if ( $elem ne "101" ) {
+            if ( $elem ne '101' ) {
                 push @chiefs, $elem;
             }
             print hidden( -name => 'sets' );
         }
-        $setlistSQL =~ s{\A\sor}{}xm;
+        $setlist_sql =~ s{\A\sor}{}xms;
 
         my @banned = param('banned');
 
         my %banlist;
 
-        my $banlistSQL;
+        my $banlist_sql;
         for my $elem (@banned) {
 
             param(
@@ -507,25 +518,24 @@ sub randomize {
                 -value => "$elem"
             );
             $banlist{$elem} = 1;
-            $banlistSQL .= " and ID != \"$elem\"";
+            $banlist_sql .= " and ID != \"$elem\"";
             print hidden( -name => 'banned' );
         }
-        $banlistSQL =~ s{\A\sand}{}xm;
+        $banlist_sql =~ s{\A\sand}{}xms;
 
-        my $attackSQL;
+        my $attack_sql;
         if ( param('attack') ) {
             param(
                 -name  => 'attack',
                 -value => param('attack')
             );
         SWITCH: {
-                if ( param('attack') eq "1" ) {
-                    $attackSQL
-                        = " and (attack != \"y\") and (events != \"y\")";
+                if ( param('attack') eq '1' ) {
+                    $attack_sql = ' and (attack != "y") and (events != "y")';
                     last SWITCH;
                 }
-                if ( param('attack') eq "2" ) {
-                    $attackSQL = " and (attack = \"y\")";
+                if ( param('attack') eq '2' ) {
+                    $attack_sql = ' and (attack = "y")';
                     last SWITCH;
                 }
                 my $nothing = 0;
@@ -533,53 +543,53 @@ sub randomize {
             print hidden( -name => 'attack' );
         }
 
-        my $eventsSQL;
+        my $events_sql;
 
         if ( param('events') ) {
             param(
                 -name  => 'events',
                 -value => param('events')
             );
-            $eventsSQL = " and (events != \"y\")";
+            $events_sql = ' and (events != "y")';
             print hidden( -name => 'events' );
         }
 
-        my $beerSQL;
-        if ( param('beer') eq "2" ) {
+        my $beer_sql;
+        if ( param('beer') eq '2' ) {
             param(
                 -name  => 'beer',
                 -value => param('beer')
             );
-            $beerSQL = " and (beer != \"y\")";
+            $beer_sql = ' and (beer != "y")';
         }
         if ( param('beer') ) {
             print hidden( -name => 'beer' );
         }
 
-        my $buildingsSQL;
+        my $buildings_sql;
         if ( param('buildings') ) {
             param(
                 -name  => 'buildings',
                 -value => param('buildings')
             );
-            $buildingsSQL = " and (buildings != \"y\")";
+            $buildings_sql = ' and (buildings != "y")';
             print hidden( -name => 'buildings' );
         }
 
-        my $privateSQL;
+        my $private_sql;
         if ( param('private') ) {
             param(
                 -name  => 'private',
                 -value => param('private')
             );
-            $privateSQL = " and (private != \"y\")";
+            $private_sql = ' and (private != "y")';
             print hidden( -name => 'private' );
         }
 
-        my $reminiscencesSQL;
+        my $reminiscences_sql;
         if ( param('reminiscences') ) {
-            if ( param('reminiscences') eq "1" ) {
-                $reminiscencesSQL = " and (reminiscences != \"y\")";
+            if ( param('reminiscences') eq '1' ) {
+                $reminiscences_sql = ' and (reminiscences != "y")';
             }
             param(
                 -name  => 'reminiscences',
@@ -588,13 +598,13 @@ sub randomize {
             print hidden( -name => 'reminiscences' );
         }
 
-        my $couplesSQL;
+        my $couples_sql;
         if ( param('couples') ) {
             param(
                 -name  => 'couples',
                 -value => param('couples')
             );
-            $privateSQL = " and (couples != \"y\")";
+            $private_sql = ' and (couples != "y")';
             print hidden( -name => 'couples' );
         }
 
@@ -603,7 +613,7 @@ sub randomize {
         my @fields;
         my @list;
         my %list;
-        my $SQL = <<'END_SQL';
+        my $sql = <<'END_SQL';
 	  SELECT
    ID,
    name,
@@ -623,55 +633,55 @@ sub randomize {
 	  FROM cardlist WHERE
 END_SQL
 
-        $SQL .= "(" . $setlistSQL . ")";
-        if ($banlistSQL) {
-            $SQL .= " and (" . $banlistSQL . ")";
+        $sql .= '(' . $setlist_sql . ')';
+        if ($banlist_sql) {
+            $sql .= ' and (' . $banlist_sql . ')';
         }
-        if ($attackSQL) {
-            $SQL .= $attackSQL;
+        if ($attack_sql) {
+            $sql .= $attack_sql;
         }
-        if ($eventsSQL) {
-            $SQL .= $eventsSQL;
+        if ($events_sql) {
+            $sql .= $events_sql;
         }
-        if ($buildingsSQL) {
-            $SQL .= $buildingsSQL;
+        if ($buildings_sql) {
+            $sql .= $buildings_sql;
         }
-        if ($privateSQL) {
-            $SQL .= $privateSQL;
+        if ($private_sql) {
+            $sql .= $private_sql;
         }
-        if ($reminiscencesSQL) {
-            $SQL .= $reminiscencesSQL;
+        if ($reminiscences_sql) {
+            $sql .= $reminiscences_sql;
         }
-        if ($beerSQL) {
-            $SQL .= $beerSQL;
+        if ($beer_sql) {
+            $sql .= $beer_sql;
         }
-        if ($couplesSQL) {
-            $SQL .= $couplesSQL;
+        if ($couples_sql) {
+            $sql .= $couples_sql;
         }
 
-        my $cursor = $dbh->prepare($SQL);
+        my $cursor = $dbh->prepare($sql);
 
         $cursor->execute;
 
-        undef(@fields);
-        undef(@list);
-        undef(%list);
+        undef @fields;
+        undef @list;
+        undef %list;
 
         while ( @fields = $cursor->fetchrow ) {
 
-            $costlist{ $fields[0] } = $fields[5];
+            $costlist{ $fields[0] } = "$fields[5]";
 
             my $prgameset;
             my $gameset;
 
             ( $prgameset, $gameset )
-                = ( $fields[2] == 1 )   ? ( '',   '' )
-                : ( $fields[2] == 2 )   ? ( '',   '-II' )
-                : ( $fields[2] == 3 )   ? ( '',   '-III' )
-                : ( $fields[2] == 4 )   ? ( '',   '-IV' )
-                : ( $fields[2] == 5 )   ? ( '',   '-V' )
-                : ( $fields[2] == 101 ) ? ( 'PR', '' )
-                :                         ( $prgameset, $gameset );
+                = ( $fields[2] eq '1' )   ? ( q{},  q{} )
+                : ( $fields[2] eq '2' )   ? ( q{},  '-II' )
+                : ( $fields[2] eq '3' )   ? ( q{},  '-III' )
+                : ( $fields[2] eq '4' )   ? ( q{},  '-IV' )
+                : ( $fields[2] eq '5' )   ? ( q{},  '-V' )
+                : ( $fields[2] eq '101' ) ? ( 'PR', q{} )
+                :                           ( $prgameset, $gameset );
 
             my $italics;
             my $italics_e;
@@ -680,31 +690,31 @@ END_SQL
             my $fontcolor;
             my $fontcolor_e;
 
-            if ( $fields[6] eq "y" ) {
-                $italics   = "<i>";
-                $italics_e = "</i>";
+            if ( "$fields[6]" eq 'y' ) {
+                $italics   = '<i>';
+                $italics_e = '</i>';
             }
 
-            if ( $fields[7] eq "y" ) {
-                $bold   = "<b>";
-                $bold_e = "</b>";
+            if ( "$fields[7]" eq 'y' ) {
+                $bold   = '<b>';
+                $bold_e = '</b>';
             }
 
-            if ( $fields[8] eq "y" ) {
-                $fontcolor   = "<font color=\"#990000\">";
-                $fontcolor_e = "</font>";
+            if ( "$fields[8]" eq 'y' ) {
+                $fontcolor   = '<font color=\"#990000\">';
+                $fontcolor_e = '</font>';
             }
 
-            my $cardnumber = sprintf( "%02d", $fields[4] );
+            my $cardnumber = sprintf '%02d', "$fields[4]";
 
-            $list{ $fields[0] }
+            $list{"$fields[0]"}
                 = "<tr bgcolor=\"$color{$fields[2]}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/$prgameset$cardnumber$gameset.jpg' width='125' height='179'></td><td><b><u>$fields[1]</u></b><br /><i>$fields[3]</i><br /><hr />$fields[12]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>$prgameset$cardnumber$gameset</td><td>$fontcolor$bold$italics$fields[1] ($fields[3])$italics_e$bold_e$fontcolor_e</td><td align=\"center\">$fields[5]</td></tr>\n";
         }
 
         $cursor->finish;
 
         my $barmaiderror;
-        if ( ( param('beer') == 1 ) && ( !$list{55} && !$list{56} ) ) {
+        if ( ( param('beer') eq '1' ) && ( !$list{'55'} && !$list{'56'} ) ) {
             $barmaiderror = 1;
         }
 
@@ -715,17 +725,20 @@ END_SQL
                 -value => param('crescent')
             );
         SWITCH: {
-                if ( param('crescent') eq "1" ) {
+                if ( param('crescent') eq '1' ) {
                 CRESCENT: {
-                        if ( $list{14} && !( $list{15} || $list{16} ) ) {
+                        if ( $list{'14'} && !( $list{'15'} || $list{'16'} ) )
+                        {
                             $crescenterror = 1;
                             last CRESCENT;
                         }
-                        if ( $list{15} && !( $list{14} || $list{16} ) ) {
+                        if ( $list{'15'} && !( $list{'14'} || $list{'16'} ) )
+                        {
                             $crescenterror = 1;
                             last CRESCENT;
                         }
-                        if ( $list{16} && !( $list{14} || $list{15} ) ) {
+                        if ( $list{'16'} && !( $list{'14'} || $list{'15'} ) )
+                        {
                             $crescenterror = 1;
                             last CRESCENT;
                         }
@@ -733,9 +746,9 @@ END_SQL
                     }
                     last SWITCH;
                 }
-                if (   ( param('crescent') eq "2" )
-                    && ( $list{14} || $list{15} || $list{16} )
-                    && !( $list{14} && $list{15} && $list{16} ) )
+                if (   ( param('crescent') eq '2' )
+                    && ( $list{'14'} || $list{'15'} || $list{'16'} )
+                    && !( $list{'14'} && $list{'15'} && $list{'16'} ) )
                 {
                     $crescenterror = 1;
                     last SWITCH;
@@ -750,16 +763,16 @@ END_SQL
         my %costignore;
         for my $elem (@costlist) {
         SWITCH: {
-                if ( $elem eq "2" ) {
-                    $costignore{2} = 1;
+                if ( $elem eq '2' ) {
+                    $costignore{'2'} = 1;
                     last SWITCH;
                 }
-                if ( $elem eq "3" ) {
-                    $costignore{3} = 1;
+                if ( $elem eq '3' ) {
+                    $costignore{'3'} = 1;
                     last SWITCH;
                 }
-                if ( $elem eq "5" ) {
-                    $costignore{5} = 1;
+                if ( $elem eq '5' ) {
+                    $costignore{'5'} = 1;
                     last SWITCH;
                 }
                 my $nothing = 0;
@@ -772,88 +785,110 @@ END_SQL
             print hidden( -name => 'cost' );
         }
 
-        push @costlist, "5"
-            if ( ( param('reminiscences') eq "2" )
-            && !exists $costignore{5} );
+        if ( ( param('reminiscences') eq '2' )
+            && !exists $costignore{'5'} )
+        {
+            push @costlist, '5';
+        }
 
         my $chiefsindex = rand @chiefs;
         my $chiefs      = $chiefs[$chiefsindex];
         my $chiefsoutput;
     SWITCH: {
-            if ( $chiefs == 1 ) {
+            if ( $chiefs eq '1' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{1}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01.jpg' width='125' height='179'></td><td><b><u>Marianne Soleil</u></b><br /><i>Maid Chief</i><br /><hr />VP: 6</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01</td><td><b>Marianne Soleil (Maid Chief)</b></td><td align=\"center\">9</td></tr>\n";
+                    = "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01.jpg' width='125' height='179'></td><td><b><u>Marianne Soleil</u></b><br /><i>Maid Chief</i><br /><hr />VP: 6</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01</td><td><b>Marianne Soleil (Maid Chief)</b></td><td align=\"center\">9</td></tr>\n";
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{1}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02.jpg' width='125' height='179'></td><td><b><u>Colette Framboise</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ At the end of the game ------</b><br />If you have more Colettes employed than any other player, you gain a bonus 5 VP.  (You gain 5 VP total, not per Colette)</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02</td><td><b><i>Colette Framboise (Chambermaid Chief)</i></b></td><td align=\"center\">3</td></tr>\n";
-                push @costlist, "2"
-                    if ( ( param('reminiscences') eq "2" )
-                    && !exists $costignore{2}
-                    && ( param('attack') ne "1" ) );
+                    .= "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02.jpg' width='125' height='179'></td><td><b><u>Colette Framboise</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ At the end of the game ------</b><br />If you have more Colettes employed than any other player, you gain a bonus 5 VP.  (You gain 5 VP total, not per Colette)</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02</td><td><b><i>Colette Framboise (Chambermaid Chief)</i></b></td><td align=\"center\">3</td></tr>\n";
+
+                if (   ( param('reminiscences') eq '2' )
+                    && !exists $costignore{'2'}
+                    && ( param('attack') ne '1' ) )
+                {
+                    push @costlist, '2';
+                }
+
                 last SWITCH;
             }
-            if ( $chiefs == 2 ) {
+            if ( $chiefs eq '2' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{2}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-II.jpg' width='125' height='179'></td><td><b><u>Claudine de la Rochelle</u></b><br /><i>Maid Chief</i><br /><hr />VP: 5</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-II</td><td><b>Claudine de la Rochelle (Maid Chief)</b></td><td align=\"center\">8</td></tr>\n";
+                    = "<tr bgcolor=\"$color{'2'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-II.jpg' width='125' height='179'></td><td><b><u>Claudine de la Rochelle</u></b><br /><i>Maid Chief</i><br /><hr />VP: 5</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-II</td><td><b>Claudine de la Rochelle (Maid Chief)</b></td><td align=\"center\">8</td></tr>\n";
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{2}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-II.jpg' width='125' height='179'></td><td><b><u>Aline du Roi</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-II</td><td><b><i>Aline du Roi (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
-                push @costlist, "3"
-                    if ( ( param('reminiscences') eq "2" )
-                    && !exists $costignore{3} );
+                    .= "<tr bgcolor=\"$color{'2'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-II.jpg' width='125' height='179'></td><td><b><u>Aline du Roi</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-II</td><td><b><i>Aline du Roi (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
+
+                if ( ( param('reminiscences') eq '2' )
+                    && !exists $costignore{'3'} )
+                {
+                    push @costlist, '3';
+                }
+
                 last SWITCH;
             }
-            if ( $chiefs == 3 ) {
+            if ( $chiefs eq '3' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{3}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-III.jpg' width='125' height='179'></td><td><b><u>Sophia Marfil</u></b><br /><i>Maid Chief</i><br /><hr />VP: 5</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-III</td><td><b>Sophia Marfil (Maid Chief)</b></td><td align=\"center\">8</td></tr>\n";
+                    = "<tr bgcolor=\"$color{'3'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-III.jpg' width='125' height='179'></td><td><b><u>Sophia Marfil</u></b><br /><i>Maid Chief</i><br /><hr />VP: 5</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-III</td><td><b>Sophia Marfil (Maid Chief)</b></td><td align=\"center\">8</td></tr>\n";
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{3}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-III.jpg' width='125' height='179'></td><td><b><u>Beatrice Escudo</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: ?<br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Each Beatrice: 2 VP</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-III</td><td><b><i>Beatrice Escudo (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
-                push @costlist, "3"
-                    if ( ( param('reminiscences') eq "2" )
-                    && !exists $costignore{3} );
+                    .= "<tr bgcolor=\"$color{'3'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-III.jpg' width='125' height='179'></td><td><b><u>Beatrice Escudo</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: ?<br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Each Beatrice: 2 VP</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-III</td><td><b><i>Beatrice Escudo (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
+
+                if ( ( param('reminiscences') eq '2' )
+                    && !exists $costignore{'3'} )
+                {
+                    push @costlist, '3';
+                }
+
                 last SWITCH;
             }
-            if ( $chiefs == 4 ) {
+            if ( $chiefs eq '4' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{4}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-IV.jpg' width='125' height='179'></td><td><b><u>Anja Brunner</u></b><br /><i>Maid Chief</i><br /><hr />VP: 6<br /><hr /><b>------ At the end of the game ------</b><br />If you have more than 3 Nicole in your deck, Anja gains an extra 1 VP.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-IV</td><td><b>Anja Brunner (Maid Chief)</b></td><td align=\"center\">10</td></tr>\n";
+                    = "<tr bgcolor=\"$color{'4'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-IV.jpg' width='125' height='179'></td><td><b><u>Anja Brunner</u></b><br /><i>Maid Chief</i><br /><hr />VP: 6<br /><hr /><b>------ At the end of the game ------</b><br />If you have more than 3 Nicole in your deck, Anja gains an extra 1 VP.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-IV</td><td><b>Anja Brunner (Maid Chief)</b></td><td align=\"center\">10</td></tr>\n";
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{4}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-IV.jpg' width='125' height='179'></td><td><b><u>Matilde Wiese</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ During your Starting Phase ------</b><br />You may put a chambermaided Matilde into your Discard pile.  If you do, choose a card from your hand and put it back to the Town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-IV</td><td><b><i>Matilde Wiese (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
-                push @costlist, "3"
-                    if ( ( param('reminiscences') eq "2" )
-                    && !exists $costignore{3}
-                    && ( param('attack') ne "1" ) );
+                    .= "<tr bgcolor=\"$color{'4'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-IV.jpg' width='125' height='179'></td><td><b><u>Matilde Wiese</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ During your Starting Phase ------</b><br />You may put a chambermaided Matilde into your Discard pile.  If you do, choose a card from your hand and put it back to the Town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-IV</td><td><b><i>Matilde Wiese (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
+
+                if (   ( param('reminiscences') eq '2' )
+                    && !exists $costignore{'3'}
+                    && ( param('attack') ne '1' ) )
+                {
+                    push @costlist, '3';
+                }
+
                 last SWITCH;
             }
-            if ( $chiefs == 5 ) {
+            if ( $chiefs eq '5' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{5}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-V.jpg' width='125' height='179'></td><td><b><u>Leopold Niebling</u></b><br /><i>Butler Chief</i><br /><hr />VP: 6<hr /><b>------ At the end of the game ------</b><br />-1 VP for each Couple you have in your Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-V</td><td><b>Leopold Niebling (Butler Chief)</b></td><td align=\"center\">10</td></tr>\n";
+                    = "<tr bgcolor=\"$color{'5'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-V.jpg' width='125' height='179'></td><td><b><u>Leopold Niebling</u></b><br /><i>Butler Chief</i><br /><hr />VP: 6<hr /><b>------ At the end of the game ------</b><br />-1 VP for each Couple you have in your Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-V</td><td><b>Leopold Niebling (Butler Chief)</b></td><td align=\"center\">10</td></tr>\n";
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{5}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-V.jpg' width='125' height='179'></td><td><b><u>Beverly Snowfeldt</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br /><br />This card can not be used in an Approach.<br /><br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Gain 2 VP if you have one or more Leopold cards.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-V</td><td><b><i>Beverly Snowfeldt (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
-                push @costlist, "3"
-                    if ( ( param('reminiscences') eq "2" )
-                    && !exists $costignore{3} );
+                    .= "<tr bgcolor=\"$color{'5'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-V.jpg' width='125' height='179'></td><td><b><u>Beverly Snowfeldt</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br /><br />This card can not be used in an Approach.<br /><br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Gain 2 VP if you have one or more Leopold cards.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-V</td><td><b><i>Beverly Snowfeldt (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
+
+                if ( ( param('reminiscences') eq '2' )
+                    && !exists $costignore{'3'} )
+                {
+                    push @costlist, '3';
+                }
+
                 last SWITCH;
             }
             my $nothing = 0;
         }
 
         my $apprenticeerror;
-        if (   ( param('apprentice') == 1 )
-            && ( !$list{66} )
-            && $chiefs eq "4" )
+        if (   ( param('apprentice') eq '1' )
+            && ( !$list{'66'} )
+            && $chiefs eq '4' )
         {
             $apprenticeerror = 1;
         }
         print hidden( -name => 'apprentice' );
 
         my $costerror;
-        if ( param('cost') || ( param('reminiscences') eq "2" ) ) {
+        if ( param('cost') || ( param('reminiscences') eq '2' ) ) {
             my %counter;
             for my $elem ( values %costlist ) {
                 for my $elem2 (@costlist) {
                     if ( $elem eq $elem2 ) {
-                        if ( !exists $counter{$elem2} ) {
-                            $counter{$elem2} = 1;
+                        if ( !exists $counter{"$elem2"} ) {
+                            $counter{"$elem2"} = 1;
                         }
-                        else { $counter{$elem2}++; }
+                        else { $counter{"$elem2"}++; }
                     }
                 }
             }
@@ -865,9 +900,9 @@ END_SQL
         }
 
     SWITCH: {
-            if ( keys %list < 10 ) {
+            if ( keys %list < $CARD_MAX ) {
                 print
-                    "<p class=\"error\"><b>Error:</b> Less than 10 cards available to randomize.</p>\n";
+                    "<p class=\"error\"><b>Error:</b> Less than $CARD_MAX cards available to randomize.</p>\n";
                 last SWITCH;
             }
             if ($costerror) {
@@ -901,24 +936,26 @@ END_SQL
             print
                 "<tr bgcolor=\"#096fb8\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">General Maids/Butlers</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
 
-            my @IDnumbers = keys %list;
-            my $counter   = 1;
+            my @id_numbers = keys %list;
+            my $counter    = 1;
             my @listkey;
 
             my %cache;
 
-            while ( $counter <= 10 ) {
+            while ( $counter <= $CARD_MAX ) {
 
                 my $num;
 
-                $num = 66
-                    if ( $chiefs eq "4"
-                    && param('apprentice') eq "1"
-                    && !( exists $cache{66} )
-                    && !( exists $banlist{66} )
-                    && $counter != 11 );
+                if (   $chiefs eq '4'
+                    && param('apprentice') eq '1'
+                    && !( exists $cache{'66'} )
+                    && !( exists $banlist{'66'} )
+                    && $counter != $CARD_MAX + 1 )
+                {
+                    $num = '66';
+                }
 
-                if ( $num != 66 ) {
+                if ( $num ne '66' ) {
                     if (@costlist) {
                         my @costcache;
                         my $costtosearch = shift @costlist;
@@ -931,141 +968,145 @@ END_SQL
 
                     }
                     else {
-                        $num = $IDnumbers[ rand @IDnumbers ];
+                        $num = $id_numbers[ rand @id_numbers ];
 
                     }
                 }
 
                 redo
                     if (
-                       ( param('crescent') eq "1" )
-                    && ( $counter == 10 )
-                    && (   !( exists $cache{14} )
-                        || !( exists $cache{15} )
-                        || !( exists $cache{16} ) )
-                    && ( $num == 14 || $num == 15 || $num == 16 )
+                       ( param('crescent') eq '1' )
+                    && ( $counter == $CARD_MAX )
+                    && (   !( exists $cache{'14'} )
+                        || !( exists $cache{'15'} )
+                        || !( exists $cache{'16'} ) )
+                    && ( $num eq '14' || $num eq '15' || $num eq '16' )
                     );
 
                 redo
                     if (
-                       ( param('crescent') eq "2" )
-                    && ( $counter > 8 )
-                    && (   !( exists $cache{14} )
-                        || !( exists $cache{15} )
-                        || !( exists $cache{16} ) )
-                    && ( ( $num == 14 ) || ( $num == 15 ) || ( $num == 16 ) )
+                       ( param('crescent') eq '2' )
+                    && ( $counter > $CARD_MAX - 2 )
+                    && (   !( exists $cache{'14'} )
+                        || !( exists $cache{'15'} )
+                        || !( exists $cache{'16'} ) )
+                    && (   ( $num eq '14' )
+                        || ( $num eq '15' )
+                        || ( $num eq '16' ) )
                     );
 
                 redo
                     if exists $cache{$num}
                     ;    # redo the loop if the number already exists
-                $cache{$num} = 1;
+                $cache{"$num"} = 1;
 
                 $listkey[$counter] = $num;
                 $counter++;
 
-                if (   ( param('beer') eq "1" )
-                    && ( $counter != 11 )
-                    && ( !( exists $cache{55} ) && !( exists $cache{56} ) ) )
+                if (   ( param('beer') eq '1' )
+                    && ( $counter != $CARD_MAX + 1 )
+                    && (   !( exists $cache{'55'} )
+                        && !( exists $cache{'56'} ) )
+                    )
                 {
-                    my @barmaidIDs = ( 55, 56 );
-                    my $newnum     = $barmaidIDs[ rand @barmaidIDs ];
-                    if (   !( exists $cache{$newnum} )
-                        && !( exists $banlist{$newnum} ) )
+                    my @barmaid_ids = qw(55 56);
+                    my $newnum      = $barmaid_ids[ rand @barmaid_ids ];
+                    if (   !( exists $cache{"$newnum"} )
+                        && !( exists $banlist{"$newnum"} ) )
                     {
-                        $cache{$newnum} = 1;
+                        $cache{"$newnum"} = 1;
                         $listkey[$counter] = $newnum;
                         $counter++;
                     }
                 }
 
             CRESCENT: {
-                    if (   ( param('crescent') eq "1" )
-                        && ( $num == 14 )
-                        && ( $counter != 11 ) )
+                    if (   ( param('crescent') eq '1' )
+                        && ( $num eq '14' )
+                        && ( $counter != $CARD_MAX + 1 ) )
                     {
-                        my @crescentIDs = ( 15, 16 );
-                        my $newnum      = $crescentIDs[ rand @crescentIDs ];
-                        if ( !( exists $cache{$newnum} ) ) {
-                            redo CRESCENT if exists $banlist{$newnum};
-                            $cache{$newnum} = 1;
+                        my @crescent_ids = qw(15 16);
+                        my $newnum = $crescent_ids[ rand @crescent_ids ];
+                        if ( !( exists $cache{"$newnum"} ) ) {
+                            redo CRESCENT if exists $banlist{"$newnum"};
+                            $cache{"$newnum"} = 1;
                             $listkey[$counter] = $newnum;
                             $counter++;
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq "1" )
-                        && ( $num == 15 )
-                        && ( $counter != 11 ) )
+                    if (   ( param('crescent') eq '1' )
+                        && ( $num eq '15' )
+                        && ( $counter != $CARD_MAX + 1 ) )
                     {
-                        my @crescentIDs = ( 14, 16 );
-                        my $newnum      = $crescentIDs[ rand @crescentIDs ];
-                        if ( !( exists $cache{$newnum} ) ) {
-                            redo CRESCENT if exists $banlist{$newnum};
-                            $cache{$newnum} = 1;
+                        my @crescent_ids = qw(14 16);
+                        my $newnum = $crescent_ids[ rand @crescent_ids ];
+                        if ( !( exists $cache{"$newnum"} ) ) {
+                            redo CRESCENT if exists $banlist{"$newnum"};
+                            $cache{"$newnum"} = 1;
                             $listkey[$counter] = $newnum;
                             $counter++;
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq "1" )
-                        && ( $num == 16 )
-                        && ( $counter != 11 ) )
+                    if (   ( param('crescent') eq '1' )
+                        && ( $num eq '16' )
+                        && ( $counter != $CARD_MAX + 1 ) )
                     {
-                        my @crescentIDs = ( 14, 15 );
-                        my $newnum      = $crescentIDs[ rand @crescentIDs ];
-                        if ( !( exists $cache{$newnum} ) ) {
-                            redo CRESCENT if exists $banlist{$newnum};
-                            $cache{$newnum} = 1;
+                        my @crescent_ids = qw(14 15);
+                        my $newnum = $crescent_ids[ rand @crescent_ids ];
+                        if ( !( exists $cache{"$newnum"} ) ) {
+                            redo CRESCENT if exists $banlist{"$newnum"};
+                            $cache{"$newnum"} = 1;
                             $listkey[$counter] = $newnum;
                             $counter++;
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq "2" )
-                        && ( $num == 14 )
-                        && ( $counter < 10 ) )
+                    if (   ( param('crescent') eq '2' )
+                        && ( $num eq '14' )
+                        && ( $counter < $CARD_MAX ) )
                     {
-                        if ( !( exists $cache{$15} ) ) {
-                            $cache{15} = 1;
-                            $listkey[$counter] = 15;
+                        if ( !( exists $cache{"$15"} ) ) {
+                            $cache{'15'} = 1;
+                            $listkey[$counter] = '15';
                             $counter++;
                         }
-                        if ( !( exists $cache{$16} ) ) {
-                            $cache{16} = 1;
-                            $listkey[$counter] = 16;
+                        if ( !( exists $cache{"$16"} ) ) {
+                            $cache{'16'} = 1;
+                            $listkey[$counter] = '16';
                             $counter++;
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq "2" )
-                        && ( $num == 15 )
-                        && ( $counter < 10 ) )
+                    if (   ( param('crescent') eq '2' )
+                        && ( $num eq '15' )
+                        && ( $counter < $CARD_MAX ) )
                     {
-                        if ( !( exists $cache{$14} ) ) {
-                            $cache{14} = 1;
-                            $listkey[$counter] = 14;
+                        if ( !( exists $cache{"$14"} ) ) {
+                            $cache{'14'} = 1;
+                            $listkey[$counter] = '14';
                             $counter++;
                         }
-                        if ( !( exists $cache{$16} ) ) {
-                            $cache{16} = 1;
-                            $listkey[$counter] = 16;
+                        if ( !( exists $cache{"$16"} ) ) {
+                            $cache{'16'} = 1;
+                            $listkey[$counter] = '16';
                             $counter++;
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq "2" )
-                        && ( $num == 16 )
-                        && ( $counter < 10 ) )
+                    if (   ( param('crescent') eq '2' )
+                        && ( $num eq '16' )
+                        && ( $counter < $CARD_MAX ) )
                     {
-                        if ( !( exists $cache{$14} ) ) {
-                            $cache{14} = 1;
-                            $listkey[$counter] = 14;
+                        if ( !( exists $cache{"$14"} ) ) {
+                            $cache{'14'} = 1;
+                            $listkey[$counter] = '14';
                             $counter++;
                         }
-                        if ( !( exists $cache{$15} ) ) {
-                            $cache{15} = 1;
-                            $listkey[$counter] = 15;
+                        if ( !( exists $cache{"$15"} ) ) {
+                            $cache{'15'} = 1;
+                            $listkey[$counter] = '15';
                             $counter++;
                         }
                         last CRESCENT;
@@ -1077,172 +1118,176 @@ END_SQL
             my @listkeysorted = sort { $a <=> $b } @listkey;
 
             for my $listitem (@listkeysorted) {
-                print $list{$listitem};
+                print $list{"$listitem"};
             }
 
             my @removebuffer;
             my @removerembuffer;
             my @removeeventsbuffer;
             my @removebuildingsbuffer;
-            if ( exists $sets{1} ) {
-                if ( param('events') || ( param('attack') eq "1" ) ) {
-                    push(
+            if ( exists $sets{'1'} ) {
+                if ( param('events') || ( param('attack') eq '1' ) ) {
+                    push
                         @removebuffer,
-                        (   "<tr bgcolor=\"$color{1}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20.jpg' width='125' height='179'></td><td><b><u>Nord Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -4<br /><b>------ During your Starting Phase ------</b><br />You may discard all but one card from your hand.  If you do, send two illnesses from the town onto one maid in any Private Quarters of your choice.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20</td><td><b><i><font color=\"#990000\">Nord Twilight (Black Maid)</font></i></b></td><td align=\"center\">4</td></tr>\n"
-                        )
-                    );
-                    push(
+                        (
+                        "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20.jpg' width='125' height='179'></td><td><b><u>Nord Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -4<br /><b>------ During your Starting Phase ------</b><br />You may discard all but one card from your hand.  If you do, send two illnesses from the town onto one maid in any Private Quarters of your choice.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20</td><td><b><i><font color=\"#990000\">Nord Twilight (Black Maid)</font></i></b></td><td align=\"center\">4</td></tr>\n"
+                        );
+                    push
                         @removebuffer,
-                        (   "<tr bgcolor=\"$color{1}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/21.jpg' width='125' height='179'></td><td><b><u>Sora Nakachi</u></b><br /><i>Private Maid</i><br /><hr />VP: 2<br /><b>------ During your Starting Phase ------</b><br />You may move one Event card from a Private Quarter of your choice to an equivalent place in another player's Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>21</td><td><b><i><font color=\"#990000\">Sora Nakachi (Private Maid)</font></i></b></td><td align=\"center\">7</td></tr>\n"
-                        )
-                    );
+                        (
+                        "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/21.jpg' width='125' height='179'></td><td><b><u>Sora Nakachi</u></b><br /><i>Private Maid</i><br /><hr />VP: 2<br /><b>------ During your Starting Phase ------</b><br />You may move one Event card from a Private Quarter of your choice to an equivalent place in another player's Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>21</td><td><b><i><font color=\"#990000\">Sora Nakachi (Private Maid)</font></i></b></td><td align=\"center\">7</td></tr>\n"
+                        );
                 }
-                if ( param('attack') eq "1" ) {
-                    push(
+                if ( param('attack') eq '1' ) {
+                    push
                         @removebuffer,
-                        (   "<tr bgcolor=\"$color{1}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/19.jpg' width='125' height='179'></td><td><b><u>Amber Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -3<br /><b>------ At the start of each other player's Discard Phase ------</b><br />The active player must discard the top card of their deck.  If the discarded card was not a Maid card, the number of cards they draw for their hand is decreased by 1.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>19</td><td><b><i><font color=\"#990000\">Amber Twilight (Black Maid)</font></i></b></td><td align=\"center\">5</td></tr>\n"
-                        )
-                    );
-                    push(
+                        (
+                        "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/19.jpg' width='125' height='179'></td><td><b><u>Amber Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -3<br /><b>------ At the start of each other player's Discard Phase ------</b><br />The active player must discard the top card of their deck.  If the discarded card was not a Maid card, the number of cards they draw for their hand is decreased by 1.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>19</td><td><b><i><font color=\"#990000\">Amber Twilight (Black Maid)</font></i></b></td><td align=\"center\">5</td></tr>\n"
+                        );
+                    push
                         @removebuffer,
-                        (   "<tr bgcolor=\"$color{1}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/25.jpg' width='125' height='179'></td><td><b><u>Eugenie Fontaine</u></b><br /><i>Private Maid</i><br /><hr /><b>------ During your Starting Phase ------</b><br />You may look at 1 random card in another player's hand.  After, you may allow that player to look at 1 random card from your hand.  If you do, exchange those two cards.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>25</td><td><i><font color=\"#990000\">Eugenie Fontaine (Private Maid)</font></i></td><td align=\"center\">5</td></tr>\n"
-                        )
-                    );
+                        (
+                        "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/25.jpg' width='125' height='179'></td><td><b><u>Eugenie Fontaine</u></b><br /><i>Private Maid</i><br /><hr /><b>------ During your Starting Phase ------</b><br />You may look at 1 random card in another player's hand.  After, you may allow that player to look at 1 random card from your hand.  If you do, exchange those two cards.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>25</td><td><i><font color=\"#990000\">Eugenie Fontaine (Private Maid)</font></i></td><td align=\"center\">5</td></tr>\n"
+                        );
                 }
             }
-            if ( exists $sets{2} ) {
-                if ( param('buildings') eq "1" ) {
-                    push(
+            if ( exists $sets{'2'} ) {
+                if ( param('buildings') eq '1' ) {
+                    push
                         @removebuffer,
-                        (   "<tr bgcolor=\"$color{2}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/27-II.jpg' width='125' height='179'></td><td><b><u>Silk Amanohara</u></b><br /><i>Exorcist Maid</i><br /><hr /><b>------ During your Starting Phase ------</b><br />If you have 3 or more buildings in your Private Quarters, you may draw a card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>27-II</td><td><i>Silk Amanohara (Exorcist Maid)</i></td><td align=\"center\">4</td></tr>\n"
-                        )
-                    );
+                        (
+                        "<tr bgcolor=\"$color{'2'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/27-II.jpg' width='125' height='179'></td><td><b><u>Silk Amanohara</u></b><br /><i>Exorcist Maid</i><br /><hr /><b>------ During your Starting Phase ------</b><br />If you have 3 or more buildings in your Private Quarters, you may draw a card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>27-II</td><td><i>Silk Amanohara (Exorcist Maid)</i></td><td align=\"center\">4</td></tr>\n"
+                        );
                 }
-                if ( param('attack') eq "1" ) {
-                    push(
+                if ( param('attack') eq '1' ) {
+                    push
                         @removebuffer,
-                        (   "<tr bgcolor=\"$color{2}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-II.jpg' width='125' height='179'></td><td><b><u>Mika Yakushido</u></b><br /><i>Black Maid</i><br /><hr />VP: -2<br />This maid may be placed in any player's Private Quarters.<br /><b>------ During your Starting Phase ------</b></b><br />You must discard a '1 Love' from your hand.  If you can't, reveal your hand, and put Mika back face down at the bottom of the Private Maid pile.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-II</td><td><b><i><font color=\"#990000\">Mika Yakushido (Black Maid)</font></i></b></td><td align=\"center\">6</td></tr>\n"
-                        )
-                    );
+                        (
+                        "<tr bgcolor=\"$color{'2'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-II.jpg' width='125' height='179'></td><td><b><u>Mika Yakushido</u></b><br /><i>Black Maid</i><br /><hr />VP: -2<br />This maid may be placed in any player's Private Quarters.<br /><b>------ During your Starting Phase ------</b></b><br />You must discard a '1 Love' from your hand.  If you can't, reveal your hand, and put Mika back face down at the bottom of the Private Maid pile.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-II</td><td><b><i><font color=\"#990000\">Mika Yakushido (Black Maid)</font></i></b></td><td align=\"center\">6</td></tr>\n"
+                        );
                 }
             }
 
-            if (   ( exists $sets{3} && param('reminiscences') eq "1" )
-                || ( !exists $sets{3} ) )
+            if (   ( exists $sets{'3'} && param('reminiscences') eq '1' )
+                || ( !exists $sets{'3'} ) )
             {
-                push(
+                push
                     @removebuffer,
-                    (   "<tr bgcolor=\"$color{101}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR14.jpg' width='125' height='179'></td><td><b><u>Liliana Giornata</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 2<br /><b>------ During your Starting Phase ------</b><br />If you have the Reminiscence card \'Astronomic Observation\' in your Private Quarters, you gain [Love +1] and [Employment +1]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR14</td><td><b><i>Liliana Giornata (Private Maid)</i></b></td><td align=\"center\">5</td></tr>\n"
-                    )
-                );
+                    (
+                    "<tr bgcolor=\"$color{'101'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR14.jpg' width='125' height='179'></td><td><b><u>Liliana Giornata</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 2<br /><b>------ During your Starting Phase ------</b><br />If you have the Reminiscence card \'Astronomic Observation\' in your Private Quarters, you gain [Love +1] and [Employment +1]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR14</td><td><b><i>Liliana Giornata (Private Maid)</i></b></td><td align=\"center\">5</td></tr>\n"
+                    );
             }
-            if (exists $sets{3}
-                && (   ( param('attack') eq "1" )
-                    && ( param('reminiscences') ne "1" ) )
+            if (exists $sets{'3'}
+                && (   ( param('attack') eq '1' )
+                    && ( param('reminiscences') ne '1' ) )
                 )
             {
-                push(
+                push
                     @removerembuffer,
-                    (   "<tr bgcolor=\"$color{3}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/30-III.jpg' width='125' height='179'></td><td><b><u>Scary Night</u></b><br /><i>Reminiscence</i><br /><b><i>Note: There are 3 of these cards in the set</i></b><br /><hr />VP: 3<br /><b>1 card with an employ cost 3<br />1 card with an employ cost 2</b><br />Every other player discards down to 3 cards in their hand.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>30-III</td><td colspan=\"2\"><font color=\"#990000\"><b>Scary Night</b></font> (3 cards)</td></tr>\n"
-                    )
-                );
+                    (
+                    "<tr bgcolor=\"$color{'3'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/30-III.jpg' width='125' height='179'></td><td><b><u>Scary Night</u></b><br /><i>Reminiscence</i><br /><b><i>Note: There are 3 of these cards in the set</i></b><br /><hr />VP: 3<br /><b>1 card with an employ cost 3<br />1 card with an employ cost 2</b><br />Every other player discards down to 3 cards in their hand.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>30-III</td><td colspan=\"2\"><font color=\"#990000\"><b>Scary Night</b></font> (3 cards)</td></tr>\n"
+                    );
             }
 
-            if ( ( exists $sets{4} && param('beer') eq "2" )
-                || !exists $sets{4} )
+            if ( ( exists $sets{'4'} && param('beer') eq '2' )
+                || !exists $sets{'4'} )
             {
-                push(
+                push
                     @removebuffer,
-                    (   "<tr bgcolor=\"$color{101}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR19.jpg' width='125' height='179'></td><td><b><u>Astrid Wende</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 1<br /><b>------ During your Starting Phase ------</b><br />You may discard the top card of your deck.  If your discarded card was a Love card, you may discard 2 cards with a cost 4 or more.  If you do, gain a beer card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR19</td><td><b><i>Astrid Wende (Private Maid)</i></b></td><td align=\"center\">6</td></tr>\n"
-                    )
-                );
-                push(
+                    (
+                    "<tr bgcolor=\"$color{'101'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR19.jpg' width='125' height='179'></td><td><b><u>Astrid Wende</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 1<br /><b>------ During your Starting Phase ------</b><br />You may discard the top card of your deck.  If your discarded card was a Love card, you may discard 2 cards with a cost 4 or more.  If you do, gain a beer card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR19</td><td><b><i>Astrid Wende (Private Maid)</i></b></td><td align=\"center\">6</td></tr>\n"
+                    );
+                push
                     @removebuffer,
-                    (   "<tr bgcolor=\"$color{101}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR34.jpg' width='125' height='179'></td><td><b><u>Ursula Fassbender</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 1<br /><b>------ At the end of the game ------</b><br />If you have 4 or more Beer cards in your Private Quarters, gain +3 VP.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR34</td><td><b><i>Ursula Fassbender (Private Maid)</i></b></td><td align=\"center\">4</td></tr>\n"
-                    )
-                );
+                    (
+                    "<tr bgcolor=\"$color{'101'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR34.jpg' width='125' height='179'></td><td><b><u>Ursula Fassbender</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 1<br /><b>------ At the end of the game ------</b><br />If you have 4 or more Beer cards in your Private Quarters, gain +3 VP.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR34</td><td><b><i>Ursula Fassbender (Private Maid)</i></b></td><td align=\"center\">4</td></tr>\n"
+                    );
             }
-            if ( exists $sets{4} ) {
-                if ((   (   (   param('beer') eq "2" && !(
-                                    (   exists $sets{2} || ( exists $sets{5}
+            if ( exists $sets{'4'} ) {
+                if ((   (   (   param('beer') eq '2' && !(
+                                    (   exists $sets{'2'}
+                                        || ( exists $sets{'5'}
                                             && !param('couples') )
                                     )
                                     || !(
-                                        !exists $sets{2} || ( exists $sets{5}
+                                        !exists $sets{'2'}
+                                        || ( exists $sets{'5'}
                                             && param('couples') )
                                     )
                                 )
                             )
                             || ( param('buildings') )
                         )
-                        && !( param('events') || param('attack') == 1 )
+                        && !( param('events') || param('attack') eq '1' )
                     )
-                    && !( param('attack') == 2 && !param('buildings') )
+                    && !( param('attack') eq '2' && !param('buildings') )
                     )
                 {
-                    push(
+                    push
                         @removeeventsbuffer,
-                        (   "<tr bgcolor=\"$color{4}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-IV.jpg' width='125' height='179'></td><td><b><u>Heavy Storm</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />This is placed onto a Building in any player's Private Quarters.  All cards placed underneath this card are treated as though they don't exist.<br /><b>------ At the beginning of your turn ------</b><br />You may Discard a '3 Love' Card from your hand.  If you do, put this card back to the Town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-IV</td><td><font color=\"#990000\">Heavy Storm</font></td><td align=\"center\">5</td></tr>\n"
-                        )
-                    );
+                        (
+                        "<tr bgcolor=\"$color{'4'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-IV.jpg' width='125' height='179'></td><td><b><u>Heavy Storm</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />This is placed onto a Building in any player's Private Quarters.  All cards placed underneath this card are treated as though they don't exist.<br /><b>------ At the beginning of your turn ------</b><br />You may Discard a '3 Love' Card from your hand.  If you do, put this card back to the Town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-IV</td><td><font color=\"#990000\">Heavy Storm</font></td><td align=\"center\">5</td></tr>\n"
+                        );
                 }
-                if (   ( param('beer') eq "2" )
-                    && ( !( param('events') || param('attack') == 1 ) ) )
+                if (   ( param('beer') eq '2' )
+                    && ( !( param('events') || param('attack') eq '1' ) ) )
                 {
-                    push(
+                    push
                         @removeeventsbuffer,
-                        (   "<tr bgcolor=\"$color{4}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/21-IV.jpg' width='125' height='179'></td><td><b><u>Let me drink!</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />When you gain this card, put this card onto your Private Quarters.<br /><b>------ At the beginning of your turn ------</b><br />Discard a Love card from your hand and remove this card from the game.  If you do, take a Beer card from any player's Private Quarters and add it to your Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>21-IV</td><td><font color=\"#990000\">Let me drink!</font></td><td align=\"center\">5</td></tr>\n"
-                        )
-                    );
+                        (
+                        "<tr bgcolor=\"$color{'4'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/21-IV.jpg' width='125' height='179'></td><td><b><u>Let me drink!</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />When you gain this card, put this card onto your Private Quarters.<br /><b>------ At the beginning of your turn ------</b><br />Discard a Love card from your hand and remove this card from the game.  If you do, take a Beer card from any player's Private Quarters and add it to your Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>21-IV</td><td><font color=\"#990000\">Let me drink!</font></td><td align=\"center\">5</td></tr>\n"
+                        );
                 }
             }
 
-            if ( exists $sets{5} ) {
+            if ( exists $sets{'5'} ) {
 
                 my $blizzard = 0;
-                if ( param("couples")
-                    && ( !exists $sets{2} || !exists $sets{4} ) )
+                if ( param('couples')
+                    && ( !exists $sets{'2'} || !exists $sets{'4'} ) )
                 {
                     $blizzard = 1;
                 }
-                if ( exists $sets{2} || exists $sets{4} ) { $blizzard = 0; }
-                if ((   !exists $sets{2} && ( !exists $sets{4}
-                            || ( exists $sets{4} && param('beer') eq "2" ) )
+                if ( exists $sets{'2'} || exists $sets{'4'} ) {
+                    $blizzard = 0;
+                }
+                if ((   !exists $sets{'2'} && ( !exists $sets{'4'}
+                            || ( exists $sets{'4'} && param('beer') eq '2' ) )
                     )
                     && ( param('couples') || param('buildings') )
                     )
                 {
                     $blizzard = 1;
                 }
-                if ( ( exists $sets{2} || exists $sets{4} )
+                if ( ( exists $sets{'2'} || exists $sets{'4'} )
                     && param('buildings') )
                 {
                     $blizzard = 1;
                 }
-                if ( param('events') || param('attack') == 1 ) {
+                if ( param('events') || param('attack') eq '1' ) {
                     $blizzard = 0;
                 }
 
                 if ($blizzard) {
 
-                    push(
+                    push
                         @removeeventsbuffer,
-                        (   "<tr bgcolor=\"$color{5}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-V.jpg' width='125' height='179'></td><td><b><u>Blizzard</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />Play this card on top of a Building card.  Any VP and any ability from cards underneath this card are lost.<br /><b>------ Employ Phase ------</b><br />You may discard any four Love cards to return this card to the town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-V</td><td><font color=\"#990000\">Blizzard</font></td><td align=\"center\">6</td></tr>\n"
-                        )
-                    );
+                        (
+                        "<tr bgcolor=\"$color{'5'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-V.jpg' width='125' height='179'></td><td><b><u>Blizzard</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />Play this card on top of a Building card.  Any VP and any ability from cards underneath this card are lost.<br /><b>------ Employ Phase ------</b><br />You may discard any four Love cards to return this card to the town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-V</td><td><font color=\"#990000\">Blizzard</font></td><td align=\"center\">6</td></tr>\n"
+                        );
 
                 }
                 if ((   !param('couples')
-                        && ( param('attack') eq "1" || param('events') )
+                        && ( param('attack') eq '1' || param('events') )
                     )
                     && !param('buildings')
                     )
                 {
-                    push(
+                    push
                         @removebuildingsbuffer,
-                        (   "<tr bgcolor=\"$color{101}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR43.jpg' width='125' height='179'></td><td><b><u>Chapel</u></b><br /><i>Building</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr /><br />When another player is playing an Event card against you, you may remove this Chapel card from the game.  If you do, ignore the effects of that Event card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR43</td><td><font color=\"#000000\">Chapel</font></td><td align=\"center\">6</td></tr>\n"
-                        )
-                    );
+                        (
+                        "<tr bgcolor=\"$color{'101'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR43.jpg' width='125' height='179'></td><td><b><u>Chapel</u></b><br /><i>Building</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr /><br />When another player is playing an Event card against you, you may remove this Chapel card from the game.  If you do, ignore the effects of that Event card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR43</td><td><font color=\"#000000\">Chapel</font></td><td align=\"center\">6</td></tr>\n"
+                        );
                 }
             }
 
@@ -1251,7 +1296,7 @@ END_SQL
                 || @removeeventsbuffer )
             {
                 print
-                    "<tr bgcolor=\"#ffffff\"><th colspan=\"3\"></td>&nbsp;</tr><tr bgcolor=\"#000000\"><th colspan=\"3\"><font color=\"#ffffff\">Remove the following from game:</font></th></tr>";
+                    '<tr bgcolor="#ffffff"><th colspan="3"></td>&nbsp;</tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
                 if ( @removebuffer && !param('private') ) {
                     print
                         "<tr bgcolor=\"#1f1a23\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Private Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
@@ -1307,11 +1352,11 @@ END_SQL
 <br /><table><tr><th colspan="2">Text Legend:</th></tr><tr><td>Red:</td><td><font color="#990000">Card can negatively affect other players</font></td></tr><tr><td>Bold:</td><td><b>Card has a VP indicator</b></td></tr><tr><td>Italics:</td><td><i>Chambermaid</i></td></tr></table>
 COLORKEY_END
 
-            print "<br /><p>"
-                . to_page("Randomize Again With Same Options")
+            print '<br /><p>'
+                . to_page('Randomize Again With Same Options')
                 . "</p>\n";
 
-            print "<p>" . to_page("New Randomization Criteria") . "</p>\n";
+            print '<p>' . to_page('New Randomization Criteria') . "</p>\n";
             $newbutton = 0;
             print "</td></tr></table>\n";
 
@@ -1319,20 +1364,21 @@ COLORKEY_END
 
     }
     if ($newbutton) {
-        print "<p>" . to_page("New Randomization Criteria") . "</p>\n";
+        print '<p>' . to_page('New Randomization Criteria') . "</p>\n";
     }
 
-    print "<br />" . $DONATE;
+    print '<br />' . $DONATE;
 
     return;
 }
 
 sub to_page {
-    return submit( -NAME => ".State", -CLASS => "topage", -VALUE => shift );
+    return submit( -NAME => '.State', -CLASS => 'topage', -VALUE => shift );
 }
 
 # fisher_yates_shuffle( \@array ) : generates a random permutation of
 # @array in place, Perl Cookbook page 121
+## no critic (ProhibitCStyleForLoops, ProhibitDoubleSigils)
 sub fisher_yates_shuffle {
     my $array = shift;
     my $i;
@@ -1344,3 +1390,4 @@ sub fisher_yates_shuffle {
 
     return;
 }
+## ok critic
