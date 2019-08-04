@@ -143,9 +143,7 @@ $output .= $h->head(
 );
 
 $output .= <<'PAGE_HEADING_END';
-
 <body style="background-color:#ffccee;background-image:url('images/hearts.gif')">
-
 <div align="center">
 PAGE_HEADING_END
 
@@ -160,7 +158,6 @@ $dbh->disconnect;
 
 $output .= <<'FOOTER_END';
 </div>
-
 </body>
 </html>
 FOOTER_END
@@ -197,35 +194,23 @@ END_SQL
     while ( @fields = $cursor->fetchrow ) {
 
         my $gameset;
-    SWITCH: {
-            if ( $fields[2] eq '1' ) {
-                $gameset = 'Tanto Cuore';
-                last SWITCH;
-            }
-            if ( $fields[2] eq '2' ) {
-                $gameset = 'Expanding the House';
-                last SWITCH;
-            }
-            if ( $fields[2] eq '3' ) {
-                $gameset = 'Romantic Vacation';
-                last SWITCH;
-            }
-            if ( $fields[2] eq '4' ) {
-                $gameset = 'Oktoberfest';
-                last SWITCH;
-            }
-            if ( $fields[2] eq '5' ) {
-                $gameset = 'Winter Romance';
-                last SWITCH;
-            }
-            if ( $fields[2] eq '101' ) {
-                $gameset = 'Intl. Tabletop Day 2016 (Promo)';
-                last SWITCH;
-            }
-            my $nothing = 0;
-        }
+
+        ($gameset)
+            = ( $fields[2] eq '1' )   ? ('Tanto Cuore')
+            : ( $fields[2] eq '2' )   ? ('Expanding the House')
+            : ( $fields[2] eq '3' )   ? ('Romantic Vacation')
+            : ( $fields[2] eq '4' )   ? ('Oktoberfest')
+            : ( $fields[2] eq '5' )   ? ('Winter Romance')
+            : ( $fields[2] eq '101' ) ? ('Intl. Tabletop Day 2016 (Promo)')
+            :                           ($gameset);
+
         push @list,
-            "<option class=\"banlist$fields[2]\" value=\"$fields[0]\">$gameset - $fields[1] ($fields[3])</option>\n";
+            $h->option(
+            {   class => "banlist$fields[2]",
+                value => "$fields[0]",
+            },
+            "$gameset - $fields[1] ($fields[3])"
+            );
     }
 
     $cursor->finish;
