@@ -217,44 +217,99 @@ END_SQL
 
     my @selectedsets = param('sets');
 
-    $suboutput .= <<'INTRO_END';
-<h2 style="font-family:Title;font-size:32px;color:#562271;font-weight:normal" align="center">Tanto Cuore <span style="color:#ff6699">&#9829;</span> Town Randomizer</h2>
+    $suboutput .= $h->h2(
+        {   style =>
+                'font-family:Title;font-size:32px;color:#562271;font-weight:normal',
+            align => 'center',
+        },
+        'Tanto Cuore '
+            . $h->span( { style => 'color:#ff6699' }, '&#9829;' )
+            . 'Town Randomizer'
+        )
 
-  
-<div style="display: inline-block;">
+        . $h->div(
+        { style => 'display: inline-block;' },
+        [
 
-<div class="boxheader" style="background-color: #cc99ff; color: #000066;">
+            $h->div(
+                {   class => 'boxheader',
+                    style => 'background-color: #cc99ff; color: #000066;'
+                },
+                [
 
-<b>Include cards from set(s):</b>
+                    $h->b('Include cards from set(s):'),
+                ]
+            ),
 
-</div>
+            $h->div(
+                { class => 'boxcontent' },
+                [
 
-<div class="boxcontent">
+                    $h->small(
+                        'Maid/butler chief pairs will be randomly selected from all chosen sets'
+                    ),
 
-<small>Maid/butler chief pairs will be randomly selected from all chosen sets</small>
+                    $h->table(
+                        {   border      => '0',
+                            cellpadding => '0',
+                            cellspacing => '4',
+                        },
+                        [   $h->tr(
+                                [   $h->td(
+                                        $h->select(
+                                            {   title =>
+                                                    'Click to select set(s)',
+                                                size     => '6',
+                                                id       => 'sets',
+                                                class    => 'sets',
+                                                name     => 'sets',
+                                                multiple => 'multiple',
+                                            },
+                                            [   $h->option(
+                                                    { value => '1', },
+                                                    'Tanto Cuore'
+                                                ),
+                                                $h->option(
+                                                    { value => '2', },
+                                                    'Expanding the House'
+                                                ),
+                                                $h->option(
+                                                    { value => '3', },
+                                                    'Romantic Vacation'
+                                                ),
+                                                $h->option(
+                                                    { value => '4', },
+                                                    'Oktoberfest'
+                                                ),
+                                                $h->option(
+                                                    { value => '5', },
+                                                    'Winter Romance'
+                                                ),
+                                                $h->option(
+                                                    { value => '101', },
+                                                    'Intl. Tabletop Day 2016 (Promo)'
+                                                ),
+                                            ]
+                                        ),
 
-<table border="0" cellpadding="0" cellspacing="4">
-<tr><td><select title="Click to select set(s)" size="6" id="sets" class="sets" name="sets" multiple="multiple">
-  <option value="1">Tanto Cuore</option>
-  <option value="2">Expanding the House</option>
-  <option value="3">Romantic Vacation</option>
-  <option value="4">Oktoberfest</option>
-  <option value="5">Winter Romance</option>
-  <option value="101">Intl. Tabletop Day 2016 (Promo)</option>
-  </select></td>
-
-<td align="center" valign="middle">&nbsp;&nbsp;
-INTRO_END
-
-    $suboutput .= to_page('Randomize');
+                                        $h->td(
+                                            {   align  => 'center',
+                                                valign => 'middle',
+                                            },
+                                            '&nbsp;&nbsp'
+                                                . to_page('Randomize')
+                                        ),
+                                    ),
+                                ]
+                            ),
+                        ]
+                    ),
+                ]
+            ),
+        ]
+        );
 
     $suboutput .= <<'OPTIONS_END';
-</td>
-</tr>
-</table>
-
-</div>
-</div>
    
 <br /><br />
 
