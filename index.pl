@@ -519,18 +519,17 @@ OPTIONS_END
         $suboutput .= $item;
     }
 
-    $suboutput .= "</select></div></div>\n";
+    $suboutput .= '</select></div></div>';
 
+    $suboutput .= '<p class="hiddenoptions">' . to_page('Randomize') . '</p>';
     $suboutput
-        .= '<p class="hiddenoptions">' . to_page('Randomize') . "</p>\n";
-    $suboutput
-        .= "<p class=\"hiddenoptions\"><input type=\"reset\" value=\"Clear All Selections\" /></p>\n";
+        .= '<p class="hiddenoptions"><input type="reset" value="Clear All Selections" /></p>';
+    $suboutput .= '<select id="banlist" style="display: none">';
 
-    $suboutput .= "<select id=\"banlist\" style=\"display: none\">\n";
     for my $listitem (@list) {
         $suboutput .= $listitem;
     }
-    $suboutput .= "</select>\n";
+    $suboutput .= '</select>';
 
     $suboutput .= <<"PAGE_FOOTER_END";
 <script type="text/javascript">
@@ -581,7 +580,7 @@ sub randomize {
 
     if ( !param('sets') ) {
         $suboutput
-            .= "<p class=\"error\"><b>Error:</b> No game sets selected.  You must choose at least one game set.</b></p>\n";
+            .= qq{<p class="error"><b>Error:</b> No game sets selected.  You must choose at least one game set.</b></p>\n};
     }
     else {
 
@@ -596,7 +595,7 @@ sub randomize {
                 -value => "$elem"
             );
 
-            $setlist_sql .= " or gameset = \"$elem\"";
+            $setlist_sql .= qq{ or gameset = "$elem"};
             $sets{$elem} = 1;
             if ( $elem ne '101' ) {
                 push @chiefs, $elem;
@@ -617,7 +616,7 @@ sub randomize {
                 -value => "$elem"
             );
             $banlist{$elem} = 1;
-            $banlist_sql .= " and ID != \"$elem\"";
+            $banlist_sql .= qq{ and ID != "$elem"};
             $suboutput   .= hidden( -name => 'banned' );
         }
         $banlist_sql =~ s{\A\sand}{}xms;
@@ -782,32 +781,25 @@ END_SQL
                 : ( $fields[2] eq '101' ) ? ( 'PR', q{} )
                 :                           ( $prgameset, $gameset );
 
-            my $italics;
-            my $italics_e;
-            my $bold;
-            my $bold_e;
-            my $fontcolor;
-            my $fontcolor_e;
+            my $cardname = "$fields[1] ($fields[3])";
 
             if ( "$fields[6]" eq 'y' ) {
-                $italics   = '<i>';
-                $italics_e = '</i>';
+                $cardname = $h->i("$cardname");
             }
 
             if ( "$fields[7]" eq 'y' ) {
-                $bold   = '<b>';
-                $bold_e = '</b>';
+                $cardname = $h->b("$cardname");
             }
 
             if ( "$fields[8]" eq 'y' ) {
-                $fontcolor   = '<font color="#990000">';
-                $fontcolor_e = '</font>';
+                $cardname = $h->tag( 'font', { color => '#990000;', },
+                    "$cardname" );
             }
 
             my $cardnumber = sprintf '%02d', "$fields[4]";
 
             $list{"$fields[0]"}
-                = "<tr bgcolor=\"$color{$fields[2]}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/$prgameset$cardnumber$gameset.jpg' width='125' height='179'></td><td><b><u>$fields[1]</u></b><br /><i>$fields[3]</i><br /><hr />$fields[12]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>$prgameset$cardnumber$gameset</td><td>$fontcolor$bold$italics$fields[1] ($fields[3])$italics_e$bold_e$fontcolor_e</td><td align=\"center\">$fields[5]</td></tr>\n";
+                = qq {<tr bgcolor="$color{$fields[2]}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/$prgameset$cardnumber$gameset.jpg' width='125' height='179'></td><td><b><u>$fields[1]</u></b><br /><i>$fields[3]</i><br /><hr />$fields[12]</td></tr></table>" rel="tooltip" class="tooltip"><td>$prgameset$cardnumber$gameset</td><td>$cardname</td><td align="center">$fields[5]</td></tr>\n};
         }
 
         $cursor->finish;
@@ -896,9 +888,9 @@ END_SQL
     SWITCH: {
             if ( $chiefs eq '1' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01.jpg' width='125' height='179'></td><td><b><u>Marianne Soleil</u></b><br /><i>Maid Chief</i><br /><hr />VP: 6</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01</td><td><b>Marianne Soleil (Maid Chief)</b></td><td align=\"center\">9</td></tr>\n";
+                    = qq{<tr bgcolor="$color{'1'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01.jpg' width='125' height='179'></td><td><b><u>Marianne Soleil</u></b><br /><i>Maid Chief</i><br /><hr />VP: 6</td></tr></table>" rel="tooltip" class="tooltip"><td>01</td><td><b>Marianne Soleil (Maid Chief)</b></td><td align="center">9</td></tr>\n};
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02.jpg' width='125' height='179'></td><td><b><u>Colette Framboise</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ At the end of the game ------</b><br />If you have more Colettes employed than any other player, you gain a bonus 5 VP.  (You gain 5 VP total, not per Colette)</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02</td><td><b><i>Colette Framboise (Chambermaid Chief)</i></b></td><td align=\"center\">3</td></tr>\n";
+                    .= qq{<tr bgcolor="$color{'1'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02.jpg' width='125' height='179'></td><td><b><u>Colette Framboise</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ At the end of the game ------</b><br />If you have more Colettes employed than any other player, you gain a bonus 5 VP.  (You gain 5 VP total, not per Colette)</td></tr></table>" rel="tooltip" class="tooltip"><td>02</td><td><b><i>Colette Framboise (Chambermaid Chief)</i></b></td><td align="center">3</td></tr>\n};
 
                 if (   ( param('reminiscences') eq '2' )
                     && !exists $costignore{'2'}
@@ -911,9 +903,9 @@ END_SQL
             }
             if ( $chiefs eq '2' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{'2'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-II.jpg' width='125' height='179'></td><td><b><u>Claudine de la Rochelle</u></b><br /><i>Maid Chief</i><br /><hr />VP: 5</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-II</td><td><b>Claudine de la Rochelle (Maid Chief)</b></td><td align=\"center\">8</td></tr>\n";
+                    = qq{<tr bgcolor="$color{'2'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-II.jpg' width='125' height='179'></td><td><b><u>Claudine de la Rochelle</u></b><br /><i>Maid Chief</i><br /><hr />VP: 5</td></tr></table>" rel="tooltip" class="tooltip"><td>01-II</td><td><b>Claudine de la Rochelle (Maid Chief)</b></td><td align="center">8</td></tr>\n};
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{'2'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-II.jpg' width='125' height='179'></td><td><b><u>Aline du Roi</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-II</td><td><b><i>Aline du Roi (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
+                    .= qq{<tr bgcolor="$color{'2'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-II.jpg' width='125' height='179'></td><td><b><u>Aline du Roi</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]</td></tr></table>" rel="tooltip" class="tooltip"><td>02-II</td><td><b><i>Aline du Roi (Chambermaid Chief)</i></b></td><td align="center">2</td></tr>\n};
 
                 if ( ( param('reminiscences') eq '2' )
                     && !exists $costignore{'3'} )
@@ -925,9 +917,9 @@ END_SQL
             }
             if ( $chiefs eq '3' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{'3'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-III.jpg' width='125' height='179'></td><td><b><u>Sophia Marfil</u></b><br /><i>Maid Chief</i><br /><hr />VP: 5</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-III</td><td><b>Sophia Marfil (Maid Chief)</b></td><td align=\"center\">8</td></tr>\n";
+                    = qq{<tr bgcolor="$color{'3'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-III.jpg' width='125' height='179'></td><td><b><u>Sophia Marfil</u></b><br /><i>Maid Chief</i><br /><hr />VP: 5</td></tr></table>" rel="tooltip" class="tooltip"><td>01-III</td><td><b>Sophia Marfil (Maid Chief)</b></td><td align="center">8</td></tr>\n};
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{'3'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-III.jpg' width='125' height='179'></td><td><b><u>Beatrice Escudo</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: ?<br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Each Beatrice: 2 VP</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-III</td><td><b><i>Beatrice Escudo (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
+                    .= qq{<tr bgcolor="$color{'3'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-III.jpg' width='125' height='179'></td><td><b><u>Beatrice Escudo</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: ?<br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Each Beatrice: 2 VP</td></tr></table>" rel="tooltip" class="tooltip"><td>02-III</td><td><b><i>Beatrice Escudo (Chambermaid Chief)</i></b></td><td align="center">2</td></tr>\n};
 
                 if ( ( param('reminiscences') eq '2' )
                     && !exists $costignore{'3'} )
@@ -939,9 +931,9 @@ END_SQL
             }
             if ( $chiefs eq '4' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{'4'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-IV.jpg' width='125' height='179'></td><td><b><u>Anja Brunner</u></b><br /><i>Maid Chief</i><br /><hr />VP: 6<br /><hr /><b>------ At the end of the game ------</b><br />If you have more than 3 Nicole in your deck, Anja gains an extra 1 VP.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-IV</td><td><b>Anja Brunner (Maid Chief)</b></td><td align=\"center\">10</td></tr>\n";
+                    = qq{<tr bgcolor="$color{'4'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-IV.jpg' width='125' height='179'></td><td><b><u>Anja Brunner</u></b><br /><i>Maid Chief</i><br /><hr />VP: 6<br /><hr /><b>------ At the end of the game ------</b><br />If you have more than 3 Nicole in your deck, Anja gains an extra 1 VP.</td></tr></table>" rel="tooltip" class="tooltip"><td>01-IV</td><td><b>Anja Brunner (Maid Chief)</b></td><td align="center">10</td></tr>\n};
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{'4'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-IV.jpg' width='125' height='179'></td><td><b><u>Matilde Wiese</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ During your Starting Phase ------</b><br />You may put a chambermaided Matilde into your Discard pile.  If you do, choose a card from your hand and put it back to the Town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-IV</td><td><b><i>Matilde Wiese (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
+                    .= qq{<tr bgcolor="$color{'4'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-IV.jpg' width='125' height='179'></td><td><b><u>Matilde Wiese</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ During your Starting Phase ------</b><br />You may put a chambermaided Matilde into your Discard pile.  If you do, choose a card from your hand and put it back to the Town.</td></tr></table>" rel="tooltip" class="tooltip"><td>02-IV</td><td><b><i>Matilde Wiese (Chambermaid Chief)</i></b></td><td align="center">2</td></tr>\n};
 
                 if (   ( param('reminiscences') eq '2' )
                     && !exists $costignore{'3'}
@@ -954,9 +946,9 @@ END_SQL
             }
             if ( $chiefs eq '5' ) {
                 $chiefsoutput
-                    = "<tr bgcolor=\"$color{'5'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-V.jpg' width='125' height='179'></td><td><b><u>Leopold Niebling</u></b><br /><i>Butler Chief</i><br /><hr />VP: 6<hr /><b>------ At the end of the game ------</b><br />-1 VP for each Couple you have in your Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>01-V</td><td><b>Leopold Niebling (Butler Chief)</b></td><td align=\"center\">10</td></tr>\n";
+                    = qq{<tr bgcolor="$color{'5'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/01-V.jpg' width='125' height='179'></td><td><b><u>Leopold Niebling</u></b><br /><i>Butler Chief</i><br /><hr />VP: 6<hr /><b>------ At the end of the game ------</b><br />-1 VP for each Couple you have in your Private Quarters.</td></tr></table>" rel="tooltip" class="tooltip"><td>01-V</td><td><b>Leopold Niebling (Butler Chief)</b></td><td align="center">10</td></tr>\n};
                 $chiefsoutput
-                    .= "<tr bgcolor=\"$color{'5'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-V.jpg' width='125' height='179'></td><td><b><u>Beverly Snowfeldt</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br /><br />This card can not be used in an Approach.<br /><br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Gain 2 VP if you have one or more Leopold cards.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>02-V</td><td><b><i>Beverly Snowfeldt (Chambermaid Chief)</i></b></td><td align=\"center\">2</td></tr>\n";
+                    .= qq{<tr bgcolor="$color{'5'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-V.jpg' width='125' height='179'></td><td><b><u>Beverly Snowfeldt</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br /><br />This card can not be used in an Approach.<br /><br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Gain 2 VP if you have one or more Leopold cards.</td></tr></table>" rel="tooltip" class="tooltip"><td>02-V</td><td><b><i>Beverly Snowfeldt (Chambermaid Chief)</i></b></td><td align="center">2</td></tr>\n};
 
                 if ( ( param('reminiscences') eq '2' )
                     && !exists $costignore{'3'} )
@@ -1001,40 +993,39 @@ END_SQL
     SWITCH: {
             if ( keys %list < $CARD_MAX ) {
                 $suboutput
-                    .= "<p class=\"error\"><b>Error:</b> Less than $CARD_MAX cards available to randomize.</p>\n";
+                    .= qq{<p class="error"><b>Error:</b> Less than $CARD_MAX cards available to randomize.</p>\n};
                 last SWITCH;
             }
             if ($costerror) {
                 $suboutput
-                    .= "<p class=\"error\"><b>Error:</b> No cards of one or more required cost(s) in pool of available cards.</p>\n";
+                    .= qq{<p class="error"><b>Error:</b> No cards of one or more required cost(s) in pool of available cards.</p>\n};
                 last SWITCH;
             }
             if ($crescenterror) {
                 $suboutput
-                    .= "<p class=\"error\"><b>Error:</b> Not enough Crescent sisters in pool of available cards to meet selected minimum.</p>\n";
+                    .= qq{<p class="error"><b>Error:</b> Not enough Crescent sisters in pool of available cards to meet selected minimum.</p>\n};
                 last SWITCH;
             }
             if ($barmaiderror) {
                 $suboutput
-                    .= "<p class=\"error\"><b>Error:</b> No Bar Maids in pool of available cards. (Beer cards are unusable)</p>\n";
+                    .= qq{<p class="error"><b>Error:</b> No Bar Maids in pool of available cards. (Beer cards are unusable)</p>\n};
                 last SWITCH;
             }
             if ($apprenticeerror) {
                 $suboutput
-                    .= "<p class=\"error\"><b>Error:</b> Nicole Schmieg is not available in the pool of available cards but is required by the option selections.</p>\n";
+                    .= qq{<p class="error"><b>Error:</b> Nicole Schmieg is not available in the pool of available cards but is required by the option selections.</p>\n};
                 last SWITCH;
             }
 
-            $suboutput .= "<table cellpadding=\"10\" bgcolor=\"#ffffff\">\n";
+            $suboutput .= qq{<table cellpadding="10" bgcolor="#ffffff">\n};
+            $suboutput .= qq{<tr><td valign="top"><table cellpadding="3">\n};
             $suboutput
-                .= "<tr><td valign=\"top\"><table cellpadding=\"3\">\n";
-            $suboutput
-                .= "<tr bgcolor=\"#036a76\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Maid/Butler Chiefs</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+                .= qq{<tr bgcolor="#036a76"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Maid/Butler Chiefs</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
 
             $suboutput .= $chiefsoutput;
 
             $suboutput
-                .= "<tr bgcolor=\"#096fb8\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">General Maids/Butlers</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+                .= qq{<tr bgcolor="#096fb8"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">General Maids/Butlers</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
 
             my @id_numbers = keys %list;
             my $counter    = 1;
@@ -1230,24 +1221,24 @@ END_SQL
                     push
                         @removebuffer,
                         (
-                        "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20.jpg' width='125' height='179'></td><td><b><u>Nord Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -4<br /><b>------ During your Starting Phase ------</b><br />You may discard all but one card from your hand.  If you do, send two illnesses from the town onto one maid in any Private Quarters of your choice.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20</td><td><b><i><font color=\"#990000\">Nord Twilight (Black Maid)</font></i></b></td><td align=\"center\">4</td></tr>\n"
+                        qq{<tr bgcolor="$color{'1'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20.jpg' width='125' height='179'></td><td><b><u>Nord Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -4<br /><b>------ During your Starting Phase ------</b><br />You may discard all but one card from your hand.  If you do, send two illnesses from the town onto one maid in any Private Quarters of your choice.</td></tr></table>" rel="tooltip" class="tooltip"><td>20</td><td><b><i><font color="#990000">Nord Twilight (Black Maid)</font></i></b></td><td align="center">4</td></tr>\n}
                         );
                     push
                         @removebuffer,
                         (
-                        "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/21.jpg' width='125' height='179'></td><td><b><u>Sora Nakachi</u></b><br /><i>Private Maid</i><br /><hr />VP: 2<br /><b>------ During your Starting Phase ------</b><br />You may move one Event card from a Private Quarter of your choice to an equivalent place in another player's Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>21</td><td><b><i><font color=\"#990000\">Sora Nakachi (Private Maid)</font></i></b></td><td align=\"center\">7</td></tr>\n"
+                        qq{<tr bgcolor="$color{'1'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/21.jpg' width='125' height='179'></td><td><b><u>Sora Nakachi</u></b><br /><i>Private Maid</i><br /><hr />VP: 2<br /><b>------ During your Starting Phase ------</b><br />You may move one Event card from a Private Quarter of your choice to an equivalent place in another player's Private Quarters.</td></tr></table>" rel="tooltip" class="tooltip"><td>21</td><td><b><i><font color="#990000">Sora Nakachi (Private Maid)</font></i></b></td><td align="center">7</td></tr>\n}
                         );
                 }
                 if ( param('attack') eq '1' ) {
                     push
                         @removebuffer,
                         (
-                        "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/19.jpg' width='125' height='179'></td><td><b><u>Amber Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -3<br /><b>------ At the start of each other player's Discard Phase ------</b><br />The active player must discard the top card of their deck.  If the discarded card was not a Maid card, the number of cards they draw for their hand is decreased by 1.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>19</td><td><b><i><font color=\"#990000\">Amber Twilight (Black Maid)</font></i></b></td><td align=\"center\">5</td></tr>\n"
+                        qq{<tr bgcolor="$color{'1'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/19.jpg' width='125' height='179'></td><td><b><u>Amber Twilight</u></b><br /><i>Black Maid</i><br /><hr />VP: -3<br /><b>------ At the start of each other player's Discard Phase ------</b><br />The active player must discard the top card of their deck.  If the discarded card was not a Maid card, the number of cards they draw for their hand is decreased by 1.</td></tr></table>" rel="tooltip" class="tooltip"><td>19</td><td><b><i><font color="#990000">Amber Twilight (Black Maid)</font></i></b></td><td align="center">5</td></tr>\n}
                         );
                     push
                         @removebuffer,
                         (
-                        "<tr bgcolor=\"$color{'1'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/25.jpg' width='125' height='179'></td><td><b><u>Eugenie Fontaine</u></b><br /><i>Private Maid</i><br /><hr /><b>------ During your Starting Phase ------</b><br />You may look at 1 random card in another player's hand.  After, you may allow that player to look at 1 random card from your hand.  If you do, exchange those two cards.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>25</td><td><i><font color=\"#990000\">Eugenie Fontaine (Private Maid)</font></i></td><td align=\"center\">5</td></tr>\n"
+                        qq{<tr bgcolor="$color{'1'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/25.jpg' width='125' height='179'></td><td><b><u>Eugenie Fontaine</u></b><br /><i>Private Maid</i><br /><hr /><b>------ During your Starting Phase ------</b><br />You may look at 1 random card in another player's hand.  After, you may allow that player to look at 1 random card from your hand.  If you do, exchange those two cards.</td></tr></table>" rel="tooltip" class="tooltip"><td>25</td><td><i><font color="#990000">Eugenie Fontaine (Private Maid)</font></i></td><td align="center">5</td></tr>\n}
                         );
                 }
             }
@@ -1256,14 +1247,14 @@ END_SQL
                     push
                         @removebuffer,
                         (
-                        "<tr bgcolor=\"$color{'2'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/27-II.jpg' width='125' height='179'></td><td><b><u>Silk Amanohara</u></b><br /><i>Exorcist Maid</i><br /><hr /><b>------ During your Starting Phase ------</b><br />If you have 3 or more buildings in your Private Quarters, you may draw a card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>27-II</td><td><i>Silk Amanohara (Exorcist Maid)</i></td><td align=\"center\">4</td></tr>\n"
+                        qq{<tr bgcolor="$color{'2'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/27-II.jpg' width='125' height='179'></td><td><b><u>Silk Amanohara</u></b><br /><i>Exorcist Maid</i><br /><hr /><b>------ During your Starting Phase ------</b><br />If you have 3 or more buildings in your Private Quarters, you may draw a card.</td></tr></table>" rel="tooltip" class="tooltip"><td>27-II</td><td><i>Silk Amanohara (Exorcist Maid)</i></td><td align="center">4</td></tr>\n}
                         );
                 }
                 if ( param('attack') eq '1' ) {
                     push
                         @removebuffer,
                         (
-                        "<tr bgcolor=\"$color{'2'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-II.jpg' width='125' height='179'></td><td><b><u>Mika Yakushido</u></b><br /><i>Black Maid</i><br /><hr />VP: -2<br />This maid may be placed in any player's Private Quarters.<br /><b>------ During your Starting Phase ------</b></b><br />You must discard a '1 Love' from your hand.  If you can't, reveal your hand, and put Mika back face down at the bottom of the Private Maid pile.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-II</td><td><b><i><font color=\"#990000\">Mika Yakushido (Black Maid)</font></i></b></td><td align=\"center\">6</td></tr>\n"
+                        qq{<tr bgcolor="$color{'2'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-II.jpg' width='125' height='179'></td><td><b><u>Mika Yakushido</u></b><br /><i>Black Maid</i><br /><hr />VP: -2<br />This maid may be placed in any player's Private Quarters.<br /><b>------ During your Starting Phase ------</b></b><br />You must discard a '1 Love' from your hand.  If you can't, reveal your hand, and put Mika back face down at the bottom of the Private Maid pile.</td></tr></table>" rel="tooltip" class="tooltip"><td>20-II</td><td><b><i><font color="#990000">Mika Yakushido (Black Maid)</font></i></b></td><td align="center">6</td></tr>\n}
                         );
                 }
             }
@@ -1274,7 +1265,7 @@ END_SQL
                 push
                     @removebuffer,
                     (
-                    "<tr bgcolor=\"$color{'101'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR14.jpg' width='125' height='179'></td><td><b><u>Liliana Giornata</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 2<br /><b>------ During your Starting Phase ------</b><br />If you have the Reminiscence card \'Astronomic Observation\' in your Private Quarters, you gain [Love +1] and [Employment +1]</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR14</td><td><b><i>Liliana Giornata (Private Maid)</i></b></td><td align=\"center\">5</td></tr>\n"
+                    qq{<tr bgcolor="$color{'101'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR14.jpg' width='125' height='179'></td><td><b><u>Liliana Giornata</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 2<br /><b>------ During your Starting Phase ------</b><br />If you have the Reminiscence card \'Astronomic Observation\' in your Private Quarters, you gain [Love +1] and [Employment +1]</td></tr></table>" rel="tooltip" class="tooltip"><td>PR14</td><td><b><i>Liliana Giornata (Private Maid)</i></b></td><td align="center">5</td></tr>\n}
                     );
             }
             if (exists $sets{'3'}
@@ -1285,7 +1276,7 @@ END_SQL
                 push
                     @removerembuffer,
                     (
-                    "<tr bgcolor=\"$color{'3'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/30-III.jpg' width='125' height='179'></td><td><b><u>Scary Night</u></b><br /><i>Reminiscence</i><br /><b><i>Note: There are 3 of these cards in the set</i></b><br /><hr />VP: 3<br /><b>1 card with an employ cost 3<br />1 card with an employ cost 2</b><br />Every other player discards down to 3 cards in their hand.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>30-III</td><td colspan=\"2\"><font color=\"#990000\"><b>Scary Night</b></font> (3 cards)</td></tr>\n"
+                    qq{<tr bgcolor="$color{'3'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/30-III.jpg' width='125' height='179'></td><td><b><u>Scary Night</u></b><br /><i>Reminiscence</i><br /><b><i>Note: There are 3 of these cards in the set</i></b><br /><hr />VP: 3<br /><b>1 card with an employ cost 3<br />1 card with an employ cost 2</b><br />Every other player discards down to 3 cards in their hand.</td></tr></table>" rel="tooltip" class="tooltip"><td>30-III</td><td colspan="2"><font color="#990000"><b>Scary Night</b></font> (3 cards)</td></tr>\n}
                     );
             }
 
@@ -1295,12 +1286,12 @@ END_SQL
                 push
                     @removebuffer,
                     (
-                    "<tr bgcolor=\"$color{'101'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR19.jpg' width='125' height='179'></td><td><b><u>Astrid Wende</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 1<br /><b>------ During your Starting Phase ------</b><br />You may discard the top card of your deck.  If your discarded card was a Love card, you may discard 2 cards with a cost 4 or more.  If you do, gain a beer card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR19</td><td><b><i>Astrid Wende (Private Maid)</i></b></td><td align=\"center\">6</td></tr>\n"
+                    qq{<tr bgcolor="$color{'101'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR19.jpg' width='125' height='179'></td><td><b><u>Astrid Wende</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 1<br /><b>------ During your Starting Phase ------</b><br />You may discard the top card of your deck.  If your discarded card was a Love card, you may discard 2 cards with a cost 4 or more.  If you do, gain a beer card.</td></tr></table>" rel="tooltip" class="tooltip"><td>PR19</td><td><b><i>Astrid Wende (Private Maid)</i></b></td><td align="center">6</td></tr>\n}
                     );
                 push
                     @removebuffer,
                     (
-                    "<tr bgcolor=\"$color{'101'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR34.jpg' width='125' height='179'></td><td><b><u>Ursula Fassbender</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 1<br /><b>------ At the end of the game ------</b><br />If you have 4 or more Beer cards in your Private Quarters, gain +3 VP.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR34</td><td><b><i>Ursula Fassbender (Private Maid)</i></b></td><td align=\"center\">4</td></tr>\n"
+                    qq{<tr bgcolor="$color{'101'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR34.jpg' width='125' height='179'></td><td><b><u>Ursula Fassbender</u></b><br /><i>Private Maid</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr />VP: 1<br /><b>------ At the end of the game ------</b><br />If you have 4 or more Beer cards in your Private Quarters, gain +3 VP.</td></tr></table>" rel="tooltip" class="tooltip"><td>PR34</td><td><b><i>Ursula Fassbender (Private Maid)</i></b></td><td align="center">4</td></tr>\n}
                     );
             }
             if ( exists $sets{'4'} ) {
@@ -1326,7 +1317,7 @@ END_SQL
                     push
                         @removeeventsbuffer,
                         (
-                        "<tr bgcolor=\"$color{'4'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-IV.jpg' width='125' height='179'></td><td><b><u>Heavy Storm</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />This is placed onto a Building in any player's Private Quarters.  All cards placed underneath this card are treated as though they don't exist.<br /><b>------ At the beginning of your turn ------</b><br />You may Discard a '3 Love' Card from your hand.  If you do, put this card back to the Town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-IV</td><td><font color=\"#990000\">Heavy Storm</font></td><td align=\"center\">5</td></tr>\n"
+                        qq{<tr bgcolor="$color{'4'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-IV.jpg' width='125' height='179'></td><td><b><u>Heavy Storm</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />This is placed onto a Building in any player's Private Quarters.  All cards placed underneath this card are treated as though they don't exist.<br /><b>------ At the beginning of your turn ------</b><br />You may Discard a '3 Love' Card from your hand.  If you do, put this card back to the Town.</td></tr></table>" rel="tooltip" class="tooltip"><td>20-IV</td><td><font color="#990000">Heavy Storm</font></td><td align="center">5</td></tr>\n}
                         );
                 }
                 if (   ( param('beer') eq '2' )
@@ -1335,7 +1326,7 @@ END_SQL
                     push
                         @removeeventsbuffer,
                         (
-                        "<tr bgcolor=\"$color{'4'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/21-IV.jpg' width='125' height='179'></td><td><b><u>Let me drink!</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />When you gain this card, put this card onto your Private Quarters.<br /><b>------ At the beginning of your turn ------</b><br />Discard a Love card from your hand and remove this card from the game.  If you do, take a Beer card from any player's Private Quarters and add it to your Private Quarters.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>21-IV</td><td><font color=\"#990000\">Let me drink!</font></td><td align=\"center\">5</td></tr>\n"
+                        qq{<tr bgcolor="$color{'4'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/21-IV.jpg' width='125' height='179'></td><td><b><u>Let me drink!</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />When you gain this card, put this card onto your Private Quarters.<br /><b>------ At the beginning of your turn ------</b><br />Discard a Love card from your hand and remove this card from the game.  If you do, take a Beer card from any player's Private Quarters and add it to your Private Quarters.</td></tr></table>" rel="tooltip" class="tooltip"><td>21-IV</td><td><font color="#990000">Let me drink!</font></td><td align="center">5</td></tr>\n}
                         );
                 }
             }
@@ -1373,7 +1364,7 @@ END_SQL
                     push
                         @removeeventsbuffer,
                         (
-                        "<tr bgcolor=\"$color{'5'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-V.jpg' width='125' height='179'></td><td><b><u>Blizzard</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />Play this card on top of a Building card.  Any VP and any ability from cards underneath this card are lost.<br /><b>------ Employ Phase ------</b><br />You may discard any four Love cards to return this card to the town.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>20-V</td><td><font color=\"#990000\">Blizzard</font></td><td align=\"center\">6</td></tr>\n"
+                        qq{<tr bgcolor="$color{'5'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-V.jpg' width='125' height='179'></td><td><b><u>Blizzard</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />Play this card on top of a Building card.  Any VP and any ability from cards underneath this card are lost.<br /><b>------ Employ Phase ------</b><br />You may discard any four Love cards to return this card to the town.</td></tr></table>" rel="tooltip" class="tooltip"><td>20-V</td><td><font color="#990000">Blizzard</font></td><td align="center">6</td></tr>\n}
                         );
 
                 }
@@ -1386,7 +1377,7 @@ END_SQL
                     push
                         @removebuildingsbuffer,
                         (
-                        "<tr bgcolor=\"$color{'101'}\" title=\"<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR43.jpg' width='125' height='179'></td><td><b><u>Chapel</u></b><br /><i>Building</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr /><br />When another player is playing an Event card against you, you may remove this Chapel card from the game.  If you do, ignore the effects of that Event card.</td></tr></table>\" rel=\"tooltip\" class=\"tooltip\"><td>PR43</td><td><font color=\"#000000\">Chapel</font></td><td align=\"center\">6</td></tr>\n"
+                        qq{<tr bgcolor="$color{'101'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/PR43.jpg' width='125' height='179'></td><td><b><u>Chapel</u></b><br /><i>Building</i><br /><b><i>PROMO CARD - Not included in base set</i></b><hr /><br />When another player is playing an Event card against you, you may remove this Chapel card from the game.  If you do, ignore the effects of that Event card.</td></tr></table>" rel="tooltip" class="tooltip"><td>PR43</td><td><font color="#000000">Chapel</font></td><td align="center">6</td></tr>\n}
                         );
                 }
             }
@@ -1399,7 +1390,7 @@ END_SQL
                     .= '<tr bgcolor="#ffffff"><th colspan="3"></td>&nbsp;</tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
                 if ( @removebuffer && !param('private') ) {
                     $suboutput
-                        .= "<tr bgcolor=\"#1f1a23\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Private Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+                        .= qq{<tr bgcolor="#1f1a23"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Private Maids</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
                     for my $elem (@removebuffer) {
                         $suboutput .= $elem;
                     }
@@ -1407,7 +1398,7 @@ END_SQL
 
                 if (@removerembuffer) {
                     $suboutput
-                        .= "<tr bgcolor=\"#fbb450\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th colspan=\"2\"><font color=\"#ffffff\">Reminiscences</font></th></tr>\n";
+                        .= qq{<tr bgcolor="#fbb450"><th><font color="#ffffff">Card&nbsp;#</font></th><th colspan="2"><font color="#ffffff">Reminiscences</font></th></tr>\n};
                     for my $elem (@removerembuffer) {
                         $suboutput .= $elem;
                     }
@@ -1415,7 +1406,7 @@ END_SQL
 
                 if (@removeeventsbuffer) {
                     $suboutput
-                        .= "<tr bgcolor=\"#8652A1\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Events</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+                        .= qq{<tr bgcolor="#8652A1"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Events</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
                     for my $elem (@removeeventsbuffer) {
                         $suboutput .= $elem;
                     }
@@ -1423,7 +1414,7 @@ END_SQL
 
                 if (@removebuildingsbuffer) {
                     $suboutput
-                        .= "<tr bgcolor=\"#f37a45\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Buildings</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+                        .= qq{<tr bgcolor="#f37a45"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Buildings</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
                     for my $elem (@removebuildingsbuffer) {
                         $suboutput .= $elem;
                     }
