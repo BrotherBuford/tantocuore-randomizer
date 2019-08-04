@@ -539,8 +539,8 @@ sub randomize {
     );
 
     if ( !param('sets') ) {
-        print
-            "<p class=\"error\"><b>Error:</b> No game sets selected.  You must choose at least one game set.</b></p>\n";
+        $suboutput
+            .= "<p class=\"error\"><b>Error:</b> No game sets selected.  You must choose at least one game set.</b></p>\n";
     }
     else {
 
@@ -759,7 +759,7 @@ END_SQL
             }
 
             if ( "$fields[8]" eq 'y' ) {
-                $fontcolor   = '<font color=\"#990000\">';
+                $fontcolor   = '<font color="#990000">';
                 $fontcolor_e = '</font>';
             }
 
@@ -959,41 +959,41 @@ END_SQL
 
     SWITCH: {
             if ( keys %list < $CARD_MAX ) {
-                print
-                    "<p class=\"error\"><b>Error:</b> Less than $CARD_MAX cards available to randomize.</p>\n";
+                $suboutput
+                    .= "<p class=\"error\"><b>Error:</b> Less than $CARD_MAX cards available to randomize.</p>\n";
                 last SWITCH;
             }
             if ($costerror) {
-                print
-                    "<p class=\"error\"><b>Error:</b> No cards of one or more required cost(s) in pool of available cards.</p>\n";
+                $suboutput
+                    .= "<p class=\"error\"><b>Error:</b> No cards of one or more required cost(s) in pool of available cards.</p>\n";
                 last SWITCH;
             }
             if ($crescenterror) {
-                print
-                    "<p class=\"error\"><b>Error:</b> Not enough Crescent sisters in pool of available cards to meet selected minimum.</p>\n";
+                $suboutput
+                    .= "<p class=\"error\"><b>Error:</b> Not enough Crescent sisters in pool of available cards to meet selected minimum.</p>\n";
                 last SWITCH;
             }
             if ($barmaiderror) {
-                print
-                    "<p class=\"error\"><b>Error:</b> No Bar Maids in pool of available cards. (Beer cards are unusable)</p>\n";
+                $suboutput
+                    .= "<p class=\"error\"><b>Error:</b> No Bar Maids in pool of available cards. (Beer cards are unusable)</p>\n";
                 last SWITCH;
             }
             if ($apprenticeerror) {
-                print
-                    "<p class=\"error\"><b>Error:</b> Nicole Schmieg is not available in the pool of available cards but is required by the option selections.</p>\n";
+                $suboutput
+                    .= "<p class=\"error\"><b>Error:</b> Nicole Schmieg is not available in the pool of available cards but is required by the option selections.</p>\n";
                 last SWITCH;
             }
 
             $suboutput .= "<table cellpadding=\"10\" bgcolor=\"#ffffff\">\n";
             $suboutput
                 .= "<tr><td valign=\"top\"><table cellpadding=\"3\">\n";
-            print
-                "<tr bgcolor=\"#036a76\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Maid/Butler Chiefs</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+            $suboutput
+                .= "<tr bgcolor=\"#036a76\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Maid/Butler Chiefs</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
 
             $suboutput .= $chiefsoutput;
 
-            print
-                "<tr bgcolor=\"#096fb8\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">General Maids/Butlers</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+            $suboutput
+                .= "<tr bgcolor=\"#096fb8\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">General Maids/Butlers</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
 
             my @id_numbers = keys %list;
             my $counter    = 1;
@@ -1354,35 +1354,35 @@ END_SQL
                 || @removerembuffer
                 || @removeeventsbuffer )
             {
-                print
-                    '<tr bgcolor="#ffffff"><th colspan="3"></td>&nbsp;</tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
+                $suboutput
+                    .= '<tr bgcolor="#ffffff"><th colspan="3"></td>&nbsp;</tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
                 if ( @removebuffer && !param('private') ) {
-                    print
-                        "<tr bgcolor=\"#1f1a23\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Private Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+                    $suboutput
+                        .= "<tr bgcolor=\"#1f1a23\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Private Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
                     for my $elem (@removebuffer) {
                         $suboutput .= $elem;
                     }
                 }
 
                 if (@removerembuffer) {
-                    print
-                        "<tr bgcolor=\"#fbb450\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th colspan=\"2\"><font color=\"#ffffff\">Reminiscences</font></th></tr>\n";
+                    $suboutput
+                        .= "<tr bgcolor=\"#fbb450\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th colspan=\"2\"><font color=\"#ffffff\">Reminiscences</font></th></tr>\n";
                     for my $elem (@removerembuffer) {
                         $suboutput .= $elem;
                     }
                 }
 
                 if (@removeeventsbuffer) {
-                    print
-                        "<tr bgcolor=\"#8652A1\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Events</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+                    $suboutput
+                        .= "<tr bgcolor=\"#8652A1\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Events</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
                     for my $elem (@removeeventsbuffer) {
                         $suboutput .= $elem;
                     }
                 }
 
                 if (@removebuildingsbuffer) {
-                    print
-                        "<tr bgcolor=\"#f37a45\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Buildings</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
+                    $suboutput
+                        .= "<tr bgcolor=\"#f37a45\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Buildings</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
                     for my $elem (@removebuildingsbuffer) {
                         $suboutput .= $elem;
                     }
