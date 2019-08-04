@@ -90,12 +90,10 @@ Readonly my $DONATE => $h->div(
     ]
 );
 
-print header();
+my $output = header()
+    . qq {<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n};
 
-print
-    qq {<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n};
-
-print $h->html(
+$output .= $h->html(
     { xmlns => 'http://www.w3.org/1999/xhtml' },
     [   $h->head(
             [   $h->title(
@@ -146,32 +144,37 @@ print $h->html(
 
             ]
         ),
+        $h->body(
+            {   style =>
+                    qq{background-color:#ffccee;background-image:url('images/hearts.gif')},
+            },
+        ),
     ]
 );
 
-print <<'PAGE_HEADING_END';
+$output .= <<'PAGE_HEADING_END';
 
-
-<body style="background-color:#ffccee;background-image:url('images/hearts.gif');">
 
 <div align="center">
 PAGE_HEADING_END
 
-print start_form();
+$output .= start_form();
 
 while ( my ( $screen_name, $function ) = each %states ) {
-    $function->( $screen_name eq $current_screen );
+    $output .= $function->( $screen_name eq $current_screen );
 }
 
-print end_form();
+$output .= end_form();
 $dbh->disconnect;
 
-print <<'FOOTER_END';
+$output .= <<'FOOTER_END';
 </div>
 
 </body>
 </html>
 FOOTER_END
+
+print $output;
 
 sub front_page {
     my $active = shift;
@@ -179,6 +182,7 @@ sub front_page {
         return;
     }
 
+    my $suboutput = qw{};
     my @list;
     my @fields;
 
@@ -237,7 +241,7 @@ END_SQL
 
     my @selectedsets = param('sets');
 
-    print <<'INTRO_END';
+    $suboutput .= <<'INTRO_END';
 <h2 style="font-family:Title;font-size:32px;color:#562271;font-weight:normal" align="center">Tanto Cuore <span style="color:#ff6699">&#9829;</span> Town Randomizer</h2>
 
   
@@ -266,9 +270,9 @@ END_SQL
 <td align="center" valign="middle">&nbsp;&nbsp;
 INTRO_END
 
-    print to_page('Randomize');
+    $suboutput .= to_page('Randomize');
 
-    print <<'OPTIONS_END';
+    $suboutput .= <<'OPTIONS_END';
 </td>
 </tr>
 </table>
@@ -480,22 +484,23 @@ OPTIONS_END
     for my $listitem (@list) {
         my $item = $listitem;
         $item =~ s{banlist.?}{banlistnoscript}xms;
-        print $item;
+        $suboutput .= $item;
     }
 
-    print "</select></div></div>\n";
+    $suboutput .= "</select></div></div>\n";
 
-    print '<p class="hiddenoptions">' . to_page('Randomize') . "</p>\n";
-    print
-        "<p class=\"hiddenoptions\"><input type=\"reset\" value=\"Clear All Selections\" /></p>\n";
+    $suboutput
+        .= '<p class="hiddenoptions">' . to_page('Randomize') . "</p>\n";
+    $suboutput
+        .= "<p class=\"hiddenoptions\"><input type=\"reset\" value=\"Clear All Selections\" /></p>\n";
 
-    print "<select id=\"banlist\" style=\"display: none\">\n";
+    $suboutput .= "<select id=\"banlist\" style=\"display: none\">\n";
     for my $listitem (@list) {
-        print $listitem;
+        $suboutput .= $listitem;
     }
-    print "</select>\n";
+    $suboutput .= "</select>\n";
 
-    print <<"PAGE_FOOTER_END";
+    $suboutput .= <<"PAGE_FOOTER_END";
 <script type="text/javascript">
 //<![CDATA[
 document.getElementById('pleaseselect').style.display = 'block';
@@ -521,7 +526,7 @@ document.getElementById('pleaseselect').style.display = 'block';
 <script type="text/javascript" src="./js/functions.js"></script>
 PAGE_FOOTER_END
 
-    return;
+    return $suboutput;
 }
 
 sub randomize {
@@ -530,6 +535,7 @@ sub randomize {
         return;
     }
 
+    my $suboutput = qw{};
     my $newbutton = 1;
 
     my %color = (
@@ -563,7 +569,7 @@ sub randomize {
             if ( $elem ne '101' ) {
                 push @chiefs, $elem;
             }
-            print hidden( -name => 'sets' );
+            $suboutput .= hidden( -name => 'sets' );
         }
         $setlist_sql =~ s{\A\sor}{}xms;
 
@@ -580,7 +586,7 @@ sub randomize {
             );
             $banlist{$elem} = 1;
             $banlist_sql .= " and ID != \"$elem\"";
-            print hidden( -name => 'banned' );
+            $suboutput   .= hidden( -name => 'banned' );
         }
         $banlist_sql =~ s{\A\sand}{}xms;
 
@@ -601,7 +607,7 @@ sub randomize {
                 }
                 my $nothing = 0;
             }
-            print hidden( -name => 'attack' );
+            $suboutput .= hidden( -name => 'attack' );
         }
 
         my $events_sql;
@@ -612,7 +618,7 @@ sub randomize {
                 -value => param('events')
             );
             $events_sql = ' and (events != "y")';
-            print hidden( -name => 'events' );
+            $suboutput .= hidden( -name => 'events' );
         }
 
         my $beer_sql;
@@ -624,7 +630,7 @@ sub randomize {
             $beer_sql = ' and (beer != "y")';
         }
         if ( param('beer') ) {
-            print hidden( -name => 'beer' );
+            $suboutput .= hidden( -name => 'beer' );
         }
 
         my $buildings_sql;
@@ -634,7 +640,7 @@ sub randomize {
                 -value => param('buildings')
             );
             $buildings_sql = ' and (buildings != "y")';
-            print hidden( -name => 'buildings' );
+            $suboutput .= hidden( -name => 'buildings' );
         }
 
         my $private_sql;
@@ -644,7 +650,7 @@ sub randomize {
                 -value => param('private')
             );
             $private_sql = ' and (private != "y")';
-            print hidden( -name => 'private' );
+            $suboutput .= hidden( -name => 'private' );
         }
 
         my $reminiscences_sql;
@@ -656,7 +662,7 @@ sub randomize {
                 -name  => 'reminiscences',
                 -value => param('reminiscences')
             );
-            print hidden( -name => 'reminiscences' );
+            $suboutput .= hidden( -name => 'reminiscences' );
         }
 
         my $couples_sql;
@@ -666,7 +672,7 @@ sub randomize {
                 -value => param('couples')
             );
             $private_sql = ' and (couples != "y")';
-            print hidden( -name => 'couples' );
+            $suboutput .= hidden( -name => 'couples' );
         }
 
         my %costlist;
@@ -817,7 +823,7 @@ END_SQL
                 my $nothing = 0;
             }
 
-            print hidden( -name => 'crescent' );
+            $suboutput .= hidden( -name => 'crescent' );
         }
 
         my @costlist = param('cost');
@@ -843,7 +849,7 @@ END_SQL
                 -name  => 'cost',
                 -value => "$elem"
             );
-            print hidden( -name => 'cost' );
+            $suboutput .= hidden( -name => 'cost' );
         }
 
         if ( ( param('reminiscences') eq '2' )
@@ -938,7 +944,7 @@ END_SQL
         {
             $apprenticeerror = 1;
         }
-        print hidden( -name => 'apprentice' );
+        $suboutput .= hidden( -name => 'apprentice' );
 
         my $costerror;
         if ( param('cost') || ( param('reminiscences') eq '2' ) ) {
@@ -987,12 +993,13 @@ END_SQL
                 last SWITCH;
             }
 
-            print "<table cellpadding=\"10\" bgcolor=\"#ffffff\">\n";
-            print "<tr><td valign=\"top\"><table cellpadding=\"3\">\n";
+            $suboutput .= "<table cellpadding=\"10\" bgcolor=\"#ffffff\">\n";
+            $suboutput
+                .= "<tr><td valign=\"top\"><table cellpadding=\"3\">\n";
             print
                 "<tr bgcolor=\"#036a76\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Maid/Butler Chiefs</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
 
-            print $chiefsoutput;
+            $suboutput .= $chiefsoutput;
 
             print
                 "<tr bgcolor=\"#096fb8\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">General Maids/Butlers</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
@@ -1179,7 +1186,7 @@ END_SQL
             my @listkeysorted = sort { $a <=> $b } @listkey;
 
             for my $listitem (@listkeysorted) {
-                print $list{"$listitem"};
+                $suboutput .= $list{"$listitem"};
             }
 
             my @removebuffer;
@@ -1362,7 +1369,7 @@ END_SQL
                     print
                         "<tr bgcolor=\"#1f1a23\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Private Maids</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
                     for my $elem (@removebuffer) {
-                        print $elem;
+                        $suboutput .= $elem;
                     }
                 }
 
@@ -1370,7 +1377,7 @@ END_SQL
                     print
                         "<tr bgcolor=\"#fbb450\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th colspan=\"2\"><font color=\"#ffffff\">Reminiscences</font></th></tr>\n";
                     for my $elem (@removerembuffer) {
-                        print $elem;
+                        $suboutput .= $elem;
                     }
                 }
 
@@ -1378,7 +1385,7 @@ END_SQL
                     print
                         "<tr bgcolor=\"#8652A1\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Events</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
                     for my $elem (@removeeventsbuffer) {
-                        print $elem;
+                        $suboutput .= $elem;
                     }
                 }
 
@@ -1386,13 +1393,13 @@ END_SQL
                     print
                         "<tr bgcolor=\"#f37a45\"><th><font color=\"#ffffff\">Card&nbsp;#</font></th><th><font color=\"#ffffff\">Buildings</font></th><th><font color=\"#ffffff\">Cost</font></th></tr>\n";
                     for my $elem (@removebuildingsbuffer) {
-                        print $elem;
+                        $suboutput .= $elem;
                     }
                 }
 
             }
 
-            print <<"COLORKEY_END";
+            $suboutput .= <<"COLORKEY_END";
 </table></td>
 
 <td align="center" valign="top" width="310">
@@ -1413,24 +1420,27 @@ END_SQL
 <br /><table><tr><th colspan="2">Text Legend:</th></tr><tr><td>Red:</td><td><font color="#990000">Card can negatively affect other players</font></td></tr><tr><td>Bold:</td><td><b>Card has a VP indicator</b></td></tr><tr><td>Italics:</td><td><i>Chambermaid</i></td></tr></table>
 COLORKEY_END
 
-            print '<br /><p>'
+            $suboutput
+                .= '<br /><p>'
                 . to_page('Randomize Again With Same Options')
                 . "</p>\n";
 
-            print '<p>' . to_page('New Randomization Criteria') . "</p>\n";
+            $suboutput
+                .= '<p>' . to_page('New Randomization Criteria') . "</p>\n";
             $newbutton = 0;
-            print "</td></tr></table>\n";
+            $suboutput .= "</td></tr></table>\n";
 
         }
 
     }
     if ($newbutton) {
-        print '<p>' . to_page('New Randomization Criteria') . "</p>\n";
+        $suboutput
+            .= '<p>' . to_page('New Randomization Criteria') . "</p>\n";
     }
 
-    print '<br />' . $DONATE;
+    $suboutput .= '<br />' . $DONATE;
 
-    return;
+    return $suboutput;
 }
 
 sub to_page {
