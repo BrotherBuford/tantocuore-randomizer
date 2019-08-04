@@ -307,24 +307,35 @@ END_SQL
                 ]
             ),
         ]
-        );
+        )
+        . $h->br
+        . $h->br
+
+        . $h->div(
+        {   style =>
+                'display: inline-block; border-radius: 100px;  background-color: #ff99cc; padding-left: 20px; padding-right: 20px; padding-top: 5px; padding-bottom:5px; margin-bottom:15px;'
+        },
+        $h->div(
+            {   id    => 'optionnote',
+                style => 'display:none'
+            },
+            $h->b(
+                $h->i('Select one or more sets to view randomizer options')
+            )
+            )
+            . $h->div(
+            { class => 'hiddenoptions' },
+            $h->b(
+                $h->i(
+                    'You may also include the following selection criteria')
+                )
+                . $h->br
+                . $h->small('All option sections may be combined</small>')
+            )
+
+        ) . $h->br;
 
     $suboutput .= <<'OPTIONS_END';
-   
-<br /><br />
-
-<div style="display: inline-block; border-radius: 100px;  background-color: #ff99cc; padding-left: 20px; padding-right: 20px; padding-top: 5px; padding-bottom:5px; margin-bottom:15px;">
-
-<div id="optionnote" style="display:none"><b><i>Select one or more sets to view randomizer options</i></b></div>
-
-<div class="hiddenoptions">
-<b><i>You may also include the following selection criteria</i></b>
-  <br /><small>All option sections may be combined</small>
-</div>
-</div>
-
-  <br />
-    
     <div style="display: inline-block;" class="hiddenoptions">
 
 <div class="boxheader" style="background-color: #5544dd; color: #ffffff;"><b>Set-specific options</b></div>
