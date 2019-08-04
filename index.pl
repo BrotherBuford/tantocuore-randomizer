@@ -46,32 +46,49 @@ if ( !$states{$current_screen} ) {
 
 Readonly my $CARD_MAX => 10;
 
-Readonly my $DONATE => <<'END_DONATE';
-<div style="display: inline-block;">
+Readonly my $DONATE => $h->div(
+    { style => 'display: inline-block;', },
+    [   $h->div(
+            {   class => 'boxheader',
+                style => 'background-color: #e17000; color: #ffffff;',
+            },
+            [   $h->b(
+                    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your donations help keep this site alive!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+                ),
+            ]
+        ),
 
-<div class="boxheader" style="background-color: #e17000; color: #ffffff;">
-
-<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your donations help keep this site alive!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
-
-</div>
-
-<div class="boxcontent"  style="background-color: #ffffff; color: #000000;">
-
-<table border="0" cellpadding="0" cellspacing="4">
-<tr><td>
-
-<script type="text/javascript" src="coinwidget/coin.js"></script>
-<script type="text/javascript" src="coinwidget/config.js"></script>
-
-</td>
-</tr>
-</table>
-
-</div>
-</div>
-
-    </p>
-END_DONATE
+        $h->div(
+            {   class => 'boxcontent',
+                style => 'background-color: #ffffff; color: #000000;',
+            },
+            [   $h->table(
+                    {   border      => '0',
+                        cellpadding => '0',
+                        cellspacing => '4',
+                    },
+                    [   $h->tr(
+                            [   $h->td(
+                                    [   $h->script(
+                                            {   type => 'text/javascript',
+                                                src  => 'coinwidget/coin.js',
+                                            }
+                                        ),
+                                        $h->script(
+                                            {   type => 'text/javascript',
+                                                src => 'coinwidget/config.js',
+                                            }
+                                        ),
+                                    ]
+                                ),
+                            ]
+                        )
+                    ]
+                ),
+            ]
+        ),
+    ]
+);
 
 print header();
 
