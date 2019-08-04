@@ -90,70 +90,61 @@ Readonly my $DONATE => $h->div(
     ]
 );
 
-my $output = header()
-    . qq {<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n};
+my $output
+    = header()
+    . qq {<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n}
+    . qq {<html xmlns="http://www.w3.org/1999/xhtml">};
 
-$output .= $h->html(
-    { xmlns => 'http://www.w3.org/1999/xhtml' },
-    [   $h->head(
-            [   $h->title(
-                    { foo => 'bar' },
-                    'Tanto Cuore &#9829; Town Randomizer'
-                ),
-                $h->meta(
-                    {   'http-equiv' => 'Content-Type',
-                        content      => "text/html;charset=ISO-8859-1",
-                    }
-                ),
-                $h->meta(
-                    {   'http-equiv' => 'X-UA-Compatible',
-                        content      => 'IE=edge',
-                    }
-                ),
-                $h->meta(
-                    {   name => 'description',
-                        content =>
-                            'A card randomizer utility for the games Tanto Cuore, Tanto Cuore: Expanding the House, Tanto Cuore: Romantic Vacation, Tanto Cuore: Oktoberfest, and Tanto Cuore: Winter Romance.',
-                    }
-                ),
-
-                $h->closed(
-                    'link',
-                    {   rel  => 'shortcut icon',
-                        href => './images/favicon.ico',
-                    }
-                ),
-                $h->closed(
-                    'link',
-                    {   rel  => 'stylesheet',
-                        type => 'text/css',
-                        href => './css/tc.css',
-                    }
-                ),
-
-                $h->script(
-                    {   type => 'text/javascript',
-                        src  => './js/jquery-1.7.2.min.js',
-                    }
-                ),
-                $h->script(
-                    {   type => 'text/javascript',
-                        src  => './js/tooltip.js',
-                    }
-                ),
-
-            ]
+$output .= $h->head(
+    [   $h->title( { foo => 'bar' }, 'Tanto Cuore &#9829; Town Randomizer' ),
+        $h->meta(
+            {   'http-equiv' => 'Content-Type',
+                content      => "text/html;charset=ISO-8859-1",
+            }
         ),
-        $h->body(
-            {   style =>
-                    qq{background-color:#ffccee;background-image:url('images/hearts.gif')},
-            },
+        $h->meta(
+            {   'http-equiv' => 'X-UA-Compatible',
+                content      => 'IE=edge',
+            }
         ),
+        $h->meta(
+            {   name => 'description',
+                content =>
+                    'A card randomizer utility for the games Tanto Cuore, Tanto Cuore: Expanding the House, Tanto Cuore: Romantic Vacation, Tanto Cuore: Oktoberfest, and Tanto Cuore: Winter Romance.',
+            }
+        ),
+
+        $h->closed(
+            'link',
+            {   rel  => 'shortcut icon',
+                href => './images/favicon.ico',
+            }
+        ),
+        $h->closed(
+            'link',
+            {   rel  => 'stylesheet',
+                type => 'text/css',
+                href => './css/tc.css',
+            }
+        ),
+
+        $h->script(
+            {   type => 'text/javascript',
+                src  => './js/jquery-1.7.2.min.js',
+            }
+        ),
+        $h->script(
+            {   type => 'text/javascript',
+                src  => './js/tooltip.js',
+            }
+        ),
+
     ]
 );
 
 $output .= <<'PAGE_HEADING_END';
 
+<body style="background-color:#ffccee;background-image:url('images/hearts.gif')">
 
 <div align="center">
 PAGE_HEADING_END
