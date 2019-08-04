@@ -267,27 +267,17 @@ END_SQL
                                             },
                                             [   $h->option(
                                                     { value => '1', },
-                                                    'Tanto Cuore'
-                                                ),
-                                                $h->option(
+                                                    'Tanto Cuore',
                                                     { value => '2', },
-                                                    'Expanding the House'
-                                                ),
-                                                $h->option(
+                                                    'Expanding the House',
                                                     { value => '3', },
-                                                    'Romantic Vacation'
-                                                ),
-                                                $h->option(
+                                                    'Romantic Vacation',
                                                     { value => '4', },
-                                                    'Oktoberfest'
-                                                ),
-                                                $h->option(
+                                                    'Oktoberfest',
                                                     { value => '5', },
-                                                    'Winter Romance'
-                                                ),
-                                                $h->option(
+                                                    'Winter Romance',
                                                     { value => '101', },
-                                                    'Intl. Tabletop Day 2016 (Promo)'
+                                                    'Intl. Tabletop Day 2016 (Promo)',
                                                 ),
                                             ]
                                         ),
