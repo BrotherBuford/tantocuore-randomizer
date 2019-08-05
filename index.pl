@@ -582,8 +582,10 @@ my $randomize = sub {
             if ( $elem ne '101' ) {
                 push @chiefs, $elem;
             }
-            $suboutput .= hidden( -name => 'sets' );
         }
+
+        $suboutput .= hidden( -name => 'sets' );
+
         $setlist_sql =~ s{\A\sor}{}xms;
 
         my @banned = ();
@@ -600,8 +602,8 @@ my $randomize = sub {
             );
             $banlist{$elem} = 1;
             $banlist_sql .= qq{ and ID != "$elem"};
-            $suboutput   .= hidden( -name => 'banned' );
         }
+        $suboutput   .= hidden( -name => 'banned' );
         $banlist_sql =~ s{\A\sand}{}xms;
 
         my $attack_sql = qw();
