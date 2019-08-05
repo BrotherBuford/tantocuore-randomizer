@@ -148,8 +148,8 @@ my $front_page = sub {
     }
 
     my $suboutput = qw();
-    my @list = ();
-    my @fields = ();
+    my @list      = ();
+    my @fields    = ();
 
     my $sql = <<'END_SQL';
 	  SELECT
@@ -164,7 +164,7 @@ END_SQL
 
     $cursor->execute;
 
-    @fields = ();;
+    @fields = ();
 
     my @selectedbans = ();
     @selectedbans = $cgi->param('banned');
@@ -567,9 +567,9 @@ my $randomize = sub {
 
         my @sets = ();
         @sets = $cgi->param('sets');
-        my %sets = ();
-        my $setlist_sql = qw();;
-        my @chiefs = ();
+        my %sets        = ();
+        my $setlist_sql = qw();
+        my @chiefs      = ();
         for my $elem (@sets) {
 
             $cgi->param(
@@ -603,7 +603,7 @@ my $randomize = sub {
             $banlist{$elem} = 1;
             $banlist_sql .= qq{ and ID != "$elem"};
         }
-        $suboutput   .= hidden( -name => 'banned' );
+        $suboutput .= hidden( -name => 'banned' );
         $banlist_sql =~ s{\A\sand}{}xms;
 
         my $attack_sql = qw();
@@ -694,9 +694,9 @@ my $randomize = sub {
         my %costlist = ();
 
         my @fields = ();
-        my @list = ();
-        my %list = ();
-        my $sql = <<'END_SQL';
+        my @list   = ();
+        my %list   = ();
+        my $sql    = <<'END_SQL';
 	  SELECT
    ID,
    name,
@@ -746,9 +746,9 @@ END_SQL
 
         $cursor->execute;
 
-        @fields = ();;
-        @list = ();
-        %list = ();;
+        @fields = ();
+        @list   = ();
+        %list   = ();
 
         while ( @fields = $cursor->fetchrow ) {
 
@@ -870,8 +870,8 @@ END_SQL
             push @costlist, '5';
         }
 
-        my $chiefsindex = rand @chiefs;
-        my $chiefs      = $chiefs[$chiefsindex];
+        my $chiefsindex  = rand @chiefs;
+        my $chiefs       = $chiefs[$chiefsindex];
         my $chiefsoutput = qw();
     SWITCH: {
             if ( $chiefs eq '1' ) {
@@ -1038,7 +1038,7 @@ END_SQL
 
                 if ( $num ne '66' ) {
                     if (@costlist) {
-                        my @costcache = ();
+                        my @costcache    = ();
                         my $costtosearch = qw();
                         $costtosearch = shift @costlist;
                         for my $elem ( keys %costlist ) {
@@ -1204,9 +1204,9 @@ END_SQL
                 $suboutput .= $list{"$listitem"};
             }
 
-            my @removebuffer = ();
-            my @removerembuffer = ();
-            my @removeeventsbuffer = ();
+            my @removebuffer          = ();
+            my @removerembuffer       = ();
+            my @removeeventsbuffer    = ();
             my @removebuildingsbuffer = ();
             if ( exists $sets{'1'} ) {
                 if ( $cgi->param('events')
@@ -1474,7 +1474,7 @@ COLORKEY_END
     return $suboutput;
 };
 
-my %states = ();
+my %states         = ();
 my $current_screen = qw();
 
 %states = (
