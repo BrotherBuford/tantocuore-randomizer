@@ -134,10 +134,10 @@ $output .= $h->head(
     ]
 );
 
-$output .= <<'PAGE_HEADING_END';
+$output .= <<'END_PAGE_HEADING';
 <body style="background-color:#ffccee;background-image:url('images/hearts.gif')">
 <div align="center">
-PAGE_HEADING_END
+END_PAGE_HEADING
 
 $output .= $cgi->start_form();
 
@@ -304,7 +304,7 @@ END_SQL
 
         ) . $h->br;
 
-    $suboutput .= <<'OPTIONS_END';
+    $suboutput .= <<'END_OPTIONS';
     <div style="display: inline-block;" class="hiddenoptions">
 
 <div class="boxheader" style="background-color: #5544dd; color: #ffffff;"><b>Set-specific options</b></div>
@@ -490,7 +490,7 @@ Require at least one general maid/butler of each of the following employ costs:
 <div class="boxcontent">
 Select cards to <i>not</i> include in results:<br /><select size="5" name="banned" id="banned" class="banned" multiple="multiple">
 <option value="0" id="pleaseselect" disabled="disabled" style="display:none">Please select a game set</option>
-OPTIONS_END
+END_OPTIONS
 
     for my $listitem (@list) {
         my $item = q{};
@@ -512,7 +512,7 @@ OPTIONS_END
     }
     $suboutput .= '</select>';
 
-    $suboutput .= <<"PAGE_FOOTER_END";
+    $suboutput .= <<"END_PAGE_FOOTER";
 <script type="text/javascript">
 //<![CDATA[
 document.getElementById('pleaseselect').style.display = 'block';
@@ -536,7 +536,7 @@ document.getElementById('pleaseselect').style.display = 'block';
 </p> -->
 
 <script type="text/javascript" src="./js/functions.js"></script>
-PAGE_FOOTER_END
+END_PAGE_FOOTER
 
     return $suboutput;
 };
@@ -1430,7 +1430,7 @@ END_SQL
 
             }
 
-            $suboutput .= <<"COLORKEY_END";
+            $suboutput .= <<"END_COLORKEY";
 </table></td>
 
 <td align="center" valign="top" width="310">
@@ -1449,7 +1449,7 @@ END_SQL
 </table>
 
 <br /><table><tr><th colspan="2">Text Legend:</th></tr><tr><td>Red:</td><td><font color="#990000">Card can negatively affect other players</font></td></tr><tr><td>Bold:</td><td><b>Card has a VP indicator</b></td></tr><tr><td>Italics:</td><td><i>Chambermaid</i></td></tr></table>
-COLORKEY_END
+END_COLORKEY
 
             $suboutput
                 .= '<br /><p>'
@@ -1497,11 +1497,11 @@ while ( my ( $screen_name, $function ) = each %states ) {
 $output .= $cgi->end_form();
 $dbh->disconnect;
 
-$output .= <<'FOOTER_END';
+$output .= <<'END_FOOTER';
 </div>
 </body>
 </html>
-FOOTER_END
+END_FOOTER
 
 print $output;
 
