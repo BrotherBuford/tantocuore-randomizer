@@ -147,7 +147,7 @@ my $front_page = sub {
         return;
     }
 
-    my $suboutput = qw();
+    my $suboutput = q{};
     my @list      = ();
     my @fields    = ();
 
@@ -171,7 +171,7 @@ END_SQL
 
     while ( @fields = $cursor->fetchrow ) {
 
-        my $gameset = qw();
+        my $gameset = q{};
 
         ($gameset)
             = ( $fields[2] eq '1' )   ? ('Tanto Cuore')
@@ -493,7 +493,7 @@ Select cards to <i>not</i> include in results:<br /><select size="5" name="banne
 OPTIONS_END
 
     for my $listitem (@list) {
-        my $item = qw();
+        my $item = q{};
         $item = $listitem;
         $item =~ s{banlist.?}{banlistnoscript}xms;
         $suboutput .= $item;
@@ -547,7 +547,7 @@ my $randomize = sub {
         return;
     }
 
-    my $suboutput = qw();
+    my $suboutput = q{};
     my $newbutton = 1;
 
     my %color = (
@@ -568,7 +568,7 @@ my $randomize = sub {
         my @sets = ();
         @sets = $cgi->param('sets');
         my %sets        = ();
-        my $setlist_sql = qw();
+        my $setlist_sql = q{};
         my @chiefs      = ();
         for my $elem (@sets) {
 
@@ -593,7 +593,7 @@ my $randomize = sub {
 
         my %banlist = ();
 
-        my $banlist_sql = qw();
+        my $banlist_sql = q{};
         for my $elem (@banned) {
 
             $cgi->param(
@@ -606,7 +606,7 @@ my $randomize = sub {
         $suboutput .= hidden( -name => 'banned' );
         $banlist_sql =~ s{\A\sand}{}xms;
 
-        my $attack_sql = qw();
+        my $attack_sql = q{};
         if ( $cgi->param('attack') ) {
             $cgi->param(
                 -name  => 'attack',
@@ -626,7 +626,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'attack' );
         }
 
-        my $events_sql = qw();
+        my $events_sql = q{};
 
         if ( $cgi->param('events') ) {
             $cgi->param(
@@ -637,7 +637,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'events' );
         }
 
-        my $beer_sql = qw();
+        my $beer_sql = q{};
         if ( $cgi->param('beer') eq '2' ) {
             $cgi->param(
                 -name  => 'beer',
@@ -649,7 +649,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'beer' );
         }
 
-        my $buildings_sql = qw();
+        my $buildings_sql = q{};
         if ( $cgi->param('buildings') ) {
             $cgi->param(
                 -name  => 'buildings',
@@ -659,7 +659,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'buildings' );
         }
 
-        my $private_sql = qw();
+        my $private_sql = q{};
         if ( $cgi->param('private') ) {
             $cgi->param(
                 -name  => 'private',
@@ -669,7 +669,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'private' );
         }
 
-        my $reminiscences_sql = qw();
+        my $reminiscences_sql = q{};
         if ( $cgi->param('reminiscences') ) {
             if ( $cgi->param('reminiscences') eq '1' ) {
                 $reminiscences_sql = ' and (reminiscences != "y")';
@@ -681,7 +681,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'reminiscences' );
         }
 
-        my $couples_sql = qw();
+        my $couples_sql = q{};
         if ( $cgi->param('couples') ) {
             $cgi->param(
                 -name  => 'couples',
@@ -789,14 +789,14 @@ END_SQL
 
         $cursor->finish;
 
-        my $barmaiderror = qw();
+        my $barmaiderror = q{};
         if (   ( $cgi->param('beer') eq '1' )
             && ( !$list{'55'} && !$list{'56'} ) )
         {
             $barmaiderror = 1;
         }
 
-        my $crescenterror = qw();
+        my $crescenterror = q{};
         if ( $cgi->param('crescent') ) {
             $cgi->param(
                 -name  => 'crescent',
@@ -872,7 +872,7 @@ END_SQL
 
         my $chiefsindex  = rand @chiefs;
         my $chiefs       = $chiefs[$chiefsindex];
-        my $chiefsoutput = qw();
+        my $chiefsoutput = q{};
     SWITCH: {
             if ( $chiefs eq '1' ) {
                 $chiefsoutput
@@ -1025,7 +1025,7 @@ END_SQL
 
             while ( $counter <= $CARD_MAX ) {
 
-                my $num = qw();
+                my $num = q{};
 
                 if (   $chiefs eq '4'
                     && $cgi->param('apprentice') eq '1'
@@ -1039,7 +1039,7 @@ END_SQL
                 if ( $num ne '66' ) {
                     if (@costlist) {
                         my @costcache    = ();
-                        my $costtosearch = qw();
+                        my $costtosearch = q{};
                         $costtosearch = shift @costlist;
                         for my $elem ( keys %costlist ) {
                             if ( $costlist{$elem} eq $costtosearch ) {
@@ -1475,7 +1475,7 @@ COLORKEY_END
 };
 
 my %states         = ();
-my $current_screen = qw();
+my $current_screen = q{};
 
 %states = (
     'Default'                           => \&$front_page,
