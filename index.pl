@@ -147,9 +147,9 @@ my $front_page = sub {
         return;
     }
 
-    my $suboutput = qw{};
-    my @list;
-    my @fields;
+    my $suboutput = qw();
+    my @list = ();
+    my @fields = ();
 
     my $sql = <<'END_SQL';
 	  SELECT
@@ -164,13 +164,14 @@ END_SQL
 
     $cursor->execute;
 
-    undef @fields;
+    @fields = ();;
 
-    my @selectedbans = $cgi->param('banned');
+    my @selectedbans = ();
+    @selectedbans = $cgi->param('banned');
 
     while ( @fields = $cursor->fetchrow ) {
 
-        my $gameset;
+        my $gameset = qw();
 
         ($gameset)
             = ( $fields[2] eq '1' )   ? ('Tanto Cuore')
@@ -192,7 +193,8 @@ END_SQL
 
     $cursor->finish;
 
-    my @selectedsets = $cgi->param('sets');
+    my @selectedsets = ();
+    @selectedsets = $cgi->param('sets');
 
     $suboutput .= $h->h2(
         {   style =>
@@ -491,7 +493,8 @@ Select cards to <i>not</i> include in results:<br /><select size="5" name="banne
 OPTIONS_END
 
     for my $listitem (@list) {
-        my $item = $listitem;
+        my $item = qw();
+        $item = $listitem;
         $item =~ s{banlist.?}{banlistnoscript}xms;
         $suboutput .= $item;
     }
@@ -544,7 +547,7 @@ my $randomize = sub {
         return;
     }
 
-    my $suboutput = qw{};
+    my $suboutput = qw();
     my $newbutton = 1;
 
     my %color = (
@@ -562,10 +565,11 @@ my $randomize = sub {
     }
     else {
 
-        my @sets = $cgi->param('sets');
-        my %sets;
-        my $setlist_sql;
-        my @chiefs;
+        my @sets = ();
+        @sets = $cgi->param('sets');
+        my %sets = ();
+        my $setlist_sql = qw();;
+        my @chiefs = ();
         for my $elem (@sets) {
 
             $cgi->param(
@@ -582,11 +586,12 @@ my $randomize = sub {
         }
         $setlist_sql =~ s{\A\sor}{}xms;
 
-        my @banned = $cgi->param('banned');
+        my @banned = ();
+        @banned = $cgi->param('banned');
 
-        my %banlist;
+        my %banlist = ();
 
-        my $banlist_sql;
+        my $banlist_sql = qw();
         for my $elem (@banned) {
 
             $cgi->param(
@@ -599,7 +604,7 @@ my $randomize = sub {
         }
         $banlist_sql =~ s{\A\sand}{}xms;
 
-        my $attack_sql;
+        my $attack_sql = qw();
         if ( $cgi->param('attack') ) {
             $cgi->param(
                 -name  => 'attack',
@@ -619,7 +624,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'attack' );
         }
 
-        my $events_sql;
+        my $events_sql = qw();
 
         if ( $cgi->param('events') ) {
             $cgi->param(
@@ -630,7 +635,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'events' );
         }
 
-        my $beer_sql;
+        my $beer_sql = qw();
         if ( $cgi->param('beer') eq '2' ) {
             $cgi->param(
                 -name  => 'beer',
@@ -642,7 +647,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'beer' );
         }
 
-        my $buildings_sql;
+        my $buildings_sql = qw();
         if ( $cgi->param('buildings') ) {
             $cgi->param(
                 -name  => 'buildings',
@@ -652,7 +657,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'buildings' );
         }
 
-        my $private_sql;
+        my $private_sql = qw();
         if ( $cgi->param('private') ) {
             $cgi->param(
                 -name  => 'private',
@@ -662,7 +667,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'private' );
         }
 
-        my $reminiscences_sql;
+        my $reminiscences_sql = qw();
         if ( $cgi->param('reminiscences') ) {
             if ( $cgi->param('reminiscences') eq '1' ) {
                 $reminiscences_sql = ' and (reminiscences != "y")';
@@ -674,7 +679,7 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'reminiscences' );
         }
 
-        my $couples_sql;
+        my $couples_sql = qw();
         if ( $cgi->param('couples') ) {
             $cgi->param(
                 -name  => 'couples',
@@ -684,11 +689,11 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'couples' );
         }
 
-        my %costlist;
+        my %costlist = ();
 
-        my @fields;
-        my @list;
-        my %list;
+        my @fields = ();
+        my @list = ();
+        my %list = ();
         my $sql = <<'END_SQL';
 	  SELECT
    ID,
@@ -739,9 +744,9 @@ END_SQL
 
         $cursor->execute;
 
-        undef @fields;
-        undef @list;
-        undef %list;
+        @fields = ();;
+        @list = ();
+        %list = ();;
 
         while ( @fields = $cursor->fetchrow ) {
 
@@ -782,14 +787,14 @@ END_SQL
 
         $cursor->finish;
 
-        my $barmaiderror;
+        my $barmaiderror = qw();
         if (   ( $cgi->param('beer') eq '1' )
             && ( !$list{'55'} && !$list{'56'} ) )
         {
             $barmaiderror = 1;
         }
 
-        my $crescenterror;
+        my $crescenterror = qw();
         if ( $cgi->param('crescent') ) {
             $cgi->param(
                 -name  => 'crescent',
@@ -830,8 +835,9 @@ END_SQL
             $suboutput .= hidden( -name => 'crescent' );
         }
 
-        my @costlist = $cgi->param('cost');
-        my %costignore;
+        my @costlist = ();
+        @costlist = $cgi->param('cost');
+        my %costignore = ();
         for my $elem (@costlist) {
         SWITCH: {
                 if ( $elem eq '2' ) {
@@ -864,7 +870,7 @@ END_SQL
 
         my $chiefsindex = rand @chiefs;
         my $chiefs      = $chiefs[$chiefsindex];
-        my $chiefsoutput;
+        my $chiefsoutput = qw();
     SWITCH: {
             if ( $chiefs eq '1' ) {
                 $chiefsoutput
@@ -953,7 +959,7 @@ END_SQL
         my $costerror;
         if ( $cgi->param('cost') || ( $cgi->param('reminiscences') eq '2' ) )
         {
-            my %counter;
+            my %counter = ();
             for my $elem ( values %costlist ) {
                 for my $elem2 (@costlist) {
                     if ( $elem eq $elem2 ) {
@@ -1008,15 +1014,16 @@ END_SQL
             $suboutput
                 .= qq{<tr bgcolor="#096fb8"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">General Maids/Butlers</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
 
-            my @id_numbers = keys %list;
-            my $counter    = 1;
-            my @listkey;
+            my @id_numbers = ();
+            @id_numbers = keys %list;
+            my $counter = 1;
+            my @listkey = ();
 
-            my %cache;
+            my %cache = ();
 
             while ( $counter <= $CARD_MAX ) {
 
-                my $num;
+                my $num = qw();
 
                 if (   $chiefs eq '4'
                     && $cgi->param('apprentice') eq '1'
@@ -1029,8 +1036,9 @@ END_SQL
 
                 if ( $num ne '66' ) {
                     if (@costlist) {
-                        my @costcache;
-                        my $costtosearch = shift @costlist;
+                        my @costcache = ();
+                        my $costtosearch = qw();
+                        $costtosearch = shift @costlist;
                         for my $elem ( keys %costlist ) {
                             if ( $costlist{$elem} eq $costtosearch ) {
                                 push @costcache, $elem;
@@ -1187,16 +1195,17 @@ END_SQL
                 }
             }
 
-            my @listkeysorted = sort { $a <=> $b } @listkey;
+            my @listkeysorted = ();
+            @listkeysorted = sort { $a <=> $b } @listkey;
 
             for my $listitem (@listkeysorted) {
                 $suboutput .= $list{"$listitem"};
             }
 
-            my @removebuffer;
-            my @removerembuffer;
-            my @removeeventsbuffer;
-            my @removebuildingsbuffer;
+            my @removebuffer = ();
+            my @removerembuffer = ();
+            my @removeeventsbuffer = ();
+            my @removebuildingsbuffer = ();
             if ( exists $sets{'1'} ) {
                 if ( $cgi->param('events')
                     || ( $cgi->param('attack') eq '1' ) )
@@ -1463,8 +1472,8 @@ COLORKEY_END
     return $suboutput;
 };
 
-my %states;
-my $current_screen;
+my %states = ();
+my $current_screen = qw();
 
 %states = (
     'Default'                           => \&$front_page,
