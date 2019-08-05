@@ -28,25 +28,14 @@ my $dbh = DBI->connect(
     }
 );
 
-my %states;
-my $current_screen;
-
-%states = (
-    'Default'                           => \&front_page,
-    'New Randomization Criteria'        => \&front_page,
-    'Randomize'                         => \&randomize,
-    'Randomize Again With Same Options' => \&randomize,
-);
-
-$current_screen = param('.State') || 'Default';
-
-if ( !$states{$current_screen} ) {
-    croak "No screen for $current_screen";
-}
 
 Readonly my $CARD_MAX => 10;
 
-Readonly my $DONATE => $h->div(
+my $to_page = sub {
+    return submit( -NAME => '.State', -CLASS => 'topage', -VALUE => shift );
+};
+
+my $donate = $h->div(
     { style => 'display: inline-block;', },
     [   $h->div(
             {   class => 'boxheader',
@@ -149,22 +138,9 @@ PAGE_HEADING_END
 
 $output .= start_form();
 
-while ( my ( $screen_name, $function ) = each %states ) {
-    $output .= $function->( $screen_name eq $current_screen );
-}
 
-$output .= end_form();
-$dbh->disconnect;
 
-$output .= <<'FOOTER_END';
-</div>
-</body>
-</html>
-FOOTER_END
-
-print $output;
-
-sub front_page {
+my $front_page = sub {
     my $active = shift;
     if ( !$active ) {
         return;
@@ -287,7 +263,7 @@ END_SQL
                                                 valign => 'middle',
                                             },
                                             '&nbsp;&nbsp'
-                                                . to_page('Randomize')
+                                                . &$to_page('Randomize')
                                         ),
                                     ),
                                 ]
@@ -521,7 +497,7 @@ OPTIONS_END
 
     $suboutput .= '</select></div></div>';
 
-    $suboutput .= '<p class="hiddenoptions">' . to_page('Randomize') . '</p>';
+    $suboutput .= '<p class="hiddenoptions">' . &$to_page('Randomize') . '</p>';
     $suboutput
         .= '<p class="hiddenoptions"><input type="reset" value="Clear All Selections" /></p>';
     $suboutput .= '<select id="banlist" style="display: none">';
@@ -541,7 +517,7 @@ document.getElementById('pleaseselect').style.display = 'block';
 
 
 <p>&nbsp;</p>
- $DONATE
+ $donate
 <p>&nbsp;</p>
 <p><small>Find a bug?  Submit an issue on <a href="https://github.com/BrotherBuford/tantocuore-randomizer" target="_new">GitHub</a></small></p>
 
@@ -558,9 +534,9 @@ document.getElementById('pleaseselect').style.display = 'block';
 PAGE_FOOTER_END
 
     return $suboutput;
-}
+};
 
-sub randomize {
+my $randomize = sub {
     my $active = shift;
     if ( !$active ) {
         return;
@@ -1445,11 +1421,11 @@ COLORKEY_END
 
             $suboutput
                 .= '<br /><p>'
-                . to_page('Randomize Again With Same Options')
+                . &$to_page('Randomize Again With Same Options')
                 . "</p>\n";
 
             $suboutput
-                .= '<p>' . to_page('New Randomization Criteria') . "</p>\n";
+                .= '<p>' . &$to_page('New Randomization Criteria') . "</p>\n";
             $newbutton = 0;
             $suboutput .= "</td></tr></table>\n";
 
@@ -1458,30 +1434,45 @@ COLORKEY_END
     }
     if ($newbutton) {
         $suboutput
-            .= '<p>' . to_page('New Randomization Criteria') . "</p>\n";
+            .= '<p>' . &$to_page('New Randomization Criteria') . "</p>\n";
     }
 
-    $suboutput .= '<br />' . $DONATE;
+    $suboutput .= '<br />' . $donate;
 
     return $suboutput;
+};
+
+
+
+my %states;
+my $current_screen;
+
+
+%states = (
+    'Default'                           => \&$front_page,
+    'New Randomization Criteria'        => \&$front_page,
+    'Randomize'                         => \&$randomize,
+    'Randomize Again With Same Options' => \&$randomize,
+);
+
+$current_screen = param('.State') || 'Default';
+
+if ( !$states{$current_screen} ) {
+    croak "No screen for $current_screen";
 }
 
-sub to_page {
-    return submit( -NAME => '.State', -CLASS => 'topage', -VALUE => shift );
+while ( my ( $screen_name, $function ) = each %states ) {
+    $output .= $function->( $screen_name eq $current_screen );
 }
 
-# fisher_yates_shuffle( \@array ) : generates a random permutation of
-# @array in place, Perl Cookbook page 121
-## no critic (ProhibitCStyleForLoops, ProhibitDoubleSigils)
-sub fisher_yates_shuffle {
-    my $array = shift;
-    my $i;
-    for ( $i = @$array; --$i; ) {
-        my $j = int rand( $i + 1 );
-        next if $i == $j;
-        @$array[ $i, $j ] = @$array[ $j, $i ];
-    }
+$output .= end_form();
+$dbh->disconnect;
 
-    return;
-}
-## ok critic
+$output .= <<'FOOTER_END';
+</div>
+</body>
+</html>
+FOOTER_END
+
+print $output;
+
