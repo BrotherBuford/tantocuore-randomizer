@@ -28,11 +28,14 @@ my $dbh = DBI->connect(
     }
 );
 
-
 Readonly my $CARD_MAX => 10;
 
 my $to_page = sub {
-    return submit( -NAME => '.State', -CLASS => 'topage', -VALUE => shift );
+    return $cgi->submit(
+        -NAME  => '.State',
+        -CLASS => 'topage',
+        -VALUE => shift
+    );
 };
 
 my $donate = $h->div(
@@ -136,9 +139,7 @@ $output .= <<'PAGE_HEADING_END';
 <div align="center">
 PAGE_HEADING_END
 
-$output .= start_form();
-
-
+$output .= $cgi->start_form();
 
 my $front_page = sub {
     my $active = shift;
@@ -165,7 +166,7 @@ END_SQL
 
     undef @fields;
 
-    my @selectedbans = param('banned');
+    my @selectedbans = $cgi->param('banned');
 
     while ( @fields = $cursor->fetchrow ) {
 
@@ -191,7 +192,7 @@ END_SQL
 
     $cursor->finish;
 
-    my @selectedsets = param('sets');
+    my @selectedsets = $cgi->param('sets');
 
     $suboutput .= $h->h2(
         {   style =>
@@ -497,7 +498,8 @@ OPTIONS_END
 
     $suboutput .= '</select></div></div>';
 
-    $suboutput .= '<p class="hiddenoptions">' . &$to_page('Randomize') . '</p>';
+    $suboutput
+        .= '<p class="hiddenoptions">' . &$to_page('Randomize') . '</p>';
     $suboutput
         .= '<p class="hiddenoptions"><input type="reset" value="Clear All Selections" /></p>';
     $suboutput .= '<select id="banlist" style="display: none">';
@@ -554,19 +556,19 @@ my $randomize = sub {
         '101' => '#ffffaa',
     );
 
-    if ( !param('sets') ) {
+    if ( !$cgi->param('sets') ) {
         $suboutput
             .= qq{<p class="error"><b>Error:</b> No game sets selected.  You must choose at least one game set.</b></p>\n};
     }
     else {
 
-        my @sets = param('sets');
+        my @sets = $cgi->param('sets');
         my %sets;
         my $setlist_sql;
         my @chiefs;
         for my $elem (@sets) {
 
-            param(
+            $cgi->param(
                 -name  => 'sets',
                 -value => "$elem"
             );
@@ -580,14 +582,14 @@ my $randomize = sub {
         }
         $setlist_sql =~ s{\A\sor}{}xms;
 
-        my @banned = param('banned');
+        my @banned = $cgi->param('banned');
 
         my %banlist;
 
         my $banlist_sql;
         for my $elem (@banned) {
 
-            param(
+            $cgi->param(
                 -name  => 'banned',
                 -value => "$elem"
             );
@@ -598,17 +600,17 @@ my $randomize = sub {
         $banlist_sql =~ s{\A\sand}{}xms;
 
         my $attack_sql;
-        if ( param('attack') ) {
-            param(
+        if ( $cgi->param('attack') ) {
+            $cgi->param(
                 -name  => 'attack',
-                -value => param('attack')
+                -value => $cgi->param('attack')
             );
         SWITCH: {
-                if ( param('attack') eq '1' ) {
+                if ( $cgi->param('attack') eq '1' ) {
                     $attack_sql = ' and (attack != "y") and (events != "y")';
                     last SWITCH;
                 }
-                if ( param('attack') eq '2' ) {
+                if ( $cgi->param('attack') eq '2' ) {
                     $attack_sql = ' and (attack = "y")';
                     last SWITCH;
                 }
@@ -619,64 +621,64 @@ my $randomize = sub {
 
         my $events_sql;
 
-        if ( param('events') ) {
-            param(
+        if ( $cgi->param('events') ) {
+            $cgi->param(
                 -name  => 'events',
-                -value => param('events')
+                -value => $cgi->param('events')
             );
             $events_sql = ' and (events != "y")';
             $suboutput .= hidden( -name => 'events' );
         }
 
         my $beer_sql;
-        if ( param('beer') eq '2' ) {
-            param(
+        if ( $cgi->param('beer') eq '2' ) {
+            $cgi->param(
                 -name  => 'beer',
-                -value => param('beer')
+                -value => $cgi->param('beer')
             );
             $beer_sql = ' and (beer != "y")';
         }
-        if ( param('beer') ) {
+        if ( $cgi->param('beer') ) {
             $suboutput .= hidden( -name => 'beer' );
         }
 
         my $buildings_sql;
-        if ( param('buildings') ) {
-            param(
+        if ( $cgi->param('buildings') ) {
+            $cgi->param(
                 -name  => 'buildings',
-                -value => param('buildings')
+                -value => $cgi->param('buildings')
             );
             $buildings_sql = ' and (buildings != "y")';
             $suboutput .= hidden( -name => 'buildings' );
         }
 
         my $private_sql;
-        if ( param('private') ) {
-            param(
+        if ( $cgi->param('private') ) {
+            $cgi->param(
                 -name  => 'private',
-                -value => param('private')
+                -value => $cgi->param('private')
             );
             $private_sql = ' and (private != "y")';
             $suboutput .= hidden( -name => 'private' );
         }
 
         my $reminiscences_sql;
-        if ( param('reminiscences') ) {
-            if ( param('reminiscences') eq '1' ) {
+        if ( $cgi->param('reminiscences') ) {
+            if ( $cgi->param('reminiscences') eq '1' ) {
                 $reminiscences_sql = ' and (reminiscences != "y")';
             }
-            param(
+            $cgi->param(
                 -name  => 'reminiscences',
-                -value => param('reminiscences')
+                -value => $cgi->param('reminiscences')
             );
             $suboutput .= hidden( -name => 'reminiscences' );
         }
 
         my $couples_sql;
-        if ( param('couples') ) {
-            param(
+        if ( $cgi->param('couples') ) {
+            $cgi->param(
                 -name  => 'couples',
-                -value => param('couples')
+                -value => $cgi->param('couples')
             );
             $private_sql = ' and (couples != "y")';
             $suboutput .= hidden( -name => 'couples' );
@@ -781,18 +783,20 @@ END_SQL
         $cursor->finish;
 
         my $barmaiderror;
-        if ( ( param('beer') eq '1' ) && ( !$list{'55'} && !$list{'56'} ) ) {
+        if (   ( $cgi->param('beer') eq '1' )
+            && ( !$list{'55'} && !$list{'56'} ) )
+        {
             $barmaiderror = 1;
         }
 
         my $crescenterror;
-        if ( param('crescent') ) {
-            param(
+        if ( $cgi->param('crescent') ) {
+            $cgi->param(
                 -name  => 'crescent',
-                -value => param('crescent')
+                -value => $cgi->param('crescent')
             );
         SWITCH: {
-                if ( param('crescent') eq '1' ) {
+                if ( $cgi->param('crescent') eq '1' ) {
                 CRESCENT: {
                         if ( $list{'14'} && !( $list{'15'} || $list{'16'} ) )
                         {
@@ -813,7 +817,7 @@ END_SQL
                     }
                     last SWITCH;
                 }
-                if (   ( param('crescent') eq '2' )
+                if (   ( $cgi->param('crescent') eq '2' )
                     && ( $list{'14'} || $list{'15'} || $list{'16'} )
                     && !( $list{'14'} && $list{'15'} && $list{'16'} ) )
                 {
@@ -826,7 +830,7 @@ END_SQL
             $suboutput .= hidden( -name => 'crescent' );
         }
 
-        my @costlist = param('cost');
+        my @costlist = $cgi->param('cost');
         my %costignore;
         for my $elem (@costlist) {
         SWITCH: {
@@ -845,14 +849,14 @@ END_SQL
                 my $nothing = 0;
             }
 
-            param(
+            $cgi->param(
                 -name  => 'cost',
                 -value => "$elem"
             );
             $suboutput .= hidden( -name => 'cost' );
         }
 
-        if ( ( param('reminiscences') eq '2' )
+        if ( ( $cgi->param('reminiscences') eq '2' )
             && !exists $costignore{'5'} )
         {
             push @costlist, '5';
@@ -868,9 +872,9 @@ END_SQL
                 $chiefsoutput
                     .= qq{<tr bgcolor="$color{'1'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02.jpg' width='125' height='179'></td><td><b><u>Colette Framboise</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ At the end of the game ------</b><br />If you have more Colettes employed than any other player, you gain a bonus 5 VP.  (You gain 5 VP total, not per Colette)</td></tr></table>" rel="tooltip" class="tooltip"><td>02</td><td><b><i>Colette Framboise (Chambermaid Chief)</i></b></td><td align="center">3</td></tr>\n};
 
-                if (   ( param('reminiscences') eq '2' )
+                if (   ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'2'}
-                    && ( param('attack') ne '1' ) )
+                    && ( $cgi->param('attack') ne '1' ) )
                 {
                     push @costlist, '2';
                 }
@@ -883,7 +887,7 @@ END_SQL
                 $chiefsoutput
                     .= qq{<tr bgcolor="$color{'2'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-II.jpg' width='125' height='179'></td><td><b><u>Aline du Roi</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]</td></tr></table>" rel="tooltip" class="tooltip"><td>02-II</td><td><b><i>Aline du Roi (Chambermaid Chief)</i></b></td><td align="center">2</td></tr>\n};
 
-                if ( ( param('reminiscences') eq '2' )
+                if ( ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'3'} )
                 {
                     push @costlist, '3';
@@ -897,7 +901,7 @@ END_SQL
                 $chiefsoutput
                     .= qq{<tr bgcolor="$color{'3'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-III.jpg' width='125' height='179'></td><td><b><u>Beatrice Escudo</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: ?<br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Each Beatrice: 2 VP</td></tr></table>" rel="tooltip" class="tooltip"><td>02-III</td><td><b><i>Beatrice Escudo (Chambermaid Chief)</i></b></td><td align="center">2</td></tr>\n};
 
-                if ( ( param('reminiscences') eq '2' )
+                if ( ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'3'} )
                 {
                     push @costlist, '3';
@@ -911,9 +915,9 @@ END_SQL
                 $chiefsoutput
                     .= qq{<tr bgcolor="$color{'4'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-IV.jpg' width='125' height='179'></td><td><b><u>Matilde Wiese</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br />Chambermaid &#8658; [Serving -2]<br /><b>------ During your Starting Phase ------</b><br />You may put a chambermaided Matilde into your Discard pile.  If you do, choose a card from your hand and put it back to the Town.</td></tr></table>" rel="tooltip" class="tooltip"><td>02-IV</td><td><b><i>Matilde Wiese (Chambermaid Chief)</i></b></td><td align="center">2</td></tr>\n};
 
-                if (   ( param('reminiscences') eq '2' )
+                if (   ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'3'}
-                    && ( param('attack') ne '1' ) )
+                    && ( $cgi->param('attack') ne '1' ) )
                 {
                     push @costlist, '3';
                 }
@@ -926,7 +930,7 @@ END_SQL
                 $chiefsoutput
                     .= qq{<tr bgcolor="$color{'5'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/02-V.jpg' width='125' height='179'></td><td><b><u>Beverly Snowfeldt</u></b><br /><i>Chambermaid Chief</i><br /><hr />VP: 1<br /><br />This card can not be used in an Approach.<br /><br />Chambermaid &#8658; [Serving -2]<br /><b>------ Chambermaid bonus ------</b><br />Gain 2 VP if you have one or more Leopold cards.</td></tr></table>" rel="tooltip" class="tooltip"><td>02-V</td><td><b><i>Beverly Snowfeldt (Chambermaid Chief)</i></b></td><td align="center">2</td></tr>\n};
 
-                if ( ( param('reminiscences') eq '2' )
+                if ( ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'3'} )
                 {
                     push @costlist, '3';
@@ -938,7 +942,7 @@ END_SQL
         }
 
         my $apprenticeerror;
-        if (   ( param('apprentice') eq '1' )
+        if (   ( $cgi->param('apprentice') eq '1' )
             && ( !$list{'66'} )
             && $chiefs eq '4' )
         {
@@ -947,7 +951,8 @@ END_SQL
         $suboutput .= hidden( -name => 'apprentice' );
 
         my $costerror;
-        if ( param('cost') || ( param('reminiscences') eq '2' ) ) {
+        if ( $cgi->param('cost') || ( $cgi->param('reminiscences') eq '2' ) )
+        {
             my %counter;
             for my $elem ( values %costlist ) {
                 for my $elem2 (@costlist) {
@@ -1014,7 +1019,7 @@ END_SQL
                 my $num;
 
                 if (   $chiefs eq '4'
-                    && param('apprentice') eq '1'
+                    && $cgi->param('apprentice') eq '1'
                     && !( exists $cache{'66'} )
                     && !( exists $banlist{'66'} )
                     && $counter != $CARD_MAX + 1 )
@@ -1042,7 +1047,7 @@ END_SQL
 
                 redo
                     if (
-                       ( param('crescent') eq '1' )
+                       ( $cgi->param('crescent') eq '1' )
                     && ( $counter == $CARD_MAX )
                     && (   !( exists $cache{'14'} )
                         || !( exists $cache{'15'} )
@@ -1052,7 +1057,7 @@ END_SQL
 
                 redo
                     if (
-                       ( param('crescent') eq '2' )
+                       ( $cgi->param('crescent') eq '2' )
                     && ( $counter > $CARD_MAX - 2 )
                     && (   !( exists $cache{'14'} )
                         || !( exists $cache{'15'} )
@@ -1070,7 +1075,7 @@ END_SQL
                 $listkey[$counter] = $num;
                 $counter++;
 
-                if (   ( param('beer') eq '1' )
+                if (   ( $cgi->param('beer') eq '1' )
                     && ( $counter != $CARD_MAX + 1 )
                     && (   !( exists $cache{'55'} )
                         && !( exists $cache{'56'} ) )
@@ -1088,7 +1093,7 @@ END_SQL
                 }
 
             CRESCENT: {
-                    if (   ( param('crescent') eq '1' )
+                    if (   ( $cgi->param('crescent') eq '1' )
                         && ( $num eq '14' )
                         && ( $counter != $CARD_MAX + 1 ) )
                     {
@@ -1102,7 +1107,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq '1' )
+                    if (   ( $cgi->param('crescent') eq '1' )
                         && ( $num eq '15' )
                         && ( $counter != $CARD_MAX + 1 ) )
                     {
@@ -1116,7 +1121,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq '1' )
+                    if (   ( $cgi->param('crescent') eq '1' )
                         && ( $num eq '16' )
                         && ( $counter != $CARD_MAX + 1 ) )
                     {
@@ -1130,7 +1135,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq '2' )
+                    if (   ( $cgi->param('crescent') eq '2' )
                         && ( $num eq '14' )
                         && ( $counter < $CARD_MAX ) )
                     {
@@ -1146,7 +1151,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq '2' )
+                    if (   ( $cgi->param('crescent') eq '2' )
                         && ( $num eq '15' )
                         && ( $counter < $CARD_MAX ) )
                     {
@@ -1162,7 +1167,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( param('crescent') eq '2' )
+                    if (   ( $cgi->param('crescent') eq '2' )
                         && ( $num eq '16' )
                         && ( $counter < $CARD_MAX ) )
                     {
@@ -1193,7 +1198,9 @@ END_SQL
             my @removeeventsbuffer;
             my @removebuildingsbuffer;
             if ( exists $sets{'1'} ) {
-                if ( param('events') || ( param('attack') eq '1' ) ) {
+                if ( $cgi->param('events')
+                    || ( $cgi->param('attack') eq '1' ) )
+                {
                     push
                         @removebuffer,
                         (
@@ -1205,7 +1212,7 @@ END_SQL
                         qq{<tr bgcolor="$color{'1'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/21.jpg' width='125' height='179'></td><td><b><u>Sora Nakachi</u></b><br /><i>Private Maid</i><br /><hr />VP: 2<br /><b>------ During your Starting Phase ------</b><br />You may move one Event card from a Private Quarter of your choice to an equivalent place in another player's Private Quarters.</td></tr></table>" rel="tooltip" class="tooltip"><td>21</td><td><b><i><font color="#990000">Sora Nakachi (Private Maid)</font></i></b></td><td align="center">7</td></tr>\n}
                         );
                 }
-                if ( param('attack') eq '1' ) {
+                if ( $cgi->param('attack') eq '1' ) {
                     push
                         @removebuffer,
                         (
@@ -1219,14 +1226,14 @@ END_SQL
                 }
             }
             if ( exists $sets{'2'} ) {
-                if ( param('buildings') eq '1' ) {
+                if ( $cgi->param('buildings') eq '1' ) {
                     push
                         @removebuffer,
                         (
                         qq{<tr bgcolor="$color{'2'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/27-II.jpg' width='125' height='179'></td><td><b><u>Silk Amanohara</u></b><br /><i>Exorcist Maid</i><br /><hr /><b>------ During your Starting Phase ------</b><br />If you have 3 or more buildings in your Private Quarters, you may draw a card.</td></tr></table>" rel="tooltip" class="tooltip"><td>27-II</td><td><i>Silk Amanohara (Exorcist Maid)</i></td><td align="center">4</td></tr>\n}
                         );
                 }
-                if ( param('attack') eq '1' ) {
+                if ( $cgi->param('attack') eq '1' ) {
                     push
                         @removebuffer,
                         (
@@ -1235,7 +1242,7 @@ END_SQL
                 }
             }
 
-            if (   ( exists $sets{'3'} && param('reminiscences') eq '1' )
+            if ( ( exists $sets{'3'} && $cgi->param('reminiscences') eq '1' )
                 || ( !exists $sets{'3'} ) )
             {
                 push
@@ -1245,8 +1252,8 @@ END_SQL
                     );
             }
             if (exists $sets{'3'}
-                && (   ( param('attack') eq '1' )
-                    && ( param('reminiscences') ne '1' ) )
+                && (   ( $cgi->param('attack') eq '1' )
+                    && ( $cgi->param('reminiscences') ne '1' ) )
                 )
             {
                 push
@@ -1256,7 +1263,7 @@ END_SQL
                     );
             }
 
-            if ( ( exists $sets{'4'} && param('beer') eq '2' )
+            if ( ( exists $sets{'4'} && $cgi->param('beer') eq '2' )
                 || !exists $sets{'4'} )
             {
                 push
@@ -1271,23 +1278,29 @@ END_SQL
                     );
             }
             if ( exists $sets{'4'} ) {
-                if ((   (   (   param('beer') eq '2' && !(
+                if ((   (   (   $cgi->param('beer') eq '2' && !(
                                     (   exists $sets{'2'}
                                         || ( exists $sets{'5'}
-                                            && !param('couples') )
+                                            && !$cgi->param('couples') )
                                     )
                                     || !(
                                         !exists $sets{'2'}
                                         || ( exists $sets{'5'}
-                                            && param('couples') )
+                                            && $cgi->param('couples') )
                                     )
                                 )
                             )
-                            || ( param('buildings') )
+                            || ( $cgi->param('buildings') )
                         )
-                        && !( param('events') || param('attack') eq '1' )
+                        && !(
+                               $cgi->param('events')
+                            || $cgi->param('attack') eq '1'
+                        )
                     )
-                    && !( param('attack') eq '2' && !param('buildings') )
+                    && !(
+                        $cgi->param('attack') eq '2'
+                        && !$cgi->param('buildings')
+                    )
                     )
                 {
                     push
@@ -1296,8 +1309,12 @@ END_SQL
                         qq{<tr bgcolor="$color{'4'}" title="<table border='0' cellpadding='8' cellspacing='0'><tr valign='top'><td><img src='./cards/20-IV.jpg' width='125' height='179'></td><td><b><u>Heavy Storm</u></b><br /><i>Event</i><br /><b><i>Note: There are 8 of these in the set</i></b><br /><hr />This is placed onto a Building in any player's Private Quarters.  All cards placed underneath this card are treated as though they don't exist.<br /><b>------ At the beginning of your turn ------</b><br />You may Discard a '3 Love' Card from your hand.  If you do, put this card back to the Town.</td></tr></table>" rel="tooltip" class="tooltip"><td>20-IV</td><td><font color="#990000">Heavy Storm</font></td><td align="center">5</td></tr>\n}
                         );
                 }
-                if (   ( param('beer') eq '2' )
-                    && ( !( param('events') || param('attack') eq '1' ) ) )
+                if (( $cgi->param('beer') eq '2' )
+                    && (!(     $cgi->param('events')
+                            || $cgi->param('attack') eq '1'
+                        )
+                    )
+                    )
                 {
                     push
                         @removeeventsbuffer,
@@ -1310,7 +1327,7 @@ END_SQL
             if ( exists $sets{'5'} ) {
 
                 my $blizzard = 0;
-                if ( param('couples')
+                if ( $cgi->param('couples')
                     && ( !exists $sets{'2'} || !exists $sets{'4'} ) )
                 {
                     $blizzard = 1;
@@ -1318,20 +1335,23 @@ END_SQL
                 if ( exists $sets{'2'} || exists $sets{'4'} ) {
                     $blizzard = 0;
                 }
-                if ((   !exists $sets{'2'} && ( !exists $sets{'4'}
-                            || ( exists $sets{'4'} && param('beer') eq '2' ) )
+                if ((   !exists $sets{'2'}
+                        && (!exists $sets{'4'}
+                            || ( exists $sets{'4'}
+                                && $cgi->param('beer') eq '2' )
+                        )
                     )
-                    && ( param('couples') || param('buildings') )
+                    && ( $cgi->param('couples') || $cgi->param('buildings') )
                     )
                 {
                     $blizzard = 1;
                 }
                 if ( ( exists $sets{'2'} || exists $sets{'4'} )
-                    && param('buildings') )
+                    && $cgi->param('buildings') )
                 {
                     $blizzard = 1;
                 }
-                if ( param('events') || param('attack') eq '1' ) {
+                if ( $cgi->param('events') || $cgi->param('attack') eq '1' ) {
                     $blizzard = 0;
                 }
 
@@ -1344,10 +1364,11 @@ END_SQL
                         );
 
                 }
-                if ((   !param('couples')
-                        && ( param('attack') eq '1' || param('events') )
+                if ((   !$cgi->param('couples')
+                        && (   $cgi->param('attack') eq '1'
+                            || $cgi->param('events') )
                     )
-                    && !param('buildings')
+                    && !$cgi->param('buildings')
                     )
                 {
                     push
@@ -1358,13 +1379,13 @@ END_SQL
                 }
             }
 
-            if (   ( @removebuffer && !param('private') )
+            if (   ( @removebuffer && !$cgi->param('private') )
                 || @removerembuffer
                 || @removeeventsbuffer )
             {
                 $suboutput
                     .= '<tr bgcolor="#ffffff"><th colspan="3"></td>&nbsp;</tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
-                if ( @removebuffer && !param('private') ) {
+                if ( @removebuffer && !$cgi->param('private') ) {
                     $suboutput
                         .= qq{<tr bgcolor="#1f1a23"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Private Maids</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
                     for my $elem (@removebuffer) {
@@ -1442,11 +1463,8 @@ COLORKEY_END
     return $suboutput;
 };
 
-
-
 my %states;
 my $current_screen;
-
 
 %states = (
     'Default'                           => \&$front_page,
@@ -1455,7 +1473,7 @@ my $current_screen;
     'Randomize Again With Same Options' => \&$randomize,
 );
 
-$current_screen = param('.State') || 'Default';
+$current_screen = $cgi->param('.State') || 'Default';
 
 if ( !$states{$current_screen} ) {
     croak "No screen for $current_screen";
@@ -1465,7 +1483,7 @@ while ( my ( $screen_name, $function ) = each %states ) {
     $output .= $function->( $screen_name eq $current_screen );
 }
 
-$output .= end_form();
+$output .= $cgi->end_form();
 $dbh->disconnect;
 
 $output .= <<'FOOTER_END';
