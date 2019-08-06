@@ -206,13 +206,13 @@ my $donate = $h->div(
 my $output
     = header()
     . qq {<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n}
-    . qq {<html xmlns="http://www.w3.org/1999/xhtml">};
+    . qq {<html xmlns="http://www.w3.org/1999/xhtml">\n};
 
 $output .= $h->head(
     [   $h->title('Tanto Cuore &#9829; Town Randomizer'),
         $h->meta(
             {   'http-equiv' => 'Content-Type',
-                content      => "text/html;charset=ISO-8859-1",
+                content      => 'text/html;charset=ISO-8859-1',
             }
         ),
         $h->meta(
@@ -386,7 +386,7 @@ END_SQL
                                             valign => 'middle',
                                         },
                                         '&nbsp;&nbsp;'
-                                            . &$to_page('Randomize')
+                                            . &{$to_page}('Randomize')
 
                                     ),
                                 ]
@@ -622,7 +622,7 @@ END_OPTIONS
     $suboutput .= '</select></div></div>';
 
     $suboutput
-        .= '<p class="hiddenoptions">' . &$to_page('Randomize') . '</p>';
+        .= '<p class="hiddenoptions">' . &{$to_page}('Randomize') . '</p>';
     $suboutput
         .= '<p class="hiddenoptions"><input type="reset" value="Clear All Selections" /></p>';
     $suboutput .= '<select id="banlist" style="display: none">';
@@ -841,12 +841,12 @@ END_SQL
 
         while ( @fields = $cursor->fetchrow ) {
 
-            $costlist{ $fields[0] } = "$fields[5]";
+            $costlist{ $fields['0'] } = "$fields['5']";
 
-            $list{"$fields[0]"} = &$card_format(
-                $fields[2], $fields[4],  $fields[1],
-                $fields[3], $fields[12], $fields[5],
-                $fields[8], $fields[7],  $fields[6]
+            $list{"$fields['0']"} = &{$card_format}(
+                $fields['2'], $fields['4'],  $fields['1'],
+                $fields['3'], $fields['12'], $fields['5'],
+                $fields['8'], $fields['7'],  $fields['6']
             );
 
         }
@@ -932,10 +932,10 @@ END_SQL
     SWITCH: {
             if ( $chiefs eq '1' ) {
                 $chiefsoutput
-                    = &$card_format( &$cardlist_other_query( '1', '1' ) );
+                    = &{$card_format}( &{$cardlist_other_query}(qw(1 1)) );
 
                 $chiefsoutput
-                    .= &$card_format( &$cardlist_other_query( '1', '2' ) );
+                    .= &{$card_format}( &{$cardlist_other_query}(qw(1 2)) );
 
                 if (   ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'2'}
@@ -948,10 +948,10 @@ END_SQL
             }
             if ( $chiefs eq '2' ) {
                 $chiefsoutput
-                    = &$card_format( &$cardlist_other_query( '2', '1' ) );
+                    = &{$card_format}( &{$cardlist_other_query}(qw(2 1)) );
 
                 $chiefsoutput
-                    .= &$card_format( &$cardlist_other_query( '2', '2' ) );
+                    .= &{$card_format}( &{$cardlist_other_query}(qw(2 2)) );
 
                 if ( ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'3'} )
@@ -963,10 +963,10 @@ END_SQL
             }
             if ( $chiefs eq '3' ) {
                 $chiefsoutput
-                    = &$card_format( &$cardlist_other_query( '3', '1' ) );
+                    = &{$card_format}( &{$cardlist_other_query}(qw(3 1)) );
 
                 $chiefsoutput
-                    .= &$card_format( &$cardlist_other_query( '3', '2' ) );
+                    .= &{$card_format}( &{$cardlist_other_query}(qw(3 2)) );
 
                 if ( ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'3'} )
@@ -978,10 +978,10 @@ END_SQL
             }
             if ( $chiefs eq '4' ) {
                 $chiefsoutput
-                    = &$card_format( &$cardlist_other_query( '4', '1' ) );
+                    = &{$card_format}( &{$cardlist_other_query}(qw(4 1)) );
 
                 $chiefsoutput
-                    .= &$card_format( &$cardlist_other_query( '4', '2' ) );
+                    .= &{$card_format}( &{$cardlist_other_query}(qw(4 2)) );
 
                 if (   ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'3'}
@@ -994,10 +994,10 @@ END_SQL
             }
             if ( $chiefs eq '5' ) {
                 $chiefsoutput
-                    = &$card_format( &$cardlist_other_query( '5', '1' ) );
+                    = &{$card_format}( &{$cardlist_other_query}(qw(5 1)) );
 
                 $chiefsoutput
-                    .= &$card_format( &$cardlist_other_query( '5', '2' ) );
+                    .= &{$card_format}( &{$cardlist_other_query}(qw(5 2)) );
 
                 if ( ( $cgi->param('reminiscences') eq '2' )
                     && !exists $costignore{'3'} )
@@ -1275,34 +1275,40 @@ END_SQL
                 {
                     push
                         @removebuffer,
-                        ( &$card_format( &$cardlist_other_query( '1', '20' ) )
+                        (
+                        &{$card_format}( &{$cardlist_other_query}(qw(1 20)) )
                         );
                     push
                         @removebuffer,
-                        ( &$card_format( &$cardlist_other_query( '1', '21' ) )
+                        (
+                        &{$card_format}( &{$cardlist_other_query}(qw(1 21)) )
                         );
                 }
                 if ( $cgi->param('attack') eq '1' ) {
                     push
                         @removebuffer,
-                        ( &$card_format( &$cardlist_other_query( '1', '19' ) )
+                        (
+                        &{$card_format}( &{$cardlist_other_query}(qw(1 19)) )
                         );
                     push
                         @removebuffer,
-                        ( &$card_format( &$cardlist_other_query( '1', '25' ) )
+                        (
+                        &{$card_format}( &{$cardlist_other_query}(qw(1 25)) )
                         );
                 }
             }
             if ( exists $sets{'2'} ) {
                 if ( $cgi->param('buildings') eq '1' ) {
                     push @removebuffer,
-                        ( &$card_format( &$cardlist_other_query( '2', '27' ) )
+                        (
+                        &{$card_format}( &{$cardlist_other_query}(qw(2 27)) )
                         );
                 }
                 if ( $cgi->param('attack') eq '1' ) {
                     push
                         @removebuffer,
-                        ( &$card_format( &$cardlist_other_query( '2', '20' ) )
+                        (
+                        &{$card_format}( &{$cardlist_other_query}(qw(2 20)) )
                         );
                 }
             }
@@ -1313,7 +1319,7 @@ END_SQL
                 push
                     @removebuffer,
                     (
-                    &$card_format( &$cardlist_other_query( '101', '14' ) ) );
+                    &{$card_format}( &{$cardlist_other_query}(qw(101 14)) ) );
             }
             if (exists $sets{'3'}
                 && (   ( $cgi->param('attack') eq '1' )
@@ -1322,7 +1328,7 @@ END_SQL
             {
                 push
                     @removerembuffer,
-                    ( &$card_format( &$cardlist_other_query( '3', '30' ) ) );
+                    ( &{$card_format}( &{$cardlist_other_query}(qw(3 30)) ) );
             }
 
             if ( ( exists $sets{'4'} && $cgi->param('beer') eq '2' )
@@ -1331,11 +1337,11 @@ END_SQL
                 push
                     @removebuffer,
                     (
-                    &$card_format( &$cardlist_other_query( '101', '19' ) ) );
+                    &{$card_format}( &{$cardlist_other_query}(qw(101 19)) ) );
                 push
                     @removebuffer,
                     (
-                    &$card_format( &$cardlist_other_query( '101', '34' ) ) );
+                    &{$card_format}( &{$cardlist_other_query}(qw(101 34)) ) );
             }
             if ( exists $sets{'4'} ) {
                 if ((   (   (   $cgi->param('beer') eq '2' && !(
@@ -1365,7 +1371,8 @@ END_SQL
                 {
                     push
                         @removeeventsbuffer,
-                        ( &$card_format( &$cardlist_other_query( '4', '20' ) )
+                        (
+                        &{$card_format}( &{$cardlist_other_query}(qw(4 20)) )
                         );
                 }
                 if (( $cgi->param('beer') eq '2' )
@@ -1377,7 +1384,8 @@ END_SQL
                 {
                     push
                         @removeeventsbuffer,
-                        ( &$card_format( &$cardlist_other_query( '4', '21' ) )
+                        (
+                        &{$card_format}( &{$cardlist_other_query}(qw(4 21)) )
                         );
                 }
             }
@@ -1417,7 +1425,8 @@ END_SQL
 
                     push
                         @removeeventsbuffer,
-                        ( &$card_format( &$cardlist_other_query( '5', '20' ) )
+                        (
+                        &{$card_format}( &{$cardlist_other_query}(qw(5 20)) )
                         );
 
                 }
@@ -1430,11 +1439,8 @@ END_SQL
                 {
                     push
                         @removebuildingsbuffer,
-                        (
-                        &$card_format(
-                            &$cardlist_other_query( '101', '43' )
-                        )
-                        );
+                        ( &{$card_format}
+                            ( &{$cardlist_other_query}(qw(101 43)) ) );
                 }
             }
 
@@ -1501,11 +1507,13 @@ END_COLORKEY
 
             $suboutput
                 .= '<br /><p>'
-                . &$to_page('Randomize Again With Same Options')
+                . &{$to_page}('Randomize Again With Same Options')
                 . "</p>\n";
 
             $suboutput
-                .= '<p>' . &$to_page('New Randomization Criteria') . "</p>\n";
+                .= '<p>'
+                . &{$to_page}('New Randomization Criteria')
+                . "</p>\n";
             $newbutton = 0;
             $suboutput .= "</td></tr></table>\n";
 
@@ -1514,7 +1522,7 @@ END_COLORKEY
     }
     if ($newbutton) {
         $suboutput
-            .= '<p>' . &$to_page('New Randomization Criteria') . "</p>\n";
+            .= '<p>' . &{$to_page}('New Randomization Criteria') . "</p>\n";
     }
 
     $suboutput .= '<br />' . $donate;
@@ -1526,10 +1534,10 @@ my %states         = ();
 my $current_screen = q{};
 
 %states = (
-    'Default'                           => \&$front_page,
-    'New Randomization Criteria'        => \&$front_page,
-    'Randomize'                         => \&$randomize,
-    'Randomize Again With Same Options' => \&$randomize,
+    'Default'                           => \&{$front_page},
+    'New Randomization Criteria'        => \&{$front_page},
+    'Randomize'                         => \&{$randomize},
+    'Randomize Again With Same Options' => \&{$randomize},
 );
 
 $current_screen = $cgi->param('.State') || 'Default';
@@ -1551,5 +1559,5 @@ $output .= <<'END_FOOTER';
 </html>
 END_FOOTER
 
-print $output;
+print $output || croak;
 
