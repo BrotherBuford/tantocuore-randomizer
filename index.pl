@@ -209,7 +209,7 @@ my $output
     . qq {<html xmlns="http://www.w3.org/1999/xhtml">};
 
 $output .= $h->head(
-    [   $h->title( { foo => 'bar' }, 'Tanto Cuore &#9829; Town Randomizer' ),
+    [   $h->title( 'Tanto Cuore &#9829; Town Randomizer' ),
         $h->meta(
             {   'http-equiv' => 'Content-Type',
                 content      => "text/html;charset=ISO-8859-1",
@@ -382,14 +382,13 @@ END_SQL
                                             ]
                                         ),
 
-                                        $h->td(
-                                            {   align  => 'center',
-                                                valign => 'middle',
-                                            },
-                                            '&nbsp;&nbsp'
-                                                . &$to_page('Randomize')
+                                        {   align  => 'center',
+                                            valign => 'middle',
+                                        },
+                                        '&nbsp;&nbsp;'
+                                            . &$to_page('Randomize')
+                                      
                                         ),
-                                    ),
                                 ]
                             ),
                         ]
@@ -420,7 +419,7 @@ END_SQL
                     'You may also include the following selection criteria')
                 )
                 . $h->br
-                . $h->small('All option sections may be combined</small>')
+                . $h->small('All option sections may be combined')
             )
 
         ) . $h->br;
