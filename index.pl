@@ -71,7 +71,7 @@ my $card_format = sub {
 
     my $suboutput = qq{<tr bgcolor='$color{$cf_gameset}' title='};
 
-    my $tooltip .= $h->table(
+    my $tooltip = $h->table(
         {   border      => '0',
             cellpadding => '8',
             cellspacing => '0',
