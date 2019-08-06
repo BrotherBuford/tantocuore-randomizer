@@ -1329,7 +1329,9 @@ END_SQL
             }
             if ( exists $sets{'2'} ) {
                 if ( $cgi->param('buildings') eq '1' ) {
-                    push @removebuffer,;
+                    push @removebuffer,
+                        ( &$card_format( &$cardlist_other_query( '2', '27' ) )
+                        );
                 }
                 if ( $cgi->param('attack') eq '1' ) {
                     push
