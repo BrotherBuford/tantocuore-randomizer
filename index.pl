@@ -209,7 +209,7 @@ my $output
     . qq {<html xmlns="http://www.w3.org/1999/xhtml">};
 
 $output .= $h->head(
-    [   $h->title( 'Tanto Cuore &#9829; Town Randomizer' ),
+    [   $h->title('Tanto Cuore &#9829; Town Randomizer'),
         $h->meta(
             {   'http-equiv' => 'Content-Type',
                 content      => "text/html;charset=ISO-8859-1",
@@ -387,8 +387,8 @@ END_SQL
                                         },
                                         '&nbsp;&nbsp;'
                                             . &$to_page('Randomize')
-                                      
-                                        ),
+
+                                    ),
                                 ]
                             ),
                         ]
