@@ -682,6 +682,8 @@ my $randomize = sub {
         @sets = $cgi->param('sets');
         my %sets        = ();
         my $setlist_sql = q{};
+        my $banlist_sql = q{};
+        my $options_sql = q{};
         my @chiefs      = ();
         for my $elem (@sets) {
 
@@ -706,7 +708,6 @@ my $randomize = sub {
 
         my %banlist = ();
 
-        my $banlist_sql = q{};
         for my $elem (@banned) {
 
             $cgi->param(
@@ -719,7 +720,6 @@ my $randomize = sub {
         $suboutput .= hidden( -name => 'banned' );
         $banlist_sql =~ s{\A\sand}{}xms;
 
-        my $attack_sql = q{};
         if ( $cgi->param('attack') ) {
             $cgi->param(
                 -name  => 'attack',
@@ -727,11 +727,11 @@ my $randomize = sub {
             );
         SWITCH: {
                 if ( $cgi->param('attack') eq '1' ) {
-                    $attack_sql = ' and (attack != "1") and (events != "1")';
+                    $options_sql = ' and (attack != "1") and (events != "1")';
                     last SWITCH;
                 }
                 if ( $cgi->param('attack') eq '2' ) {
-                    $attack_sql = ' and (attack = "1")';
+                    $sql = ' and (attack = "1")';
                     last SWITCH;
                 }
                 my $nothing = 0;
@@ -746,46 +746,42 @@ my $randomize = sub {
                 -name  => 'events',
                 -value => $cgi->param('events')
             );
-            $events_sql = ' and (events != "1")';
+            $options_sql = ' and (events != "1")';
             $suboutput .= hidden( -name => 'events' );
         }
 
-        my $beer_sql = q{};
         if ( $cgi->param('beer') eq '2' ) {
             $cgi->param(
                 -name  => 'beer',
                 -value => $cgi->param('beer')
             );
-            $beer_sql = ' and (beer != "1")';
+            $options_sql = ' and (beer != "1")';
         }
         if ( $cgi->param('beer') ) {
             $suboutput .= hidden( -name => 'beer' );
         }
 
-        my $buildings_sql = q{};
         if ( $cgi->param('buildings') ) {
             $cgi->param(
                 -name  => 'buildings',
                 -value => $cgi->param('buildings')
             );
-            $buildings_sql = ' and (buildings != "1")';
+            $options_sql = ' and (buildings != "1")';
             $suboutput .= hidden( -name => 'buildings' );
         }
 
-        my $private_sql = q{};
         if ( $cgi->param('private') ) {
             $cgi->param(
                 -name  => 'private',
                 -value => $cgi->param('private')
             );
-            $private_sql = ' and (private != "1")';
+            $options_sql = ' and (private != "1")';
             $suboutput .= hidden( -name => 'private' );
         }
 
-        my $reminiscences_sql = q{};
         if ( $cgi->param('reminiscences') ) {
             if ( $cgi->param('reminiscences') eq '1' ) {
-                $reminiscences_sql = ' and (reminiscences != "1")';
+                $options_sql = ' and (reminiscences != "1")';
             }
             $cgi->param(
                 -name  => 'reminiscences',
@@ -794,13 +790,12 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'reminiscences' );
         }
 
-        my $couples_sql = q{};
         if ( $cgi->param('couples') ) {
             $cgi->param(
                 -name  => 'couples',
                 -value => $cgi->param('couples')
             );
-            $private_sql = ' and (couples != "1")';
+            $options_sql = ' and (couples != "1")';
             $suboutput .= hidden( -name => 'couples' );
         }
 
@@ -832,15 +827,9 @@ END_SQL
         $sql .= '(' . $setlist_sql . ')';
 
         ($sql) .=
-              ($banlist_sql)       ? ( ' and (' . $banlist_sql . ')' )
-            : ($attack_sql)        ? ($attack_sql)
-            : ($events_sql)        ? ($events_sql)
-            : ($buildings_sql)     ? ($buildings_sql)
-            : ($private_sql)       ? ($private_sql)
-            : ($reminiscences_sql) ? ($reminiscences_sql)
-            : ($beer_sql)          ? ($beer_sql)
-            : ($couples_sql)       ? ($couples_sql)
-            :                        (q{});
+              ($banlist_sql) ? ( ' and (' . $banlist_sql . ')' )
+            : ($options_sql) ? ($options_sql)
+            :                  (q{});
 
         my $cursor = $dbh->prepare($sql);
 
