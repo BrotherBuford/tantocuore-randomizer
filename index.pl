@@ -31,7 +31,7 @@ my $dbh = DBI->connect(
 
 Readonly my $CARD_MAX => 10;
 
-my %color = (
+Readonly my %COLOR => (
     '1'   => '#ffccee',
     '2'   => '#ffddbb',
     '3'   => '#cceeff',
@@ -69,7 +69,7 @@ my $card_format = sub {
     my $cardnumber      = sprintf '%02d', "$cf_cardnum";
     my $carddesignation = $prgameset . $cardnumber . $gameset;
 
-    my $suboutput = qq{<tr bgcolor='$color{$cf_gameset}' title='};
+    my $suboutput = qq{<tr bgcolor='$COLOR{$cf_gameset}' title='};
 
     my $tooltip = $h->table(
         {   border      => '0',
@@ -1499,12 +1499,12 @@ END_SQL
 <table>
 
 <tr><th colspan="2">Color Legend:</th></tr>
-<tr><td width="25" bgcolor="$color{1}">&nbsp;</td><td>Tanto Cuore</td></tr>
-<tr><td width="25" bgcolor="$color{2}">&nbsp;</td><td>Expanding the House</td></tr>
-<tr><td width="25" bgcolor="$color{3}">&nbsp;</td><td>Romantic Vacation</td></tr>
-<tr><td width="25" bgcolor="$color{4}">&nbsp;</td><td>Oktoberfest</td></tr>
-<tr><td width="25" bgcolor="$color{5}">&nbsp;</td><td>Winter Romance</td></tr>
-<tr><td width="25" bgcolor="$color{101}">&nbsp;</td><td>Promo Card</td></tr>
+<tr><td width="25" bgcolor="$COLOR{1}">&nbsp;</td><td>Tanto Cuore</td></tr>
+<tr><td width="25" bgcolor="$COLOR{2}">&nbsp;</td><td>Expanding the House</td></tr>
+<tr><td width="25" bgcolor="$COLOR{3}">&nbsp;</td><td>Romantic Vacation</td></tr>
+<tr><td width="25" bgcolor="$COLOR{4}">&nbsp;</td><td>Oktoberfest</td></tr>
+<tr><td width="25" bgcolor="$COLOR{5}">&nbsp;</td><td>Winter Romance</td></tr>
+<tr><td width="25" bgcolor="$COLOR{101}">&nbsp;</td><td>Promo Card</td></tr>
 </table>
 
 <br /><table><tr><th colspan="2">Text Legend:</th></tr><tr><td>Red:</td><td><font color="#990000">Card can negatively affect other players</font></td></tr><tr><td>Bold:</td><td><b>Card has a VP indicator</b></td></tr><tr><td>Italics:</td><td><i>Chambermaid</i></td></tr></table>
