@@ -831,30 +831,17 @@ my $randomize = sub {
 END_SQL
 
         $sql .= '(' . $setlist_sql . ')';
-        if ($banlist_sql) {
-            $sql .= ' and (' . $banlist_sql . ')';
-        }
-        if ($attack_sql) {
-            $sql .= $attack_sql;
-        }
-        if ($events_sql) {
-            $sql .= $events_sql;
-        }
-        if ($buildings_sql) {
-            $sql .= $buildings_sql;
-        }
-        if ($private_sql) {
-            $sql .= $private_sql;
-        }
-        if ($reminiscences_sql) {
-            $sql .= $reminiscences_sql;
-        }
-        if ($beer_sql) {
-            $sql .= $beer_sql;
-        }
-        if ($couples_sql) {
-            $sql .= $couples_sql;
-        }
+
+        ($sql) .=
+              ($banlist_sql)       ? ( ' and (' . $banlist_sql . ')' )
+            : ($attack_sql)        ? ($attack_sql)
+            : ($events_sql)        ? ($events_sql)
+            : ($buildings_sql)     ? ($buildings_sql)
+            : ($private_sql)       ? ($private_sql)
+            : ($reminiscences_sql) ? ($reminiscences_sql)
+            : ($beer_sql)          ? ($beer_sql)
+            : ($couples_sql)       ? ($couples_sql)
+            :                        (q{});
 
         my $cursor = $dbh->prepare($sql);
 
@@ -893,24 +880,15 @@ END_SQL
             );
         SWITCH: {
                 if ( $cgi->param('crescent') eq '1' ) {
-                CRESCENT: {
-                        if ( $list{'14'} && !( $list{'15'} || $list{'16'} ) )
-                        {
-                            $crescenterror = 1;
-                            last CRESCENT;
-                        }
-                        if ( $list{'15'} && !( $list{'14'} || $list{'16'} ) )
-                        {
-                            $crescenterror = 1;
-                            last CRESCENT;
-                        }
-                        if ( $list{'16'} && !( $list{'14'} || $list{'15'} ) )
-                        {
-                            $crescenterror = 1;
-                            last CRESCENT;
-                        }
-                        my $nothing = 0;
-                    }
+
+                    ($crescenterror)
+                        = ( $list{'14'} && !( $list{'15'} || $list{'16'} ) )
+                        ? ('1')
+                        : ( $list{'15'} && !( $list{'14'} || $list{'16'} ) )
+                        ? ('1')
+                        : ( $list{'16'} && !( $list{'14'} || $list{'15'} ) )
+                        ? ('1')
+                        : ($crescenterror);
                     last SWITCH;
                 }
                 if (   ( $cgi->param('crescent') eq '2' )
