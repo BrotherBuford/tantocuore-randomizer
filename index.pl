@@ -1475,7 +1475,7 @@ END_SQL
                 || @removeeventsbuffer )
             {
                 $suboutput
-                    .= '<tr bgcolor="#ffffff"><th colspan="3"></th>&nbsp;</tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
+                    .= '<tr bgcolor="#ffffff"><th colspan="3">&nbsp;</th></tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
                 if ( @removebuffer && !$cgi->param('private') ) {
                     $suboutput
                         .= qq{<tr bgcolor="#1f1a23"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Private Maids</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
