@@ -31,7 +31,7 @@ my $dbh = DBI->connect(
 
 Readonly my $CARD_MAX => 10;
 
-Readonly my %COLOR => (
+Readonly my %COLOR_OF => (
     '1'   => '#ffccee',
     '2'   => '#ffddbb',
     '3'   => '#cceeff',
@@ -42,7 +42,7 @@ Readonly my %COLOR => (
 
 my $to_page = sub {
     return $cgi->submit(
-        -NAME  => '.State',
+        -NAME  => '.Page',
         -CLASS => 'topage',
         -VALUE => shift
     );
@@ -69,7 +69,7 @@ my $card_format = sub {
     my $cardnumber      = sprintf '%02d', "$cf_cardnum";
     my $carddesignation = $prgameset . $cardnumber . $gameset;
 
-    my $suboutput = qq{<tr bgcolor='$COLOR{$cf_gameset}' title='};
+    my $suboutput = qq{<tr bgcolor='$COLOR_OF{$cf_gameset}' title='};
 
     my $tooltip = $h->table(
         {   border      => '0',
@@ -680,7 +680,7 @@ my $randomize = sub {
 
         my @sets = ();
         @sets = $cgi->param('sets');
-        my %sets        = ();
+        my %set_is        = ();
         my $setlist_sql = q{};
         my $banlist_sql = q{};
         my $options_sql = q{};
@@ -693,7 +693,7 @@ my $randomize = sub {
             );
 
             $setlist_sql .= qq{ or gameset = "$elem"};
-            $sets{$elem} = 1;
+            $set_is{$elem} = 1;
             if ( $elem ne '101' ) {
                 push @chiefs, $elem;
             }
@@ -706,7 +706,7 @@ my $randomize = sub {
         my @banned = ();
         @banned = $cgi->param('banned');
 
-        my %banlist = ();
+        my %ban_for = ();
 
         for my $elem (@banned) {
 
@@ -714,7 +714,7 @@ my $randomize = sub {
                 -name  => 'banned',
                 -value => "$elem"
             );
-            $banlist{$elem} = 1;
+            $ban_for{$elem} = 1;
             $banlist_sql .= qq{ and ID != "$elem"};
         }
         $suboutput .= hidden( -name => 'banned' );
@@ -799,11 +799,11 @@ my $randomize = sub {
             $suboutput .= hidden( -name => 'couples' );
         }
 
-        my %costlist = ();
+        my %cost_of = ();
 
         my @fields = ();
         my @list   = ();
-        my %list   = ();
+        my %list_has   = ();
         $sql = <<'END_SQL';
 	  SELECT
    ID,
@@ -837,13 +837,13 @@ END_SQL
 
         @fields = ();
         @list   = ();
-        %list   = ();
+        %list_has   = ();
 
         while ( @fields = $cursor->fetchrow ) {
 
-            $costlist{ $fields['0'] } = "$fields['5']";
+            $cost_of{ $fields['0'] } = "$fields['5']";
 
-            $list{"$fields['0']"} = &{$card_format}(
+            $list_has{"$fields['0']"} = &{$card_format}(
                 $fields['2'], $fields['4'],  $fields['1'],
                 $fields['3'], $fields['12'], $fields['5'],
                 $fields['8'], $fields['7'],  $fields['6']
@@ -855,7 +855,7 @@ END_SQL
 
         my $barmaiderror = q{};
         if (   ( $cgi->param('beer') eq '1' )
-            && ( !$list{'55'} && !$list{'56'} ) )
+            && ( !$list_has{'55'} && !$list_has{'56'} ) )
         {
             $barmaiderror = 1;
         }
@@ -870,18 +870,18 @@ END_SQL
                 if ( $cgi->param('crescent') eq '1' ) {
 
                     ($crescenterror)
-                        = ( $list{'14'} && !( $list{'15'} || $list{'16'} ) )
+                        = ( $list_has{'14'} && !( $list_has{'15'} || $list_has{'16'} ) )
                         ? ('1')
-                        : ( $list{'15'} && !( $list{'14'} || $list{'16'} ) )
+                        : ( $list_has{'15'} && !( $list_has{'14'} || $list_has{'16'} ) )
                         ? ('1')
-                        : ( $list{'16'} && !( $list{'14'} || $list{'15'} ) )
+                        : ( $list_has{'16'} && !( $list_has{'14'} || $list_has{'15'} ) )
                         ? ('1')
                         : ($crescenterror);
                     last SWITCH;
                 }
                 if (   ( $cgi->param('crescent') eq '2' )
-                    && ( $list{'14'} || $list{'15'} || $list{'16'} )
-                    && !( $list{'14'} && $list{'15'} && $list{'16'} ) )
+                    && ( $list_has{'14'} || $list_has{'15'} || $list_has{'16'} )
+                    && !( $list_has{'14'} && $list_has{'15'} && $list_has{'16'} ) )
                 {
                     $crescenterror = 1;
                     last SWITCH;
@@ -894,19 +894,19 @@ END_SQL
 
         my @costlist = ();
         @costlist = $cgi->param('cost');
-        my %costignore = ();
+        my %costignore_has = ();
         for my $elem (@costlist) {
         SWITCH: {
                 if ( $elem eq '2' ) {
-                    $costignore{'2'} = 1;
+                    $costignore_has{'2'} = 1;
                     last SWITCH;
                 }
                 if ( $elem eq '3' ) {
-                    $costignore{'3'} = 1;
+                    $costignore_has{'3'} = 1;
                     last SWITCH;
                 }
                 if ( $elem eq '5' ) {
-                    $costignore{'5'} = 1;
+                    $costignore_has{'5'} = 1;
                     last SWITCH;
                 }
                 my $nothing = 0;
@@ -920,7 +920,7 @@ END_SQL
         }
 
         if ( ( $cgi->param('reminiscences') eq '2' )
-            && !exists $costignore{'5'} )
+            && !exists $costignore_has{'5'} )
         {
             push @costlist, '5';
         }
@@ -938,7 +938,7 @@ END_SQL
                     .= &{$card_format}( &{$cardlist_other_query}(qw(1 2)) );
 
                 if (   ( $cgi->param('reminiscences') eq '2' )
-                    && !exists $costignore{'2'}
+                    && !exists $costignore_has{'2'}
                     && ( $cgi->param('attack') ne '1' ) )
                 {
                     push @costlist, '2';
@@ -954,7 +954,7 @@ END_SQL
                     .= &{$card_format}( &{$cardlist_other_query}(qw(2 2)) );
 
                 if ( ( $cgi->param('reminiscences') eq '2' )
-                    && !exists $costignore{'3'} )
+                    && !exists $costignore_has{'3'} )
                 {
                     push @costlist, '3';
                 }
@@ -969,7 +969,7 @@ END_SQL
                     .= &{$card_format}( &{$cardlist_other_query}(qw(3 2)) );
 
                 if ( ( $cgi->param('reminiscences') eq '2' )
-                    && !exists $costignore{'3'} )
+                    && !exists $costignore_has{'3'} )
                 {
                     push @costlist, '3';
                 }
@@ -984,7 +984,7 @@ END_SQL
                     .= &{$card_format}( &{$cardlist_other_query}(qw(4 2)) );
 
                 if (   ( $cgi->param('reminiscences') eq '2' )
-                    && !exists $costignore{'3'}
+                    && !exists $costignore_has{'3'}
                     && ( $cgi->param('attack') ne '1' ) )
                 {
                     push @costlist, '3';
@@ -1000,7 +1000,7 @@ END_SQL
                     .= &{$card_format}( &{$cardlist_other_query}(qw(5 2)) );
 
                 if ( ( $cgi->param('reminiscences') eq '2' )
-                    && !exists $costignore{'3'} )
+                    && !exists $costignore_has{'3'} )
                 {
                     push @costlist, '3';
                 }
@@ -1012,7 +1012,7 @@ END_SQL
 
         my $apprenticeerror;
         if (   ( $cgi->param('apprentice') eq '1' )
-            && ( !$list{'66'} )
+            && ( !$list_has{'66'} )
             && $chiefs eq '4' )
         {
             $apprenticeerror = 1;
@@ -1022,26 +1022,26 @@ END_SQL
         my $costerror;
         if ( $cgi->param('cost') || ( $cgi->param('reminiscences') eq '2' ) )
         {
-            my %counter = ();
-            for my $elem ( values %costlist ) {
+            my %counter_has = ();
+            for my $elem ( values %cost_of ) {
                 for my $elem2 (@costlist) {
                     if ( $elem eq $elem2 ) {
-                        if ( !exists $counter{"$elem2"} ) {
-                            $counter{"$elem2"} = 1;
+                        if ( !exists $counter_has{"$elem2"} ) {
+                            $counter_has{"$elem2"} = 1;
                         }
-                        else { $counter{"$elem2"}++; }
+                        else { $counter_has{"$elem2"}++; }
                     }
                 }
             }
 
             for my $elem (@costlist) {
-                if ( !exists $counter{$elem} ) { $costerror = 1; }
+                if ( !exists $counter_has{$elem} ) { $costerror = 1; }
             }
 
         }
 
     SWITCH: {
-            if ( keys %list < $CARD_MAX ) {
+            if ( keys %list_has < $CARD_MAX ) {
                 $suboutput
                     .= qq{<p class="error"><b>Error:</b> Less than $CARD_MAX cards available to randomize.</p>\n};
                 last SWITCH;
@@ -1078,11 +1078,11 @@ END_SQL
                 .= qq{<tr bgcolor="#096fb8"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">General Maids/Butlers</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
 
             my @id_numbers = ();
-            @id_numbers = keys %list;
+            @id_numbers = keys %list_has;
             my $counter = 1;
             my @listkey = ();
 
-            my %cache = ();
+            my %cache_has = ();
 
             while ( $counter <= $CARD_MAX ) {
 
@@ -1090,8 +1090,8 @@ END_SQL
 
                 if (   $chiefs eq '4'
                     && $cgi->param('apprentice') eq '1'
-                    && !( exists $cache{'66'} )
-                    && !( exists $banlist{'66'} )
+                    && !( exists $cache_has{'66'} )
+                    && !( exists $ban_for{'66'} )
                     && $counter != $CARD_MAX + 1 )
                 {
                     $num = '66';
@@ -1102,8 +1102,8 @@ END_SQL
                         my @costcache    = ();
                         my $costtosearch = q{};
                         $costtosearch = shift @costlist;
-                        for my $elem ( keys %costlist ) {
-                            if ( $costlist{$elem} eq $costtosearch ) {
+                        for my $elem ( keys %cost_of ) {
+                            if ( $cost_of{$elem} eq $costtosearch ) {
                                 push @costcache, $elem;
                             }
                         }
@@ -1120,9 +1120,9 @@ END_SQL
                     if (
                        ( $cgi->param('crescent') eq '1' )
                     && ( $counter == $CARD_MAX )
-                    && (   !( exists $cache{'14'} )
-                        || !( exists $cache{'15'} )
-                        || !( exists $cache{'16'} ) )
+                    && (   !( exists $cache_has{'14'} )
+                        || !( exists $cache_has{'15'} )
+                        || !( exists $cache_has{'16'} ) )
                     && ( $num eq '14' || $num eq '15' || $num eq '16' )
                     );
 
@@ -1130,34 +1130,34 @@ END_SQL
                     if (
                        ( $cgi->param('crescent') eq '2' )
                     && ( $counter > $CARD_MAX - 2 )
-                    && (   !( exists $cache{'14'} )
-                        || !( exists $cache{'15'} )
-                        || !( exists $cache{'16'} ) )
+                    && (   !( exists $cache_has{'14'} )
+                        || !( exists $cache_has{'15'} )
+                        || !( exists $cache_has{'16'} ) )
                     && (   ( $num eq '14' )
                         || ( $num eq '15' )
                         || ( $num eq '16' ) )
                     );
 
                 redo
-                    if exists $cache{$num}
+                    if exists $cache_has{$num}
                     ;    # redo the loop if the number already exists
-                $cache{"$num"} = 1;
+                $cache_has{"$num"} = 1;
 
                 $listkey[$counter] = $num;
                 $counter++;
 
                 if (   ( $cgi->param('beer') eq '1' )
                     && ( $counter != $CARD_MAX + 1 )
-                    && (   !( exists $cache{'55'} )
-                        && !( exists $cache{'56'} ) )
+                    && (   !( exists $cache_has{'55'} )
+                        && !( exists $cache_has{'56'} ) )
                     )
                 {
                     my @barmaid_ids = qw(55 56);
                     my $newnum      = $barmaid_ids[ rand @barmaid_ids ];
-                    if (   !( exists $cache{"$newnum"} )
-                        && !( exists $banlist{"$newnum"} ) )
+                    if (   !( exists $cache_has{"$newnum"} )
+                        && !( exists $ban_for{"$newnum"} ) )
                     {
-                        $cache{"$newnum"} = 1;
+                        $cache_has{"$newnum"} = 1;
                         $listkey[$counter] = $newnum;
                         $counter++;
                     }
@@ -1170,9 +1170,9 @@ END_SQL
                     {
                         my @crescent_ids = qw(15 16);
                         my $newnum = $crescent_ids[ rand @crescent_ids ];
-                        if ( !( exists $cache{"$newnum"} ) ) {
-                            redo CRESCENT if exists $banlist{"$newnum"};
-                            $cache{"$newnum"} = 1;
+                        if ( !( exists $cache_has{"$newnum"} ) ) {
+                            redo CRESCENT if exists $ban_for{"$newnum"};
+                            $cache_has{"$newnum"} = 1;
                             $listkey[$counter] = $newnum;
                             $counter++;
                         }
@@ -1184,9 +1184,9 @@ END_SQL
                     {
                         my @crescent_ids = qw(14 16);
                         my $newnum = $crescent_ids[ rand @crescent_ids ];
-                        if ( !( exists $cache{"$newnum"} ) ) {
-                            redo CRESCENT if exists $banlist{"$newnum"};
-                            $cache{"$newnum"} = 1;
+                        if ( !( exists $cache_has{"$newnum"} ) ) {
+                            redo CRESCENT if exists $ban_for{"$newnum"};
+                            $cache_has{"$newnum"} = 1;
                             $listkey[$counter] = $newnum;
                             $counter++;
                         }
@@ -1198,9 +1198,9 @@ END_SQL
                     {
                         my @crescent_ids = qw(14 15);
                         my $newnum = $crescent_ids[ rand @crescent_ids ];
-                        if ( !( exists $cache{"$newnum"} ) ) {
-                            redo CRESCENT if exists $banlist{"$newnum"};
-                            $cache{"$newnum"} = 1;
+                        if ( !( exists $cache_has{"$newnum"} ) ) {
+                            redo CRESCENT if exists $ban_for{"$newnum"};
+                            $cache_has{"$newnum"} = 1;
                             $listkey[$counter] = $newnum;
                             $counter++;
                         }
@@ -1210,13 +1210,13 @@ END_SQL
                         && ( $num eq '14' )
                         && ( $counter < $CARD_MAX ) )
                     {
-                        if ( !( exists $cache{"$15"} ) ) {
-                            $cache{'15'} = 1;
+                        if ( !( exists $cache_has{"$15"} ) ) {
+                            $cache_has{'15'} = 1;
                             $listkey[$counter] = '15';
                             $counter++;
                         }
-                        if ( !( exists $cache{"$16"} ) ) {
-                            $cache{'16'} = 1;
+                        if ( !( exists $cache_has{"$16"} ) ) {
+                            $cache_has{'16'} = 1;
                             $listkey[$counter] = '16';
                             $counter++;
                         }
@@ -1226,13 +1226,13 @@ END_SQL
                         && ( $num eq '15' )
                         && ( $counter < $CARD_MAX ) )
                     {
-                        if ( !( exists $cache{"$14"} ) ) {
-                            $cache{'14'} = 1;
+                        if ( !( exists $cache_has{"$14"} ) ) {
+                            $cache_has{'14'} = 1;
                             $listkey[$counter] = '14';
                             $counter++;
                         }
-                        if ( !( exists $cache{"$16"} ) ) {
-                            $cache{'16'} = 1;
+                        if ( !( exists $cache_has{"$16"} ) ) {
+                            $cache_has{'16'} = 1;
                             $listkey[$counter] = '16';
                             $counter++;
                         }
@@ -1242,13 +1242,13 @@ END_SQL
                         && ( $num eq '16' )
                         && ( $counter < $CARD_MAX ) )
                     {
-                        if ( !( exists $cache{"$14"} ) ) {
-                            $cache{'14'} = 1;
+                        if ( !( exists $cache_has{"$14"} ) ) {
+                            $cache_has{'14'} = 1;
                             $listkey[$counter] = '14';
                             $counter++;
                         }
-                        if ( !( exists $cache{"$15"} ) ) {
-                            $cache{'15'} = 1;
+                        if ( !( exists $cache_has{"$15"} ) ) {
+                            $cache_has{'15'} = 1;
                             $listkey[$counter] = '15';
                             $counter++;
                         }
@@ -1262,14 +1262,14 @@ END_SQL
             @listkeysorted = sort { $a <=> $b } @listkey;
 
             for my $listitem (@listkeysorted) {
-                $suboutput .= $list{"$listitem"};
+                $suboutput .= $list_has{"$listitem"};
             }
 
             my @removebuffer          = ();
             my @removerembuffer       = ();
             my @removeeventsbuffer    = ();
             my @removebuildingsbuffer = ();
-            if ( exists $sets{'1'} ) {
+            if ( exists $set_is{'1'} ) {
                 if ( $cgi->param('events')
                     || ( $cgi->param('attack') eq '1' ) )
                 {
@@ -1297,7 +1297,7 @@ END_SQL
                         );
                 }
             }
-            if ( exists $sets{'2'} ) {
+            if ( exists $set_is{'2'} ) {
                 if ( $cgi->param('buildings') eq '1' ) {
                     push @removebuffer,
                         (
@@ -1313,15 +1313,15 @@ END_SQL
                 }
             }
 
-            if ( ( exists $sets{'3'} && $cgi->param('reminiscences') eq '1' )
-                || ( !exists $sets{'3'} ) )
+            if ( ( exists $set_is{'3'} && $cgi->param('reminiscences') eq '1' )
+                || ( !exists $set_is{'3'} ) )
             {
                 push
                     @removebuffer,
                     (
                     &{$card_format}( &{$cardlist_other_query}(qw(101 14)) ) );
             }
-            if (exists $sets{'3'}
+            if (exists $set_is{'3'}
                 && (   ( $cgi->param('attack') eq '1' )
                     && ( $cgi->param('reminiscences') ne '1' ) )
                 )
@@ -1331,8 +1331,8 @@ END_SQL
                     ( &{$card_format}( &{$cardlist_other_query}(qw(3 30)) ) );
             }
 
-            if ( ( exists $sets{'4'} && $cgi->param('beer') eq '2' )
-                || !exists $sets{'4'} )
+            if ( ( exists $set_is{'4'} && $cgi->param('beer') eq '2' )
+                || !exists $set_is{'4'} )
             {
                 push
                     @removebuffer,
@@ -1343,15 +1343,15 @@ END_SQL
                     (
                     &{$card_format}( &{$cardlist_other_query}(qw(101 34)) ) );
             }
-            if ( exists $sets{'4'} ) {
+            if ( exists $set_is{'4'} ) {
                 if ((   (   (   $cgi->param('beer') eq '2' && !(
-                                    (   exists $sets{'2'}
-                                        || ( exists $sets{'5'}
+                                    (   exists $set_is{'2'}
+                                        || ( exists $set_is{'5'}
                                             && !$cgi->param('couples') )
                                     )
                                     || !(
-                                        !exists $sets{'2'}
-                                        || ( exists $sets{'5'}
+                                        !exists $set_is{'2'}
+                                        || ( exists $set_is{'5'}
                                             && $cgi->param('couples') )
                                     )
                                 )
@@ -1390,20 +1390,20 @@ END_SQL
                 }
             }
 
-            if ( exists $sets{'5'} ) {
+            if ( exists $set_is{'5'} ) {
 
                 my $blizzard = 0;
                 if ( $cgi->param('couples')
-                    && ( !exists $sets{'2'} || !exists $sets{'4'} ) )
+                    && ( !exists $set_is{'2'} || !exists $set_is{'4'} ) )
                 {
                     $blizzard = 1;
                 }
-                if ( exists $sets{'2'} || exists $sets{'4'} ) {
+                if ( exists $set_is{'2'} || exists $set_is{'4'} ) {
                     $blizzard = 0;
                 }
-                if ((   !exists $sets{'2'}
-                        && (!exists $sets{'4'}
-                            || ( exists $sets{'4'}
+                if ((   !exists $set_is{'2'}
+                        && (!exists $set_is{'4'}
+                            || ( exists $set_is{'4'}
                                 && $cgi->param('beer') eq '2' )
                         )
                     )
@@ -1412,7 +1412,7 @@ END_SQL
                 {
                     $blizzard = 1;
                 }
-                if ( ( exists $sets{'2'} || exists $sets{'4'} )
+                if ( ( exists $set_is{'2'} || exists $set_is{'4'} )
                     && $cgi->param('buildings') )
                 {
                     $blizzard = 1;
@@ -1494,12 +1494,12 @@ END_SQL
 <table>
 
 <tr><th colspan="2">Color Legend:</th></tr>
-<tr><td width="25" bgcolor="$COLOR{1}">&nbsp;</td><td>Tanto Cuore</td></tr>
-<tr><td width="25" bgcolor="$COLOR{2}">&nbsp;</td><td>Expanding the House</td></tr>
-<tr><td width="25" bgcolor="$COLOR{3}">&nbsp;</td><td>Romantic Vacation</td></tr>
-<tr><td width="25" bgcolor="$COLOR{4}">&nbsp;</td><td>Oktoberfest</td></tr>
-<tr><td width="25" bgcolor="$COLOR{5}">&nbsp;</td><td>Winter Romance</td></tr>
-<tr><td width="25" bgcolor="$COLOR{101}">&nbsp;</td><td>Promo Card</td></tr>
+<tr><td width="25" bgcolor="$COLOR_OF{1}">&nbsp;</td><td>Tanto Cuore</td></tr>
+<tr><td width="25" bgcolor="$COLOR_OF{2}">&nbsp;</td><td>Expanding the House</td></tr>
+<tr><td width="25" bgcolor="$COLOR_OF{3}">&nbsp;</td><td>Romantic Vacation</td></tr>
+<tr><td width="25" bgcolor="$COLOR_OF{4}">&nbsp;</td><td>Oktoberfest</td></tr>
+<tr><td width="25" bgcolor="$COLOR_OF{5}">&nbsp;</td><td>Winter Romance</td></tr>
+<tr><td width="25" bgcolor="$COLOR_OF{101}">&nbsp;</td><td>Promo Card</td></tr>
 </table>
 
 <br /><table><tr><th colspan="2">Text Legend:</th></tr><tr><td>Red:</td><td><font color="#990000">Card can negatively affect other players</font></td></tr><tr><td>Bold:</td><td><b>Card has a VP indicator</b></td></tr><tr><td>Italics:</td><td><i>Chambermaid</i></td></tr></table>
@@ -1530,23 +1530,23 @@ END_COLORKEY
     return $suboutput;
 };
 
-my %states         = ();
+my %page_is         = ();
 my $current_screen = q{};
 
-%states = (
+%page_is = (
     'Default'                           => \&{$front_page},
     'New Randomization Criteria'        => \&{$front_page},
     'Randomize'                         => \&{$randomize},
     'Randomize Again With Same Options' => \&{$randomize},
 );
 
-$current_screen = $cgi->param('.State') || 'Default';
+$current_screen = $cgi->param('.Page') || 'Default';
 
-if ( !$states{$current_screen} ) {
+if ( !$page_is{$current_screen} ) {
     croak "No screen for $current_screen";
 }
 
-while ( my ( $screen_name, $function ) = each %states ) {
+while ( my ( $screen_name, $function ) = each %page_is ) {
     $output .= $function->( $screen_name eq $current_screen );
 }
 
