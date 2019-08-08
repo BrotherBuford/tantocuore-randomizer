@@ -9,20 +9,27 @@ use version; our $VERSION = qv(6.01);
 use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser);
 use Apache::DBI qw();
-use File::Basename qw();
+use File::Basename qw(dirname);
 use Readonly;
 use English qw( -no_match_vars );
 use HTML::Tiny;
 use HTML::Entities;
 
+my $donate = q{};
+
+# Create the donation block - remove if unneeded
+### BEGIN donate
+use lib dirname(__FILE__) . '/lib';
+use Coinwidget;
+$donate = q{<p>&nbsp;</p>} . Coinwidget::donate() . q{<p>&nbsp;</p>};
+### END donate
+
 my $h = HTML::Tiny->new;
 
 my $cgi = CGI->new;
 
-my ( $name, $path, $suffix ) = File::Basename::fileparse($PROGRAM_NAME);
-
 my $dbh = DBI->connect(
-    "DBI:SQLite:dbname=$path/cardlist.sqlite",
+    'DBI:SQLite:dbname=' . dirname(__FILE__) . '/cardlist.sqlite',
     undef, undef,
     {   sqlite_unicode => 1,
         ReadOnly       => 1,
@@ -158,50 +165,6 @@ END_SQL
     return @query_result;
 
 };
-
-my $donate = $h->div(
-    { style => 'display: inline-block;', },
-    [   $h->div(
-            {   class => 'boxheader',
-                style => 'background-color: #e17000; color: #ffffff;',
-            },
-            [   $h->b(
-                    '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your donations help keep this site alive!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-                ),
-            ]
-        ),
-
-        $h->div(
-            {   class => 'boxcontent',
-                style => 'background-color: #ffffff; color: #000000;',
-            },
-            [   $h->table(
-                    {   border      => '0',
-                        cellpadding => '0',
-                        cellspacing => '4',
-                    },
-                    [   $h->tr(
-                            [   $h->td(
-                                    [   $h->script(
-                                            {   type => 'text/javascript',
-                                                src  => 'coinwidget/coin.js',
-                                            }
-                                        ),
-                                        $h->script(
-                                            {   type => 'text/javascript',
-                                                src => 'coinwidget/config.js',
-                                            }
-                                        ),
-                                    ]
-                                ),
-                            ]
-                        )
-                    ]
-                ),
-            ]
-        ),
-    ]
-);
 
 my $output
     = header()
@@ -641,9 +604,8 @@ document.getElementById('pleaseselect').style.display = 'block';
 </script>
 
 
-<p>&nbsp;</p>
  $donate
-<p>&nbsp;</p>
+
 <p><small>Find a bug?  Submit an issue on <a href="https://github.com/BrotherBuford/tantocuore-randomizer" target="_new">GitHub</a></small></p>
 
 <p style="font-size: 0.55em">This game utility is a fan work not affiliated with Arclight, Inc. or Japanime Games.<br /><a href="http://www.tantocuore.com/">Tanto Cuore Official English Website</a> &#8226; <a href="http://www.arclight.co.jp/ag/tc/">Tanto Cuore Official Japanese Website</a><br /><a href="https://www.facebook.com/JapanimeGames/">Japanime Games Facebook Page</a></p>
@@ -1536,7 +1498,7 @@ END_COLORKEY
             .= '<p>' . &{$to_page}('New Randomization Criteria') . "</p>\n";
     }
 
-    $suboutput .= '<br />' . $donate;
+    $suboutput .= $donate;
 
     return $suboutput;
 };
