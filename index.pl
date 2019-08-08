@@ -288,7 +288,7 @@ END_SQL
     @fields = ();
 
     my @selectedbans = ();
-    @selectedbans = $cgi->param('banned');
+    @selectedbans = scalar $cgi->param('banned');
 
     while ( @fields = $cursor->fetchrow ) {
 
@@ -315,7 +315,7 @@ END_SQL
     $cursor->finish;
 
     my @selectedsets = ();
-    @selectedsets = $cgi->param('sets');
+    @selectedsets = scalar $cgi->param('sets');
 
     $suboutput .= $h->h2(
         {   style =>
