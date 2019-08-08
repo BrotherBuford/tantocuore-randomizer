@@ -680,7 +680,7 @@ my $randomize = sub {
 
         my @sets = ();
         @sets = $cgi->param('sets');
-        my %set_is        = ();
+        my %set_is      = ();
         my $setlist_sql = q{};
         my $banlist_sql = q{};
         my $options_sql = q{};
@@ -801,9 +801,9 @@ my $randomize = sub {
 
         my %cost_of = ();
 
-        my @fields = ();
-        my @list   = ();
-        my %list_has   = ();
+        my @fields   = ();
+        my @list     = ();
+        my %list_has = ();
         $sql = <<'END_SQL';
 	  SELECT
    ID,
@@ -835,9 +835,9 @@ END_SQL
 
         $cursor->execute;
 
-        @fields = ();
-        @list   = ();
-        %list_has   = ();
+        @fields   = ();
+        @list     = ();
+        %list_has = ();
 
         while ( @fields = $cursor->fetchrow ) {
 
@@ -870,18 +870,26 @@ END_SQL
                 if ( $cgi->param('crescent') eq '1' ) {
 
                     ($crescenterror)
-                        = ( $list_has{'14'} && !( $list_has{'15'} || $list_has{'16'} ) )
+                        = ( $list_has{'14'}
+                            && !( $list_has{'15'} || $list_has{'16'} ) )
                         ? ('1')
-                        : ( $list_has{'15'} && !( $list_has{'14'} || $list_has{'16'} ) )
+                        : ( $list_has{'15'}
+                            && !( $list_has{'14'} || $list_has{'16'} ) )
                         ? ('1')
-                        : ( $list_has{'16'} && !( $list_has{'14'} || $list_has{'15'} ) )
+                        : ( $list_has{'16'}
+                            && !( $list_has{'14'} || $list_has{'15'} ) )
                         ? ('1')
                         : ($crescenterror);
                     last SWITCH;
                 }
-                if (   ( $cgi->param('crescent') eq '2' )
-                    && ( $list_has{'14'} || $list_has{'15'} || $list_has{'16'} )
-                    && !( $list_has{'14'} && $list_has{'15'} && $list_has{'16'} ) )
+                if (( $cgi->param('crescent') eq '2' )
+                    && (   $list_has{'14'}
+                        || $list_has{'15'}
+                        || $list_has{'16'} )
+                    && !(
+                        $list_has{'14'} && $list_has{'15'} && $list_has{'16'}
+                    )
+                    )
                 {
                     $crescenterror = 1;
                     last SWITCH;
@@ -1313,8 +1321,11 @@ END_SQL
                 }
             }
 
-            if ( ( exists $set_is{'3'} && $cgi->param('reminiscences') eq '1' )
-                || ( !exists $set_is{'3'} ) )
+            if ((   exists $set_is{'3'}
+                    && $cgi->param('reminiscences') eq '1'
+                )
+                || ( !exists $set_is{'3'} )
+                )
             {
                 push
                     @removebuffer,
@@ -1530,7 +1541,7 @@ END_COLORKEY
     return $suboutput;
 };
 
-my %page_is         = ();
+my %page_is        = ();
 my $current_screen = q{};
 
 %page_is = (
