@@ -48,10 +48,13 @@ Readonly my %COLOR_OF => (
 );
 
 my $to_page = sub {
-    return $cgi->submit(
-        -NAME  => '.Page',
-        -CLASS => 'topage',
-        -VALUE => shift
+    my $submit_value = shift;
+    return $h->input(
+        {   type  => 'submit',
+            name  => '.Page',
+            class => 'topage',
+            value => "$submit_value",
+        }
     );
 };
 
