@@ -678,7 +678,7 @@ my $pagedisplay_randomize = sub {
         $setlist_sql =~ s{\A\sor}{}xms;
 
         my @banned = ();
-        if ( $cgi_param_for{'banned'} ) {
+        if ( $cgi_param_for{'banned'}[0] ) {
             @banned = @{ $cgi_param_for{'banned'} };
         }
 
@@ -703,11 +703,11 @@ my $pagedisplay_randomize = sub {
             );
         SWITCH: {
                 if ( $cgi_param_for{'attack'}[0] eq '1' ) {
-                    $options_sql = ' and (attack != "1") and (events != "1")';
+                    $options_sql .= ' and (attack != "1") and (events != "1")';
                     last SWITCH;
                 }
                 if ( $cgi_param_for{'attack'}[0] eq '2' ) {
-                    $sql = ' and (attack = "1")';
+                    $options_sql .= ' and (attack = "1")';
                     last SWITCH;
                 }
                 my $nothing = 0;
@@ -722,7 +722,7 @@ my $pagedisplay_randomize = sub {
                 -name  => 'events',
                 -value => $cgi->param('events')
             );
-            $options_sql = ' and (events != "1")';
+            $options_sql .= ' and (events != "1")';
             $suboutput .= hidden( -name => 'events' );
         }
 
@@ -732,7 +732,7 @@ my $pagedisplay_randomize = sub {
                     -name  => 'beer',
                     -value => $cgi->param('beer')
                 );
-                $options_sql = ' and (beer != "1")';
+                $options_sql .= ' and (beer != "1")';
             }
             $suboutput .= hidden( -name => 'beer' );
         }
@@ -742,7 +742,7 @@ my $pagedisplay_randomize = sub {
                 -name  => 'buildings',
                 -value => $cgi->param('buildings')
             );
-            $options_sql = ' and (buildings != "1")';
+            $options_sql .= ' and (buildings != "1")';
             $suboutput .= hidden( -name => 'buildings' );
         }
 
@@ -751,13 +751,13 @@ my $pagedisplay_randomize = sub {
                 -name  => 'private',
                 -value => $cgi->param('private')
             );
-            $options_sql = ' and (private != "1")';
+            $options_sql .= ' and (private != "1")';
             $suboutput .= hidden( -name => 'private' );
         }
 
         if ( $cgi_param_for{'reminiscences'}[0] ) {
             if ( $cgi->param('reminiscences') eq '1' ) {
-                $options_sql = ' and (reminiscences != "1")';
+                $options_sql .= ' and (reminiscences != "1")';
             }
             $cgi->param(
                 -name  => 'reminiscences',
@@ -771,7 +771,7 @@ my $pagedisplay_randomize = sub {
                 -name  => 'couples',
                 -value => $cgi->param('couples')
             );
-            $options_sql = ' and (couples != "1")';
+            $options_sql .= ' and (couples != "1")';
             $suboutput .= hidden( -name => 'couples' );
         }
 
@@ -877,7 +877,7 @@ END_SQL
         }
 
         my @costlist = ();
-        if ( $cgi_param_for{'cost'} ) {
+        if ( $cgi_param_for{'cost'}[0] ) {
             @costlist = @{ $cgi_param_for{'cost'} };
         }
         my %costignore_has = ();
@@ -1006,7 +1006,7 @@ END_SQL
         $suboutput .= hidden( -name => 'apprentice' );
 
         my $costerror;
-        if ( $cgi_param_for{'cost'}
+        if ( $cgi_param_for{'cost'}[0]
             || ( $cgi_param_for{'reminiscences'}[0] eq '2' ) )
         {
             my %counter_has = ();
