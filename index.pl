@@ -58,6 +58,18 @@ my $to_page = sub {
     );
 };
 
+my %cgi_param_for = map { $ARG => [ $cgi->param($ARG) ] } $cgi->param();
+my @all_params    = qw(
+    sets      crescent      private events
+    buildings reminiscences beer    apprentice
+    couples   cost          attack  banned
+    .Page
+);
+
+for my $key (@all_params) {
+    $cgi_param_for{$key} //= [];
+}
+
 my $card_format = sub {
     my ($cf_gameset, $cf_cardnum, $cf_name,
         $cf_title,   $cf_notes,   $cf_cost,
@@ -635,14 +647,13 @@ my $pagedisplay_randomize = sub {
 
     my $sql = q{};
 
-    if ( !defined $cgi->param('sets') ) {
+    if ( !$cgi_param_for{'sets'} ) {
         $suboutput
             .= qq{<p class="error"><b>Error:</b> No game sets selected.  You must choose at least one game set.</b></p>\n};
     }
     else {
 
-        my @sets = ();
-        @sets = $cgi->param('sets');
+        my @sets        = @{ $cgi_param_for{'sets'} };
         my %set_is      = ();
         my $setlist_sql = q{};
         my $banlist_sql = q{};
@@ -667,7 +678,9 @@ my $pagedisplay_randomize = sub {
         $setlist_sql =~ s{\A\sor}{}xms;
 
         my @banned = ();
-        @banned = $cgi->param('banned');
+        if ( $cgi_param_for{'banned'} ) {
+            @banned = @{ $cgi_param_for{'banned'} };
+        }
 
         my %ban_for = ();
 
@@ -683,17 +696,17 @@ my $pagedisplay_randomize = sub {
         $suboutput .= hidden( -name => 'banned' );
         $banlist_sql =~ s{\A\sand}{}xms;
 
-        if ( defined $cgi->param('attack') ) {
+        if ( $cgi_param_for{'attack'}[0] ) {
             $cgi->param(
                 -name  => 'attack',
                 -value => $cgi->param('attack')
             );
         SWITCH: {
-                if ( $cgi->param('attack') eq '1' ) {
+                if ( $cgi_param_for{'attack'}[0] eq '1' ) {
                     $options_sql = ' and (attack != "1") and (events != "1")';
                     last SWITCH;
                 }
-                if ( $cgi->param('attack') eq '2' ) {
+                if ( $cgi_param_for{'attack'}[0] eq '2' ) {
                     $sql = ' and (attack = "1")';
                     last SWITCH;
                 }
@@ -704,7 +717,7 @@ my $pagedisplay_randomize = sub {
 
         my $events_sql = q{};
 
-        if ( defined $cgi->param('events') ) {
+        if ( $cgi_param_for{'events'}[0] ) {
             $cgi->param(
                 -name  => 'events',
                 -value => $cgi->param('events')
@@ -713,7 +726,7 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'events' );
         }
 
-        if ( defined $cgi->param('beer') ) {
+        if ( $cgi_param_for{'beer'}[0] ) {
             if ( $cgi->param('beer') eq '2' ) {
                 $cgi->param(
                     -name  => 'beer',
@@ -724,7 +737,7 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'beer' );
         }
 
-        if ( defined $cgi->param('buildings') ) {
+        if ( $cgi_param_for{'buildings'}[0] ) {
             $cgi->param(
                 -name  => 'buildings',
                 -value => $cgi->param('buildings')
@@ -733,7 +746,7 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'buildings' );
         }
 
-        if ( defined $cgi->param('private') ) {
+        if ( $cgi_param_for{'private'}[0] ) {
             $cgi->param(
                 -name  => 'private',
                 -value => $cgi->param('private')
@@ -742,7 +755,7 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'private' );
         }
 
-        if ( defined $cgi->param('reminiscences') ) {
+        if ( $cgi_param_for{'reminiscences'}[0] ) {
             if ( $cgi->param('reminiscences') eq '1' ) {
                 $options_sql = ' and (reminiscences != "1")';
             }
@@ -753,7 +766,7 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'reminiscences' );
         }
 
-        if ( defined $cgi->param('couples') ) {
+        if ( $cgi_param_for{'couples'}[0] ) {
             $cgi->param(
                 -name  => 'couples',
                 -value => $cgi->param('couples')
@@ -817,22 +830,20 @@ END_SQL
         $cursor->finish;
 
         my $barmaiderror = q{};
-        if ( defined $cgi->param('beer') ) {
-            if (   ( $cgi->param('beer') eq '1' )
-                && ( !$list_has{'55'} && !$list_has{'56'} ) )
-            {
-                $barmaiderror = 1;
-            }
+        if (   ( $cgi_param_for{'beer'}[0] eq '1' )
+            && ( !$list_has{'55'} && !$list_has{'56'} ) )
+        {
+            $barmaiderror = 1;
         }
 
         my $crescenterror = q{};
-        if ( defined $cgi->param('crescent') ) {
+        if ( $cgi_param_for{'crescent'}[0] ) {
             $cgi->param(
                 -name  => 'crescent',
                 -value => $cgi->param('crescent')
             );
         SWITCH: {
-                if ( $cgi->param('crescent') eq '1' ) {
+                if ( $cgi_param_for{'crescent'}[0] eq '1' ) {
 
                     ($crescenterror)
                         = ( $list_has{'14'}
@@ -847,7 +858,7 @@ END_SQL
                         : ($crescenterror);
                     last SWITCH;
                 }
-                if (( $cgi->param('crescent') eq '2' )
+                if (( $cgi_param_for{'crescent'}[0] eq '2' )
                     && (   $list_has{'14'}
                         || $list_has{'15'}
                         || $list_has{'16'} )
@@ -866,7 +877,9 @@ END_SQL
         }
 
         my @costlist = ();
-        @costlist = $cgi->param('cost');
+        if ( $cgi_param_for{'cost'} ) {
+            @costlist = @{ $cgi_param_for{'cost'} };
+        }
         my %costignore_has = ();
         for my $elem (@costlist) {
         SWITCH: {
@@ -892,12 +905,10 @@ END_SQL
         }
         $suboutput .= hidden( -name => 'cost' );
 
-        if ( defined $cgi->param('reminiscences') ) {
-            if ( ( $cgi->param('reminiscences') eq '2' )
-                && !exists $costignore_has{'5'} )
-            {
-                push @costlist, '5';
-            }
+        if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
+            && !exists $costignore_has{'5'} )
+        {
+            push @costlist, '5';
         }
 
         my $chiefsindex  = rand @chiefs;
@@ -912,9 +923,9 @@ END_SQL
                 $chiefsoutput
                     .= &{$card_format}( &{$cardlist_other_query}(qw(1 2)) );
 
-                if (   ( $cgi->param('reminiscences') eq '2' )
+                if (   ( $cgi_param_for{'reminiscences'}[0] eq '2' )
                     && !exists $costignore_has{'2'}
-                    && ( $cgi->param('attack') ne '1' ) )
+                    && ( $cgi_param_for{'attack'}[0] ne '1' ) )
                 {
                     push @costlist, '2';
                 }
@@ -928,7 +939,7 @@ END_SQL
                 $chiefsoutput
                     .= &{$card_format}( &{$cardlist_other_query}(qw(2 2)) );
 
-                if ( ( $cgi->param('reminiscences') eq '2' )
+                if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
                     && !exists $costignore_has{'3'} )
                 {
                     push @costlist, '3';
@@ -943,7 +954,7 @@ END_SQL
                 $chiefsoutput
                     .= &{$card_format}( &{$cardlist_other_query}(qw(3 2)) );
 
-                if ( ( $cgi->param('reminiscences') eq '2' )
+                if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
                     && !exists $costignore_has{'3'} )
                 {
                     push @costlist, '3';
@@ -958,9 +969,9 @@ END_SQL
                 $chiefsoutput
                     .= &{$card_format}( &{$cardlist_other_query}(qw(4 2)) );
 
-                if (   ( $cgi->param('reminiscences') eq '2' )
+                if (   ( $cgi_param_for{'reminiscences'}[0] eq '2' )
                     && !exists $costignore_has{'3'}
-                    && ( $cgi->param('attack') ne '1' ) )
+                    && ( $cgi_param_for{'attack'}[0] ne '1' ) )
                 {
                     push @costlist, '3';
                 }
@@ -974,7 +985,7 @@ END_SQL
                 $chiefsoutput
                     .= &{$card_format}( &{$cardlist_other_query}(qw(5 2)) );
 
-                if ( ( $cgi->param('reminiscences') eq '2' )
+                if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
                     && !exists $costignore_has{'3'} )
                 {
                     push @costlist, '3';
@@ -986,7 +997,7 @@ END_SQL
         }
 
         my $apprenticeerror;
-        if (   defined $cgi->param('apprentice')
+        if (   $cgi_param_for{'apprentice'}[0]
             && ( !$list_has{'66'} )
             && $chiefs eq '4' )
         {
@@ -995,8 +1006,8 @@ END_SQL
         $suboutput .= hidden( -name => 'apprentice' );
 
         my $costerror;
-        if ( defined $cgi->param('cost')
-            || ( $cgi->param('reminiscences') eq '2' ) )
+        if ( $cgi_param_for{'cost'}
+            || ( $cgi_param_for{'reminiscences'}[0] eq '2' ) )
         {
             my %counter_has = ();
             for my $elem ( values %cost_of ) {
@@ -1065,7 +1076,7 @@ END_SQL
                 my $num = q{};
 
                 if (   $chiefs eq '4'
-                    && defined $cgi->param('apprentice')
+                    && $cgi_param_for{'apprentice'}[0]
                     && !( exists $cache_has{'66'} )
                     && !( exists $ban_for{'66'} )
                     && $counter != $CARD_MAX + 1 )
@@ -1094,7 +1105,7 @@ END_SQL
 
                 redo
                     if (
-                       ( $cgi->param('crescent') eq '1' )
+                       ( $cgi_param_for{'crescent'}[0] eq '1' )
                     && ( $counter == $CARD_MAX )
                     && (   !( exists $cache_has{'14'} )
                         || !( exists $cache_has{'15'} )
@@ -1104,7 +1115,7 @@ END_SQL
 
                 redo
                     if (
-                       ( $cgi->param('crescent') eq '2' )
+                       ( $cgi_param_for{'crescent'}[0] eq '2' )
                     && ( $counter > $CARD_MAX - 2 )
                     && (   !( exists $cache_has{'14'} )
                         || !( exists $cache_has{'15'} )
@@ -1122,7 +1133,7 @@ END_SQL
                 $listkey[$counter] = $num;
                 $counter++;
 
-                if (   ( $cgi->param('beer') eq '1' )
+                if (   ( $cgi_param_for{'beer'}[0] eq '1' )
                     && ( $counter != $CARD_MAX + 1 )
                     && (   !( exists $cache_has{'55'} )
                         && !( exists $cache_has{'56'} ) )
@@ -1140,7 +1151,7 @@ END_SQL
                 }
 
             CRESCENT: {
-                    if (   ( $cgi->param('crescent') eq '1' )
+                    if (   ( $cgi_param_for{'crescent'}[0] eq '1' )
                         && ( $num eq '14' )
                         && ( $counter != $CARD_MAX + 1 ) )
                     {
@@ -1154,7 +1165,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( $cgi->param('crescent') eq '1' )
+                    if (   ( $cgi_param_for{'crescent'}[0] eq '1' )
                         && ( $num eq '15' )
                         && ( $counter != $CARD_MAX + 1 ) )
                     {
@@ -1168,7 +1179,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( $cgi->param('crescent') eq '1' )
+                    if (   ( $cgi_param_for{'crescent'}[0] eq '1' )
                         && ( $num eq '16' )
                         && ( $counter != $CARD_MAX + 1 ) )
                     {
@@ -1182,7 +1193,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( $cgi->param('crescent') eq '2' )
+                    if (   ( $cgi_param_for{'crescent'}[0] eq '2' )
                         && ( $num eq '14' )
                         && ( $counter < $CARD_MAX ) )
                     {
@@ -1198,7 +1209,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( $cgi->param('crescent') eq '2' )
+                    if (   ( $cgi_param_for{'crescent'}[0] eq '2' )
                         && ( $num eq '15' )
                         && ( $counter < $CARD_MAX ) )
                     {
@@ -1214,7 +1225,7 @@ END_SQL
                         }
                         last CRESCENT;
                     }
-                    if (   ( $cgi->param('crescent') eq '2' )
+                    if (   ( $cgi_param_for{'crescent'}[0] eq '2' )
                         && ( $num eq '16' )
                         && ( $counter < $CARD_MAX ) )
                     {
@@ -1246,8 +1257,8 @@ END_SQL
             my @removeeventsbuffer    = ();
             my @removebuildingsbuffer = ();
             if ( exists $set_is{'1'} ) {
-                if ( defined $cgi->param('events')
-                    || ( $cgi->param('attack') eq '1' ) )
+                if ( $cgi_param_for{'events'}[0]
+                    || ( $cgi_param_for{'attack'}[0] eq '1' ) )
                 {
                     push
                         @removebuffer,
@@ -1260,7 +1271,7 @@ END_SQL
                         &{$card_format}( &{$cardlist_other_query}(qw(1 21)) )
                         );
                 }
-                if ( $cgi->param('attack') eq '1' ) {
+                if ( $cgi_param_for{'attack'}[0] eq '1' ) {
                     push
                         @removebuffer,
                         (
@@ -1274,13 +1285,13 @@ END_SQL
                 }
             }
             if ( exists $set_is{'2'} ) {
-                if ( defined $cgi->param('buildings') ) {
+                if ( $cgi_param_for{'buildings'}[0] ) {
                     push @removebuffer,
                         (
                         &{$card_format}( &{$cardlist_other_query}(qw(2 27)) )
                         );
                 }
-                if ( $cgi->param('attack') eq '1' ) {
+                if ( $cgi_param_for{'attack'}[0] eq '1' ) {
                     push
                         @removebuffer,
                         (
@@ -1290,7 +1301,7 @@ END_SQL
             }
 
             if ((   exists $set_is{'3'}
-                    && $cgi->param('reminiscences') eq '1'
+                    && $cgi_param_for{'reminiscences'}[0] eq '1'
                 )
                 || ( !exists $set_is{'3'} )
                 )
@@ -1301,8 +1312,8 @@ END_SQL
                     &{$card_format}( &{$cardlist_other_query}(qw(101 14)) ) );
             }
             if (exists $set_is{'3'}
-                && (   ( $cgi->param('attack') eq '1' )
-                    && ( $cgi->param('reminiscences') ne '1' ) )
+                && (   ( $cgi_param_for{'attack'}[0] eq '1' )
+                    && ( $cgi_param_for{'reminiscences'}[0] ne '1' ) )
                 )
             {
                 push
@@ -1310,7 +1321,7 @@ END_SQL
                     ( &{$card_format}( &{$cardlist_other_query}(qw(3 30)) ) );
             }
 
-            if ( ( exists $set_is{'4'} && $cgi->param('beer') eq '2' )
+            if ( ( exists $set_is{'4'} && $cgi_param_for{'beer'}[0] eq '2' )
                 || !exists $set_is{'4'} )
             {
                 push
@@ -1323,29 +1334,28 @@ END_SQL
                     &{$card_format}( &{$cardlist_other_query}(qw(101 34)) ) );
             }
             if ( exists $set_is{'4'} ) {
-                if ((   (   (   $cgi->param('beer') eq '2' && !(
+                if ((   (   (   $cgi_param_for{'beer'}[0] eq '2' && !(
                                     (   exists $set_is{'2'}
                                         || ( exists $set_is{'5'}
-                                            && !
-                                            defined $cgi->param('couples') )
+                                            && !$cgi_param_for{'couples'}[0] )
                                     )
                                     || !(
                                         !exists $set_is{'2'}
                                         || ( exists $set_is{'5'}
-                                            && $cgi->param('couples') )
+                                            && $cgi_param_for{'couples'}[0] )
                                     )
                                 )
                             )
-                            || ( $cgi->param('buildings') )
+                            || ( $cgi_param_for{'buildings'}[0] )
                         )
                         && !(
-                               $cgi->param('events')
-                            || $cgi->param('attack') eq '1'
+                               $cgi_param_for{'events'}[0]
+                            || $cgi_param_for{'attack'}[0] eq '1'
                         )
                     )
                     && !(
-                        $cgi->param('attack') eq '2'
-                        && !defined $cgi->param('buildings')
+                        $cgi_param_for{'attack'}[0] eq '2'
+                        && !$cgi_param_for{'buildings'}[0]
                     )
                     )
                 {
@@ -1355,9 +1365,9 @@ END_SQL
                         &{$card_format}( &{$cardlist_other_query}(qw(4 20)) )
                         );
                 }
-                if (( $cgi->param('beer') eq '2' )
-                    && (!(     $cgi->param('events')
-                            || $cgi->param('attack') eq '1'
+                if (( $cgi_param_for{'beer'}[0] eq '2' )
+                    && (!(     $cgi_param_for{'events'}[0]
+                            || $cgi_param_for{'attack'}[0] eq '1'
                         )
                     )
                     )
@@ -1373,7 +1383,7 @@ END_SQL
             if ( exists $set_is{'5'} ) {
 
                 my $blizzard = 0;
-                if ( $cgi->param('couples')
+                if ( $cgi_param_for{'couples'}[0]
                     && ( !exists $set_is{'2'} || !exists $set_is{'4'} ) )
                 {
                     $blizzard = 1;
@@ -1384,20 +1394,23 @@ END_SQL
                 if ((   !exists $set_is{'2'}
                         && (!exists $set_is{'4'}
                             || ( exists $set_is{'4'}
-                                && $cgi->param('beer') eq '2' )
+                                && $cgi_param_for{'beer'}[0] eq '2' )
                         )
                     )
-                    && ( $cgi->param('couples') || $cgi->param('buildings') )
+                    && (   $cgi_param_for{'couples'}[0]
+                        || $cgi_param_for{'buildings'}[0] )
                     )
                 {
                     $blizzard = 1;
                 }
                 if ( ( exists $set_is{'2'} || exists $set_is{'4'} )
-                    && $cgi->param('buildings') )
+                    && $cgi_param_for{'buildings'}[0] )
                 {
                     $blizzard = 1;
                 }
-                if ( $cgi->param('events') || $cgi->param('attack') eq '1' ) {
+                if (   $cgi_param_for{'events'}[0]
+                    || $cgi_param_for{'attack'}[0] eq '1' )
+                {
                     $blizzard = 0;
                 }
 
@@ -1410,11 +1423,11 @@ END_SQL
                         );
 
                 }
-                if ((   !defined $cgi->param('couples')
-                        && (   $cgi->param('attack') eq '1'
-                            || $cgi->param('events') )
+                if ((   !$cgi_param_for{'couples'}[0]
+                        && (   $cgi_param_for{'attack'}[0] eq '1'
+                            || $cgi_param_for{'events'}[0] )
                     )
-                    && !defined $cgi->param('buildings')
+                    && !$cgi_param_for{'buildings'}[0]
                     )
                 {
                     push
@@ -1424,13 +1437,13 @@ END_SQL
                 }
             }
 
-            if (   ( @removebuffer && !defined $cgi->param('private') )
+            if (   ( @removebuffer && !defined $cgi_param_for{'private'}[0] )
                 || @removerembuffer
                 || @removeeventsbuffer )
             {
                 $suboutput
                     .= '<tr bgcolor="#ffffff"><th colspan="3">&nbsp;</th></tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
-                if ( @removebuffer && !defined $cgi->param('private') ) {
+                if ( @removebuffer && !$cgi_param_for{'private'}[0] ) {
                     $suboutput
                         .= qq{<tr bgcolor="#1f1a23"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Private Maids</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
                     for my $elem (@removebuffer) {
