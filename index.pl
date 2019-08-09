@@ -8,7 +8,7 @@ use strict;
 use version; our $VERSION = qv(6.01);
 use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser);
-use Apache::DBI qw();
+use DBI;
 use File::Basename qw(dirname);
 use Readonly;
 use English qw( -no_match_vars );
