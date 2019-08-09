@@ -582,20 +582,22 @@ END_OPTIONS
         $suboutput .= $item;
     }
 
-    $suboutput .= '</select></div></div>';
-
-    $suboutput
-        .= '<p class="hiddenoptions">' . &{$to_page}('Randomize') . '</p>';
-    $suboutput
-        .= '<p class="hiddenoptions"><input type="reset" value="Clear All Selections" /></p>';
-    $suboutput .= '<select id="banlist" style="display: none">';
+    $suboutput .= '</select></div></div>'
+        . $h->p( { class=>'hiddenoptions', }, &{$to_page}('Randomize') )
+        . $h->p( { class=>'hiddenoptions', },
+                  $h->input( {
+                      type=>'reset',
+                      value=>'Clear All Selections',
+                  } )
+              )
+        . '<select id="banlist" style="display: none">';
 
     for my $listitem (@list) {
         $suboutput .= $listitem;
     }
-    $suboutput .= '</select>';
+    $suboutput .= '</select>'
 
-    $suboutput .= <<"END_PAGE_FOOTER";
+        . <<"END_PAGE_FOOTER";
 <script type="text/javascript">
 //<![CDATA[
 document.getElementById('pleaseselect').style.display = 'block';
