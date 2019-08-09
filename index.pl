@@ -889,8 +889,8 @@ END_SQL
                 -name  => 'cost',
                 -value => "$elem"
             );
-            $suboutput .= hidden( -name => 'cost' );
         }
+        $suboutput .= hidden( -name => 'cost' );
 
         if ( defined $cgi->param('reminiscences') ) {
             if ( ( $cgi->param('reminiscences') eq '2' )
