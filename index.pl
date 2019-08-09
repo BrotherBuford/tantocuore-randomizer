@@ -250,9 +250,6 @@ END_SQL
 
     @fields = ();
 
-    my @selectedbans = ();
-    @selectedbans = scalar $cgi->param('banned');
-
     while ( @fields = $cursor->fetchrow ) {
 
         my $gameset = q{};
@@ -276,9 +273,6 @@ END_SQL
     }
 
     $cursor->finish;
-
-    my @selectedsets = ();
-    @selectedsets = scalar $cgi->param('sets');
 
     $suboutput .= $h->h2(
         {   style =>
@@ -582,15 +576,17 @@ END_OPTIONS
         $suboutput .= $item;
     }
 
-    $suboutput .= '</select></div></div>'
-        . $h->p( { class=>'hiddenoptions', }, &{$to_page}('Randomize') )
-        . $h->p( { class=>'hiddenoptions', },
-                  $h->input( {
-                      type=>'reset',
-                      value=>'Clear All Selections',
-                  } )
-              )
-        . '<select id="banlist" style="display: none">';
+    $suboutput
+        .= '</select></div></div>'
+        . $h->p( { class => 'hiddenoptions', }, &{$to_page}('Randomize') )
+        . $h->p(
+        { class => 'hiddenoptions', },
+        $h->input(
+            {   type  => 'reset',
+                value => 'Clear All Selections',
+            }
+        )
+        ) . '<select id="banlist" style="display: none">';
 
     for my $listitem (@list) {
         $suboutput .= $listitem;
@@ -1052,7 +1048,7 @@ END_SQL
             my @id_numbers = ();
             @id_numbers = keys %list_has;
             my $counter = 1;
-            my @listkey = ();
+            my @listkey = ('0');
 
             my %cache_has = ();
 
