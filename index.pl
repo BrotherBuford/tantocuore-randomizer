@@ -635,7 +635,7 @@ my $pagedisplay_randomize = sub {
 
     my $sql = q{};
 
-    if ( !$cgi->param('sets') ) {
+    if ( !defined $cgi->param('sets') ) {
         $suboutput
             .= qq{<p class="error"><b>Error:</b> No game sets selected.  You must choose at least one game set.</b></p>\n};
     }
@@ -683,7 +683,7 @@ my $pagedisplay_randomize = sub {
         $suboutput .= hidden( -name => 'banned' );
         $banlist_sql =~ s{\A\sand}{}xms;
 
-        if ( $cgi->param('attack') ) {
+        if ( defined $cgi->param('attack') ) {
             $cgi->param(
                 -name  => 'attack',
                 -value => $cgi->param('attack')
@@ -704,7 +704,7 @@ my $pagedisplay_randomize = sub {
 
         my $events_sql = q{};
 
-        if ( $cgi->param('events') ) {
+        if ( defined $cgi->param('events') ) {
             $cgi->param(
                 -name  => 'events',
                 -value => $cgi->param('events')
@@ -713,18 +713,18 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'events' );
         }
 
-        if ( $cgi->param('beer') eq '2' ) {
-            $cgi->param(
-                -name  => 'beer',
-                -value => $cgi->param('beer')
-            );
-            $options_sql = ' and (beer != "1")';
-        }
-        if ( $cgi->param('beer') ) {
+        if ( defined $cgi->param('beer') ) {
+            if ( $cgi->param('beer') eq '2' ) {
+                $cgi->param(
+                    -name  => 'beer',
+                    -value => $cgi->param('beer')
+                );
+                $options_sql = ' and (beer != "1")';
+            }
             $suboutput .= hidden( -name => 'beer' );
         }
 
-        if ( $cgi->param('buildings') ) {
+        if ( defined $cgi->param('buildings') ) {
             $cgi->param(
                 -name  => 'buildings',
                 -value => $cgi->param('buildings')
@@ -733,7 +733,7 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'buildings' );
         }
 
-        if ( $cgi->param('private') ) {
+        if ( defined $cgi->param('private') ) {
             $cgi->param(
                 -name  => 'private',
                 -value => $cgi->param('private')
@@ -742,7 +742,7 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'private' );
         }
 
-        if ( $cgi->param('reminiscences') ) {
+        if ( defined $cgi->param('reminiscences') ) {
             if ( $cgi->param('reminiscences') eq '1' ) {
                 $options_sql = ' and (reminiscences != "1")';
             }
@@ -753,7 +753,7 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'reminiscences' );
         }
 
-        if ( $cgi->param('couples') ) {
+        if ( defined $cgi->param('couples') ) {
             $cgi->param(
                 -name  => 'couples',
                 -value => $cgi->param('couples')
@@ -817,14 +817,16 @@ END_SQL
         $cursor->finish;
 
         my $barmaiderror = q{};
-        if (   ( $cgi->param('beer') eq '1' )
-            && ( !$list_has{'55'} && !$list_has{'56'} ) )
-        {
-            $barmaiderror = 1;
+        if ( defined $cgi->param('beer') ) {
+            if (   ( $cgi->param('beer') eq '1' )
+                && ( !$list_has{'55'} && !$list_has{'56'} ) )
+            {
+                $barmaiderror = 1;
+            }
         }
 
         my $crescenterror = q{};
-        if ( $cgi->param('crescent') ) {
+        if ( defined $cgi->param('crescent') ) {
             $cgi->param(
                 -name  => 'crescent',
                 -value => $cgi->param('crescent')
@@ -890,10 +892,12 @@ END_SQL
             $suboutput .= hidden( -name => 'cost' );
         }
 
-        if ( ( $cgi->param('reminiscences') eq '2' )
-            && !exists $costignore_has{'5'} )
-        {
-            push @costlist, '5';
+        if ( defined $cgi->param('reminiscences') ) {
+            if ( ( $cgi->param('reminiscences') eq '2' )
+                && !exists $costignore_has{'5'} )
+            {
+                push @costlist, '5';
+            }
         }
 
         my $chiefsindex  = rand @chiefs;
@@ -982,7 +986,7 @@ END_SQL
         }
 
         my $apprenticeerror;
-        if (   ( $cgi->param('apprentice') eq '1' )
+        if (   defined $cgi->param('apprentice')
             && ( !$list_has{'66'} )
             && $chiefs eq '4' )
         {
@@ -991,7 +995,8 @@ END_SQL
         $suboutput .= hidden( -name => 'apprentice' );
 
         my $costerror;
-        if ( $cgi->param('cost') || ( $cgi->param('reminiscences') eq '2' ) )
+        if ( defined $cgi->param('cost')
+            || ( $cgi->param('reminiscences') eq '2' ) )
         {
             my %counter_has = ();
             for my $elem ( values %cost_of ) {
@@ -1060,7 +1065,7 @@ END_SQL
                 my $num = q{};
 
                 if (   $chiefs eq '4'
-                    && $cgi->param('apprentice') eq '1'
+                    && defined $cgi->param('apprentice')
                     && !( exists $cache_has{'66'} )
                     && !( exists $ban_for{'66'} )
                     && $counter != $CARD_MAX + 1 )
@@ -1241,7 +1246,7 @@ END_SQL
             my @removeeventsbuffer    = ();
             my @removebuildingsbuffer = ();
             if ( exists $set_is{'1'} ) {
-                if ( $cgi->param('events')
+                if ( defined $cgi->param('events')
                     || ( $cgi->param('attack') eq '1' ) )
                 {
                     push
@@ -1269,7 +1274,7 @@ END_SQL
                 }
             }
             if ( exists $set_is{'2'} ) {
-                if ( $cgi->param('buildings') eq '1' ) {
+                if ( defined $cgi->param('buildings') ) {
                     push @removebuffer,
                         (
                         &{$card_format}( &{$cardlist_other_query}(qw(2 27)) )
@@ -1321,7 +1326,8 @@ END_SQL
                 if ((   (   (   $cgi->param('beer') eq '2' && !(
                                     (   exists $set_is{'2'}
                                         || ( exists $set_is{'5'}
-                                            && !$cgi->param('couples') )
+                                            && !
+                                            defined $cgi->param('couples') )
                                     )
                                     || !(
                                         !exists $set_is{'2'}
@@ -1339,7 +1345,7 @@ END_SQL
                     )
                     && !(
                         $cgi->param('attack') eq '2'
-                        && !$cgi->param('buildings')
+                        && !defined $cgi->param('buildings')
                     )
                     )
                 {
@@ -1404,11 +1410,11 @@ END_SQL
                         );
 
                 }
-                if ((   !$cgi->param('couples')
+                if ((   !defined $cgi->param('couples')
                         && (   $cgi->param('attack') eq '1'
                             || $cgi->param('events') )
                     )
-                    && !$cgi->param('buildings')
+                    && !defined $cgi->param('buildings')
                     )
                 {
                     push
@@ -1418,13 +1424,13 @@ END_SQL
                 }
             }
 
-            if (   ( @removebuffer && !$cgi->param('private') )
+            if (   ( @removebuffer && !defined $cgi->param('private') )
                 || @removerembuffer
                 || @removeeventsbuffer )
             {
                 $suboutput
                     .= '<tr bgcolor="#ffffff"><th colspan="3">&nbsp;</th></tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
-                if ( @removebuffer && !$cgi->param('private') ) {
+                if ( @removebuffer && !defined $cgi->param('private') ) {
                     $suboutput
                         .= qq{<tr bgcolor="#1f1a23"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Private Maids</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
                     for my $elem (@removebuffer) {
