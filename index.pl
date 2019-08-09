@@ -225,7 +225,7 @@ END_PAGE_HEADING
 
 $output .= $cgi->start_form();
 
-my $front_page = sub {
+my $pagedisplay_front_page = sub {
     my $active = shift;
     if ( !$active ) {
         return;
@@ -623,7 +623,7 @@ END_PAGE_FOOTER
     return $suboutput;
 };
 
-my $randomize = sub {
+my $pagedisplay_randomize = sub {
     my $active = shift;
     if ( !$active ) {
         return;
@@ -1507,10 +1507,10 @@ my %page_is        = ();
 my $current_screen = q{};
 
 %page_is = (
-    'Default'                           => \&{$front_page},
-    'New Randomization Criteria'        => \&{$front_page},
-    'Randomize'                         => \&{$randomize},
-    'Randomize Again With Same Options' => \&{$randomize},
+    'Default'                           => \&{$pagedisplay_front_page},
+    'New Randomization Criteria'        => \&{$pagedisplay_front_page},
+    'Randomize'                         => \&{$pagedisplay_randomize},
+    'Randomize Again With Same Options' => \&{$pagedisplay_randomize},
 );
 
 $current_screen = $cgi->param('.Page') || 'Default';
