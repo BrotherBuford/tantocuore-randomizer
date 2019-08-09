@@ -703,7 +703,8 @@ my $pagedisplay_randomize = sub {
             );
         SWITCH: {
                 if ( $cgi_param_for{'attack'}[0] eq '1' ) {
-                    $options_sql .= ' and (attack != "1") and (events != "1")';
+                    $options_sql
+                        .= ' and (attack != "1") and (events != "1")';
                     last SWITCH;
                 }
                 if ( $cgi_param_for{'attack'}[0] eq '2' ) {
@@ -723,7 +724,7 @@ my $pagedisplay_randomize = sub {
                 -value => $cgi->param('events')
             );
             $options_sql .= ' and (events != "1")';
-            $suboutput .= hidden( -name => 'events' );
+            $suboutput   .= hidden( -name => 'events' );
         }
 
         if ( $cgi_param_for{'beer'}[0] ) {
@@ -743,7 +744,7 @@ my $pagedisplay_randomize = sub {
                 -value => $cgi->param('buildings')
             );
             $options_sql .= ' and (buildings != "1")';
-            $suboutput .= hidden( -name => 'buildings' );
+            $suboutput   .= hidden( -name => 'buildings' );
         }
 
         if ( $cgi_param_for{'private'}[0] ) {
@@ -752,7 +753,7 @@ my $pagedisplay_randomize = sub {
                 -value => $cgi->param('private')
             );
             $options_sql .= ' and (private != "1")';
-            $suboutput .= hidden( -name => 'private' );
+            $suboutput   .= hidden( -name => 'private' );
         }
 
         if ( $cgi_param_for{'reminiscences'}[0] ) {
@@ -772,7 +773,7 @@ my $pagedisplay_randomize = sub {
                 -value => $cgi->param('couples')
             );
             $options_sql .= ' and (couples != "1")';
-            $suboutput .= hidden( -name => 'couples' );
+            $suboutput   .= hidden( -name => 'couples' );
         }
 
         my %cost_of = ();
