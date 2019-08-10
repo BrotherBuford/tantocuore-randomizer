@@ -94,6 +94,14 @@ my $card_table_header = sub {
     return $suboutput;
 };
 
+my $result_error = sub {
+    my ($errortext) = @ARG;
+
+    my $suboutput
+        = $h->p( { class => 'error', }, $h->b('Error: ') . $errortext );
+    return $suboutput;
+};
+
 my $card_format = sub {
     my ($cf_gameset, $cf_cardnum, $cf_name,
         $cf_title,   $cf_notes,   $cf_cost,
@@ -673,7 +681,9 @@ my $pagedisplay_randomize = sub {
 
     if ( !$cgi_param_for{'sets'} ) {
         $suboutput
-            .= qq{<p class="error"><b>Error:</b> No game sets selected.  You must choose at least one game set.</b></p>\n};
+            .= &{$result_error}(
+            q{No game sets selected.  You must choose at least one game set.}
+            );
     }
     else {
 
@@ -1055,32 +1065,41 @@ END_SQL
     SWITCH: {
             if ( keys %list_has < $CARD_MAX ) {
                 $suboutput
-                    .= qq{<p class="error"><b>Error:</b> Less than $CARD_MAX cards available to randomize.</p>\n};
+                    .= &{$result_error}
+                    (qq{Less than $CARD_MAX cards available to randomize.});
                 last SWITCH;
             }
             if ($costerror) {
                 $suboutput
-                    .= qq{<p class="error"><b>Error:</b> No cards of one or more required cost(s) in pool of available cards.</p>\n};
+                    .= &{$result_error}(
+                    q{No cards of one or more required cost(s) in pool of available cards.}
+                    );
                 last SWITCH;
             }
             if ($crescenterror) {
                 $suboutput
-                    .= qq{<p class="error"><b>Error:</b> Not enough Crescent sisters in pool of available cards to meet selected minimum.</p>\n};
+                    .= &{$result_error}(
+                    q{Not enough Crescent sisters in pool of available cards to meet selected minimum.}
+                    );
                 last SWITCH;
             }
             if ($barmaiderror) {
                 $suboutput
-                    .= qq{<p class="error"><b>Error:</b> No Bar Maids in pool of available cards. (Beer cards are unusable)</p>\n};
+                    .= &{$result_error}(
+                    q{No Bar Maids in pool of available cards. (Beer cards are unusable)}
+                    );
                 last SWITCH;
             }
             if ($apprenticeerror) {
                 $suboutput
-                    .= qq{<p class="error"><b>Error:</b> Nicole Schmieg is not available in the pool of available cards but is required by the option selections.</p>\n};
+                    .= &{$result_error}(
+                    q{Nicole Schmieg is not available in the pool of available cards but is required by the option selections.}
+                    );
                 last SWITCH;
             }
 
-            $suboutput .= qq{<table cellpadding="10" bgcolor="#ffffff">\n};
-            $suboutput .= qq{<tr><td valign="top"><table cellpadding="3">\n};
+            $suboutput .= q{<table cellpadding="10" bgcolor="#ffffff">};
+            $suboutput .= q{<tr><td valign="top"><table cellpadding="3">};
             $suboutput
                 .= &{$card_table_header}( '#036a76', 'Maid/Butler Chiefs' );
 
