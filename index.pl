@@ -47,6 +47,15 @@ Readonly my %COLOR_OF => (
     '101' => '#ffffaa',
 );
 
+Readonly my %NAME_OF => (
+    '1'   => 'Tanto Cuore',
+    '2'   => 'Expanding the House',
+    '3'   => 'Romantic Vacation',
+    '4'   => 'Oktoberfest',
+    '5'   => 'Winter Romance',
+    '101' => 'Promo Card',
+);
+
 my %cgi_param_for = map { $ARG => [ $cgi->param($ARG) ] } $cgi->param();
 my @all_params    = qw(
     sets      crescent      private events
@@ -248,10 +257,10 @@ $output .= $h->head(
     ]
 );
 
-$output .= <<'END_PAGE_HEADING';
+$output .= <<'END_HTML';
 <body style="background-color:#ffccee;background-image:url('images/hearts.gif')">
 <div align="center">
-END_PAGE_HEADING
+END_HTML
 
 $output .= $cgi->start_form();
 
@@ -411,7 +420,7 @@ END_SQL
 
         ) . $h->br;
 
-    $suboutput .= <<'END_OPTIONS';
+    $suboutput .= <<'END_HTML';
     <div style="display: inline-block;" class="hiddenoptions">
 
 <div class="boxheader" style="background-color: #5544dd; color: #ffffff;"><b>Set-specific options</b></div>
@@ -597,7 +606,7 @@ Require at least one general maid/butler of each of the following employ costs:
 <div class="boxcontent">
 Select cards to <i>not</i> include in results:<br /><select size="5" name="banned" id="banned" class="banned" multiple="multiple">
 <option value="0" id="pleaseselect" disabled="disabled" style="display:none">Please select a game set</option>
-END_OPTIONS
+END_HTML
 
     for my $listitem (@list) {
         my $item = q{};
@@ -623,7 +632,7 @@ END_OPTIONS
     }
     $suboutput .= '</select>'
 
-        . <<"END_PAGE_FOOTER";
+        . <<"END_HTML";
 <script type="text/javascript">
 //<![CDATA[
 document.getElementById('pleaseselect').style.display = 'block';
@@ -646,7 +655,7 @@ document.getElementById('pleaseselect').style.display = 'block';
 </p> -->
 
 <script type="text/javascript" src="./js/functions.js"></script>
-END_PAGE_FOOTER
+END_HTML
 
     return $suboutput;
 };
@@ -1512,36 +1521,69 @@ END_SQL
 
             }
 
-            $suboutput .= <<"END_COLORKEY";
+            $suboutput .= <<"END_HTML";
 </table></td>
 
 <td align="center" valign="top" width="310">
+END_HTML
 
-<small><b>Touch or hover over each card name for information on the card's effects.</b><br /><br /></small>
+            my $colorkey = q{};
 
-<table>
+            for my $elem ( sort { $a <=> $b } keys %COLOR_OF ) {
+                $colorkey .= $h->tr(
+                    [   $h->td(
+                            {   width   => '25',
+                                bgcolor => $COLOR_OF{$elem},
+                            },
+                            '&nbsp;'
+                        ),
+                        $h->td( $NAME_OF{$elem} ),
+                    ]
+                );
+            }
 
-<tr><th colspan="2">Color Legend:</th></tr>
-<tr><td width="25" bgcolor="$COLOR_OF{1}">&nbsp;</td><td>Tanto Cuore</td></tr>
-<tr><td width="25" bgcolor="$COLOR_OF{2}">&nbsp;</td><td>Expanding the House</td></tr>
-<tr><td width="25" bgcolor="$COLOR_OF{3}">&nbsp;</td><td>Romantic Vacation</td></tr>
-<tr><td width="25" bgcolor="$COLOR_OF{4}">&nbsp;</td><td>Oktoberfest</td></tr>
-<tr><td width="25" bgcolor="$COLOR_OF{5}">&nbsp;</td><td>Winter Romance</td></tr>
-<tr><td width="25" bgcolor="$COLOR_OF{101}">&nbsp;</td><td>Promo Card</td></tr>
-</table>
+            $suboutput .= $h->small(
+                $h->b(
+                    q{Touch or hover over each card name for information on the card's effects.}
+                        . $h->br
+                        . $h->br
+                )
+                )
+                . $h->table(
+                [   $h->tr( $h->th( { colspan => '2', }, 'Color Legend:' ) ),
+                    $colorkey
+                ]
+                )
+                . $h->br
+                . $h->table(
+                [   $h->tr( $h->th( { colspan => '2' }, 'Text Legend:' ) ),
+                    $h->tr(
+                        [   $h->td(
+                                'Red:',
+                                $h->tag(
+                                    'font',
+                                    { color => '#990000', },
+                                    'Card can negatively affect other players'
+                                )
+                            ),
+                        ]
+                    ),
+                    $h->tr(
+                        [   $h->td(
+                                'Bold:', $h->b('Card has a VP indicator')
+                            ),
+                        ]
+                    ),
+                    $h->tr( [ $h->td( 'Italics:', $h->i('Chambermaid') ), ] ),
+                ]
+                )
 
-<br /><table><tr><th colspan="2">Text Legend:</th></tr><tr><td>Red:</td><td><font color="#990000">Card can negatively affect other players</font></td></tr><tr><td>Bold:</td><td><b>Card has a VP indicator</b></td></tr><tr><td>Italics:</td><td><i>Chambermaid</i></td></tr></table>
-END_COLORKEY
+                . $h->br
+                . $h->p(
+                &{$to_page}('Randomize Again With Same Options'),
+                &{$to_page}('New Randomization Criteria')
+                );
 
-            $suboutput
-                .= '<br /><p>'
-                . &{$to_page}('Randomize Again With Same Options')
-                . "</p>\n";
-
-            $suboutput
-                .= '<p>'
-                . &{$to_page}('New Randomization Criteria')
-                . "</p>\n";
             $newbutton = 0;
             $suboutput .= "</td></tr></table>\n";
 
@@ -1550,7 +1592,7 @@ END_COLORKEY
     }
     if ($newbutton) {
         $suboutput
-            .= '<p>' . &{$to_page}('New Randomization Criteria') . "</p>\n";
+            .= $h->p( &{$to_page}('New Randomization Criteria') );
     }
 
     $suboutput .= $donate;
@@ -1581,11 +1623,11 @@ while ( my ( $screen_name, $function ) = each %page_is ) {
 $output .= $cgi->end_form();
 $dbh->disconnect;
 
-$output .= <<'END_FOOTER';
+$output .= <<'END_HTML';
 </div>
 </body>
 </html>
-END_FOOTER
+END_HTML
 
 print $output || croak;
 
