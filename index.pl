@@ -213,65 +213,6 @@ END_SQL
 
 };
 
-my $output
-    = header()
-    . qq {<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n}
-    . qq {<html xmlns="http://www.w3.org/1999/xhtml">\n};
-
-$output .= $h->head(
-    [   $h->title('Tanto Cuore &#9829; Town Randomizer'),
-        $h->meta(
-            {   'http-equiv' => 'Content-Type',
-                content      => 'text/html;charset=ISO-8859-1',
-            }
-        ),
-        $h->meta(
-            {   'http-equiv' => 'X-UA-Compatible',
-                content      => 'IE=edge',
-            }
-        ),
-        $h->meta(
-            {   name => 'description',
-                content =>
-                    'A card randomizer utility for the games Tanto Cuore, Tanto Cuore: Expanding the House, Tanto Cuore: Romantic Vacation, Tanto Cuore: Oktoberfest, and Tanto Cuore: Winter Romance.',
-            }
-        ),
-
-        $h->closed(
-            'link',
-            {   rel  => 'shortcut icon',
-                href => './images/favicon.ico',
-            }
-        ),
-        $h->closed(
-            'link',
-            {   rel  => 'stylesheet',
-                type => 'text/css',
-                href => './css/tc.css',
-            }
-        ),
-
-        $h->script(
-            {   type => 'text/javascript',
-                src  => './js/jquery-1.7.2.min.js',
-            }
-        ),
-        $h->script(
-            {   type => 'text/javascript',
-                src  => './js/tooltip.js',
-            }
-        ),
-
-    ]
-);
-
-$output .= <<'END_HTML';
-<body style="background-color:#ffccee;background-image:url('images/hearts.gif')">
-<div align="center">
-END_HTML
-
-$output .= $cgi->start_form();
-
 my $pagedisplay_front_page = sub {
     my $active = shift;
     if ( !$active ) {
@@ -1634,6 +1575,65 @@ $current_screen = $cgi->param('.Page') || 'Default';
 if ( !$page_is{$current_screen} ) {
     croak "No screen for $current_screen";
 }
+
+my $output
+    = header()
+    . qq {<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n}
+    . qq {<html xmlns="http://www.w3.org/1999/xhtml">\n};
+
+$output .= $h->head(
+    [   $h->title('Tanto Cuore &#9829; Town Randomizer'),
+        $h->meta(
+            {   'http-equiv' => 'Content-Type',
+                content      => 'text/html;charset=ISO-8859-1',
+            }
+        ),
+        $h->meta(
+            {   'http-equiv' => 'X-UA-Compatible',
+                content      => 'IE=edge',
+            }
+        ),
+        $h->meta(
+            {   name => 'description',
+                content =>
+                    'A card randomizer utility for the games Tanto Cuore, Tanto Cuore: Expanding the House, Tanto Cuore: Romantic Vacation, Tanto Cuore: Oktoberfest, and Tanto Cuore: Winter Romance.',
+            }
+        ),
+
+        $h->closed(
+            'link',
+            {   rel  => 'shortcut icon',
+                href => './images/favicon.ico',
+            }
+        ),
+        $h->closed(
+            'link',
+            {   rel  => 'stylesheet',
+                type => 'text/css',
+                href => './css/tc.css',
+            }
+        ),
+
+        $h->script(
+            {   type => 'text/javascript',
+                src  => './js/jquery-1.7.2.min.js',
+            }
+        ),
+        $h->script(
+            {   type => 'text/javascript',
+                src  => './js/tooltip.js',
+            }
+        ),
+
+    ]
+);
+
+$output .= <<'END_HTML';
+<body style="background-color:#ffccee;background-image:url('images/hearts.gif')">
+<div align="center">
+END_HTML
+
+$output .= $cgi->start_form();
 
 while ( my ( $screen_name, $function ) = each %page_is ) {
     $output .= $function->( $screen_name eq $current_screen );
