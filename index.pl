@@ -15,15 +15,6 @@ use English qw( -no_match_vars );
 use HTML::Tiny;
 use HTML::Entities;
 
-my $donate = q{};
-
-# Create the donation block - remove if unneeded
-### BEGIN donate
-use lib dirname(__FILE__) . '/lib';
-use Coinwidget;
-$donate = q{<p>&nbsp;</p>} . Coinwidget::donate() . q{<p>&nbsp;</p>};
-### END donate
-
 my $h = HTML::Tiny->new;
 
 my $cgi = CGI->new;
@@ -35,6 +26,15 @@ my $dbh = DBI->connect(
         ReadOnly       => 1,
     }
 );
+
+my $donate = q{};
+
+# Create the donation block - remove if unneeded
+### BEGIN donate
+use lib dirname(__FILE__) . '/lib';
+use Coinwidget;
+$donate = $h->p('&nbsp;') . Coinwidget::donate() . $h->p('&nbsp;');
+### END donate
 
 Readonly my $CARD_MAX => 10;
 
