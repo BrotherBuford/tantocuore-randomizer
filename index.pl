@@ -47,17 +47,6 @@ Readonly my %COLOR_OF => (
     '101' => '#ffffaa',
 );
 
-my $to_page = sub {
-    my $submit_value = shift;
-    return $h->input(
-        {   type  => 'submit',
-            name  => '.Page',
-            class => 'topage',
-            value => "$submit_value",
-        }
-    );
-};
-
 my %cgi_param_for = map { $ARG => [ $cgi->param($ARG) ] } $cgi->param();
 my @all_params    = qw(
     sets      crescent      private events
@@ -69,6 +58,32 @@ my @all_params    = qw(
 for my $key (@all_params) {
     $cgi_param_for{$key} //= [];
 }
+
+my $to_page = sub {
+    my $submit_value = shift;
+    return $h->input(
+        {   type  => 'submit',
+            name  => '.Page',
+            class => 'topage',
+            value => "$submit_value",
+        }
+    );
+};
+
+my $card_table_header = sub {
+    my ( $color, $header ) = @ARG;
+
+    my $suboutput = $h->tr(
+        { bgcolor => $color },
+        [   $h->th(
+                $h->tag( 'font', { color => '#ffffff', }, 'Card&nbsp;#' )
+            ),
+            $h->th( $h->tag( 'font', { color => '#ffffff', }, $header ) ),
+            $h->th( $h->tag( 'font', { color => '#ffffff', }, 'Cost' ) ),
+        ]
+    );
+    return $suboutput;
+};
 
 my $card_format = sub {
     my ($cf_gameset, $cf_cardnum, $cf_name,
@@ -1058,12 +1073,13 @@ END_SQL
             $suboutput .= qq{<table cellpadding="10" bgcolor="#ffffff">\n};
             $suboutput .= qq{<tr><td valign="top"><table cellpadding="3">\n};
             $suboutput
-                .= qq{<tr bgcolor="#036a76"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Maid/Butler Chiefs</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
+                .= &{$card_table_header}( '#036a76', 'Maid/Butler Chiefs' );
 
             $suboutput .= $chiefsoutput;
 
             $suboutput
-                .= qq{<tr bgcolor="#096fb8"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">General Maids/Butlers</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
+                .= &{$card_table_header}
+                ( '#096fb8', 'General Maids/Butlers' );
 
             my @id_numbers = ();
             @id_numbers = keys %list_has;
@@ -1442,11 +1458,25 @@ END_SQL
                 || @removerembuffer
                 || @removeeventsbuffer )
             {
-                $suboutput
-                    .= '<tr bgcolor="#ffffff"><th colspan="3">&nbsp;</th></tr><tr bgcolor="#000000"><th colspan="3"><font color="#ffffff">Remove the following from game:</font></th></tr>';
+                $suboutput .= $h->tr( { bgcolor => '#ffffff' },
+                    $h->th( { colspan => '3' }, '&nbsp;' ) )
+                    . $h->tr(
+                    { bgcolor => '#000000' },
+                    $h->th(
+                        { colspan => '3' },
+                        $h->tag(
+                            'font',
+                            { color => '#ffffff', },
+                            'Remove the following from game:'
+                        )
+                    )
+                    );
+
                 if ( @removebuffer && !$cgi_param_for{'private'}[0] ) {
                     $suboutput
-                        .= qq{<tr bgcolor="#1f1a23"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Private Maids</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
+                        .= &{$card_table_header}
+                        ( '#1f1a23', 'Private Maids' );
+
                     for my $elem (@removebuffer) {
                         $suboutput .= $elem;
                     }
@@ -1454,7 +1484,9 @@ END_SQL
 
                 if (@removerembuffer) {
                     $suboutput
-                        .= qq{<tr bgcolor="#fbb450"><th><font color="#ffffff">Card&nbsp;#</font></th><th colspan="2"><font color="#ffffff">Reminiscences</font></th></tr>\n};
+                        .= &{$card_table_header}
+                        ( '#fbb450', 'Reminiscences' );
+
                     for my $elem (@removerembuffer) {
                         $suboutput .= $elem;
                     }
@@ -1462,7 +1494,8 @@ END_SQL
 
                 if (@removeeventsbuffer) {
                     $suboutput
-                        .= qq{<tr bgcolor="#8652A1"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Events</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
+                        .= &{$card_table_header}( '#8652A1', 'Events' );
+
                     for my $elem (@removeeventsbuffer) {
                         $suboutput .= $elem;
                     }
@@ -1470,7 +1503,8 @@ END_SQL
 
                 if (@removebuildingsbuffer) {
                     $suboutput
-                        .= qq{<tr bgcolor="#f37a45"><th><font color="#ffffff">Card&nbsp;#</font></th><th><font color="#ffffff">Buildings</font></th><th><font color="#ffffff">Cost</font></th></tr>\n};
+                        .= &{$card_table_header}( '#f37a45', 'Buildings' );
+
                     for my $elem (@removebuildingsbuffer) {
                         $suboutput .= $elem;
                     }
