@@ -1639,7 +1639,7 @@ while ( my ( $screen_name, $function ) = each %page_is ) {
     $output .= $function->( $screen_name eq $current_screen );
 }
 
-$output .= $cgi->end_form();
+$output .= $h->close('form');
 $dbh->disconnect;
 
 $output .= <<'END_HTML';
