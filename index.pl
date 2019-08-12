@@ -1235,7 +1235,9 @@ END_SQL
             @listkeysorted = sort { $a <=> $b } @listkey;
 
             for my $listitem (@listkeysorted) {
-                $suboutput .= $list_has{"$listitem"};
+                if ( $list_has{"$listitem"} ) {
+                    $suboutput .= $list_has{"$listitem"};
+                }
             }
 
             my @removebuffer          = ();
@@ -1635,7 +1637,10 @@ END_HTML
 $output .= $cgi->start_form();
 
 while ( my ( $screen_name, $function ) = each %page_is ) {
-    $output .= $function->( $screen_name eq $current_screen );
+    my $screen = $function->( $screen_name eq $current_screen );
+    if ($screen) {
+        $output .= $screen;
+    }
 }
 
 $output .= $h->close('form');
