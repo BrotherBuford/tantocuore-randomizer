@@ -56,7 +56,7 @@ Readonly my %NAME_OF => (
     '101' => 'Promo Card',
 );
 
-my %cgi_param_for = map { $ARG => [ $cgi->param($ARG) ] } $cgi->param();
+my %cgi_param_for = map { $ARG => [ $cgi->multi_param($ARG) ] } $cgi->param();
 my @all_params    = qw(
     sets      crescent      private events
     buildings reminiscences beer    apprentice
