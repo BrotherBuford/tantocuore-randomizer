@@ -65,7 +65,7 @@ my @all_params    = qw(
 );
 
 for my $key (@all_params) {
-    $cgi_param_for{$key} //= [];
+    $cgi_param_for{$key}[0] //= q{};
 }
 
 my $to_page = sub {
@@ -1422,8 +1422,7 @@ END_SQL
                             ( &{$cardlist_other_query}(qw(101 43)) ) );
                 }
             }
-
-            if (   ( @removebuffer && !defined $cgi_param_for{'private'}[0] )
+            if (   ( @removebuffer && !$cgi_param_for{'private'}[0] )
                 || @removerembuffer
                 || @removeeventsbuffer )
             {
