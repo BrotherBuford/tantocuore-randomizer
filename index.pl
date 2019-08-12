@@ -1183,12 +1183,12 @@ END_SQL
                         && ( $num eq '14' )
                         && ( $counter < $CARD_MAX ) )
                     {
-                        if ( !( exists $cache_has{"$15"} ) ) {
+                        if ( !( exists $cache_has{'15'} ) ) {
                             $cache_has{'15'} = 1;
                             $listkey[$counter] = '15';
                             $counter++;
                         }
-                        if ( !( exists $cache_has{"$16"} ) ) {
+                        if ( !( exists $cache_has{'16'} ) ) {
                             $cache_has{'16'} = 1;
                             $listkey[$counter] = '16';
                             $counter++;
@@ -1199,12 +1199,12 @@ END_SQL
                         && ( $num eq '15' )
                         && ( $counter < $CARD_MAX ) )
                     {
-                        if ( !( exists $cache_has{"$14"} ) ) {
+                        if ( !( exists $cache_has{'14'} ) ) {
                             $cache_has{'14'} = 1;
                             $listkey[$counter] = '14';
                             $counter++;
                         }
-                        if ( !( exists $cache_has{"$16"} ) ) {
+                        if ( !( exists $cache_has{'16'} ) ) {
                             $cache_has{'16'} = 1;
                             $listkey[$counter] = '16';
                             $counter++;
@@ -1215,12 +1215,12 @@ END_SQL
                         && ( $num eq '16' )
                         && ( $counter < $CARD_MAX ) )
                     {
-                        if ( !( exists $cache_has{"$14"} ) ) {
+                        if ( !( exists $cache_has{'14'} ) ) {
                             $cache_has{'14'} = 1;
                             $listkey[$counter] = '14';
                             $counter++;
                         }
-                        if ( !( exists $cache_has{"$15"} ) ) {
+                        if ( !( exists $cache_has{'15'} ) ) {
                             $cache_has{'15'} = 1;
                             $listkey[$counter] = '15';
                             $counter++;
