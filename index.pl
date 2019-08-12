@@ -674,7 +674,7 @@ my $pagedisplay_randomize = sub {
         if ( $cgi_param_for{'attack'}[0] ) {
             $cgi->param(
                 -name  => 'attack',
-                -value => $cgi->param('attack')
+                -value => scalar $cgi->param('attack')
             );
         SWITCH: {
                 if ( $cgi_param_for{'attack'}[0] eq '1' ) {
@@ -696,17 +696,17 @@ my $pagedisplay_randomize = sub {
         if ( $cgi_param_for{'events'}[0] ) {
             $cgi->param(
                 -name  => 'events',
-                -value => $cgi->param('events')
+                -value => scalar $cgi->param('events')
             );
             $options_sql .= ' and (events != "1")';
             $suboutput   .= hidden( -name => 'events' );
         }
 
         if ( $cgi_param_for{'beer'}[0] ) {
-            if ( $cgi->param('beer') eq '2' ) {
+            if ( scalar $cgi->param('beer') eq '2' ) {
                 $cgi->param(
                     -name  => 'beer',
-                    -value => $cgi->param('beer')
+                    -value => scalar $cgi->param('beer')
                 );
                 $options_sql .= ' and (beer != "1")';
             }
@@ -716,7 +716,7 @@ my $pagedisplay_randomize = sub {
         if ( $cgi_param_for{'buildings'}[0] ) {
             $cgi->param(
                 -name  => 'buildings',
-                -value => $cgi->param('buildings')
+                -value => scalar $cgi->param('buildings')
             );
             $options_sql .= ' and (buildings != "1")';
             $suboutput   .= hidden( -name => 'buildings' );
@@ -725,19 +725,19 @@ my $pagedisplay_randomize = sub {
         if ( $cgi_param_for{'private'}[0] ) {
             $cgi->param(
                 -name  => 'private',
-                -value => $cgi->param('private')
+                -value => scalar $cgi->param('private')
             );
             $options_sql .= ' and (private != "1")';
             $suboutput   .= hidden( -name => 'private' );
         }
 
         if ( $cgi_param_for{'reminiscences'}[0] ) {
-            if ( $cgi->param('reminiscences') eq '1' ) {
+            if ( scalar $cgi->param('reminiscences') eq '1' ) {
                 $options_sql .= ' and (reminiscences != "1")';
             }
             $cgi->param(
                 -name  => 'reminiscences',
-                -value => $cgi->param('reminiscences')
+                -value => scalar $cgi->param('reminiscences')
             );
             $suboutput .= hidden( -name => 'reminiscences' );
         }
@@ -745,7 +745,7 @@ my $pagedisplay_randomize = sub {
         if ( $cgi_param_for{'couples'}[0] ) {
             $cgi->param(
                 -name  => 'couples',
-                -value => $cgi->param('couples')
+                -value => scalar $cgi->param('couples')
             );
             $options_sql .= ' and (couples != "1")';
             $suboutput   .= hidden( -name => 'couples' );
@@ -816,7 +816,7 @@ END_SQL
         if ( $cgi_param_for{'crescent'}[0] ) {
             $cgi->param(
                 -name  => 'crescent',
-                -value => $cgi->param('crescent')
+                -value => scalar $cgi->param('crescent')
             );
         SWITCH: {
                 if ( $cgi_param_for{'crescent'}[0] eq '1' ) {
@@ -1569,7 +1569,7 @@ my $current_screen = q{};
     'Randomize Again With Same Options' => \&{$pagedisplay_randomize},
 );
 
-$current_screen = $cgi->param('.Page') || 'Default';
+$current_screen = scalar $cgi->param('.Page') || 'Default';
 
 if ( !$page_is{$current_screen} ) {
     croak "No screen for $current_screen";
