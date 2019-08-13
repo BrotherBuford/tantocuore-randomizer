@@ -40,28 +40,40 @@ Readonly my $CARD_MAX => 10;
 
 Readonly my %CARDSET => (
     '1' => {
-        color => '#ffccee',
-        name  => 'Tanto Cuore',
+        color  => '#ffccee',
+        name   => 'Tanto Cuore',
+        prefix => q{},
+        suffix => q{},
     },
     '2' => {
-        color => '#ffddbb',
-        name  => 'Expanding the House',
+        color  => '#ffddbb',
+        name   => 'Expanding the House',
+        prefix => q{},
+        suffix => q{-II},
     },
     '3' => {
-        color => '#cceeff',
-        name  => 'Romantic Vacation',
+        color  => '#cceeff',
+        name   => 'Romantic Vacation',
+        prefix => q{},
+        suffix => q{-III},
     },
     '4' => {
-        color => '#ddaa88',
-        name  => 'Oktoberfest',
+        color  => '#ddaa88',
+        name   => 'Oktoberfest',
+        prefix => q{},
+        suffix => q{-IV},
     },
     '5' => {
-        color => '#5b97ab',
-        name  => 'Winter Romance',
+        color  => '#5b97ab',
+        name   => 'Winter Romance',
+        prefix => q{},
+        suffix => q{-V},
     },
     '101' => {
-        color => '#ffffaa',
-        name  => 'Promo Card',
+        color  => '#ffffaa',
+        name   => 'PROMO',
+        prefix => q{PR},
+        suffix => q{},
     },
 );
 
@@ -117,22 +129,14 @@ my $card_format = sub {
         $cf_attack,  $cf_vp,      $cf_chambermaid
     ) = @ARG;
 
-    my $prgameset;
-    my $gameset;
+    my $cardnumber = sprintf '%02d', "$cf_cardnum";
+    my $carddesignation
+        = $CARDSET{"$cf_gameset"}{'prefix'}
+        . $cardnumber
+        . $CARDSET{"$cf_gameset"}{'suffix'};
 
-    ( $prgameset, $gameset )
-        = ( $cf_gameset eq '1' )   ? ( q{},  q{} )
-        : ( $cf_gameset eq '2' )   ? ( q{},  '-II' )
-        : ( $cf_gameset eq '3' )   ? ( q{},  '-III' )
-        : ( $cf_gameset eq '4' )   ? ( q{},  '-IV' )
-        : ( $cf_gameset eq '5' )   ? ( q{},  '-V' )
-        : ( $cf_gameset eq '101' ) ? ( 'PR', q{} )
-        :                            ( $prgameset, $gameset );
-
-    my $cardnumber      = sprintf '%02d', "$cf_cardnum";
-    my $carddesignation = $prgameset . $cardnumber . $gameset;
-
-    my $suboutput = qq{<tr bgcolor='$CARDSET{$cf_gameset}{'color'}' title='};
+    my $suboutput
+        = qq{<tr bgcolor='$CARDSET{"$cf_gameset"}{'color'}' title='};
 
     my $tooltip = $h->table(
         {   border      => '0',
@@ -249,23 +253,12 @@ END_SQL
 
     while ( @fields = $cursor->fetchrow ) {
 
-        my $gameset = q{};
-
-        ($gameset)
-            = ( $fields[2] eq '1' )   ? ('Tanto Cuore')
-            : ( $fields[2] eq '2' )   ? ('Expanding the House')
-            : ( $fields[2] eq '3' )   ? ('Romantic Vacation')
-            : ( $fields[2] eq '4' )   ? ('Oktoberfest')
-            : ( $fields[2] eq '5' )   ? ('Winter Romance')
-            : ( $fields[2] eq '101' ) ? ('Intl. Tabletop Day 2016 (Promo)')
-            :                           ($gameset);
-
         push @list,
             $h->option(
             {   class => "banlist$fields[2]",
                 value => "$fields[0]",
             },
-            "$gameset - $fields[1] ($fields[3])"
+            qq{$CARDSET{"$fields[2]"}{'name'} - $fields[1] ($fields[3])}
             );
     }
 
@@ -321,17 +314,17 @@ END_SQL
                                             },
                                             [   $h->option(
                                                     { value => '1', },
-                                                    'Tanto Cuore',
+                                                    $CARDSET{'1'}{'name'},
                                                     { value => '2', },
-                                                    'Expanding the House',
+                                                    $CARDSET{'2'}{'name'},
                                                     { value => '3', },
-                                                    'Romantic Vacation',
+                                                    $CARDSET{'3'}{'name'},
                                                     { value => '4', },
-                                                    'Oktoberfest',
+                                                    $CARDSET{'4'}{'name'},
                                                     { value => '5', },
-                                                    'Winter Romance',
+                                                    $CARDSET{'5'}{'name'},
                                                     { value => '101', },
-                                                    'Intl. Tabletop Day 2016 (Promo)',
+                                                    "Intl. Tabletop Day 2016 ($CARDSET{'101'}{'name'})",
                                                 ),
                                             ]
                                         ),
@@ -1503,11 +1496,11 @@ END_HTML
                 $colorkey .= $h->tr(
                     [   $h->td(
                             {   width   => '25',
-                                bgcolor => $CARDSET{$elem}{'color'},
+                                bgcolor => $CARDSET{"$elem"}{'color'},
                             },
                             '&nbsp;'
                         ),
-                        $h->td( $CARDSET{$elem}{'name'} ),
+                        $h->td( $CARDSET{"$elem"}{'name'} ),
                     ]
                 );
             }
