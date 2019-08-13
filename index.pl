@@ -581,32 +581,71 @@ END_HTML
     for my $listitem (@list) {
         $suboutput .= $listitem;
     }
-    $suboutput .= '</select>'
 
-        . <<"END_HTML";
-<script type="text/javascript">
+    $suboutput .= '</select>';
+
+    my $scriptdata = <<"END_HTML";
 //<![CDATA[
 document.getElementById('pleaseselect').style.display = 'block';
 \$(".banlistnoscript").remove();
 //]]>
-</script>
-
-
- $donate
-
-<p><small>Find a bug?  Submit an issue on <a href="https://github.com/BrotherBuford/tantocuore-randomizer" target="_new">GitHub</a></small></p>
-
-<p style="font-size: 0.55em">This game utility is a fan work not affiliated with Arclight, Inc. or Japanime Games.<br /><a href="http://www.tantocuore.com/">Tanto Cuore Official English Website</a> &#8226; <a href="http://www.arclight.co.jp/ag/tc/">Tanto Cuore Official Japanese Website</a><br /><a href="https://www.facebook.com/JapanimeGames/">Japanime Games Facebook Page</a></p>
-
-
-<!-- <p>
-      <a href="http://validator.w3.org/check?uri=referer"><img
-          src="./images/xhtml1.0.png"
-          alt="Valid XHTML 1.0" height="15" width="80" /></a>
-</p> -->
-
-<script type="text/javascript" src="./js/functions.js"></script>
 END_HTML
+
+    $suboutput
+        .= $h->script( { type => 'text/javascript', }, $scriptdata )
+        . $donate
+        . $h->p(
+        $h->small(
+            'Source code, bug reporting, and feature requests available at '
+                . $h->a(
+                {   href =>
+                        'https://github.com/BrotherBuford/tantocuore-randomizer',
+                    target => '_new',
+                },
+                'GitHub'
+                )
+        ),
+        $h->img(
+            {   alt => 'GitHub',
+                src =>
+                    'https://img.shields.io/github/license/BrotherBuford/tantocuore-randomizer',
+            }
+            )
+            . q{&nbsp;}
+            . $h->img(
+            {   alt => 'GitHub top language',
+                src =>
+                    'https://img.shields.io/github/languages/top/brotherbuford/tantocuore-randomizer',
+            }
+            )
+            . q{&nbsp;}
+            . $h->img(
+            {   alt => 'GitHub last commit (branch)',
+                src =>
+                    'https://img.shields.io/github/last-commit/brotherbuford/tantocuore-randomizer/master?label=last%20update',
+            }
+            ),
+        { style => 'font-size: 0.55em', },
+        'This game utility is a fan work not affiliated with Arclight, Inc. or Japanime Games.'
+            . $h->br
+            . $h->a(
+            { href => 'http://www.tantocuore.com/', },
+            'Tanto Cuore Official English Website'
+            )
+            . q{ &#8226; }
+            . $h->a(
+            { href => 'http://www.arclight.co.jp/ag/tc/', },
+            'Tanto Cuore Official Japanese Website'
+            )
+            . $h->br
+            . $h->a( { href => 'https://www.facebook.com/JapanimeGames/', },
+            'Japanime Games Facebook Page' )
+            . $h->script(
+            {   type => 'text/javascript',
+                src  => './js/functions.js',
+            }
+            )
+        );
 
     return $suboutput;
 };
