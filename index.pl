@@ -889,8 +889,9 @@ END_SQL
             push @costlist, '5';
         }
 
-        my $chiefsindex  = rand @chiefs;
-        my $chiefs       = $chiefs[$chiefsindex];
+        my $chiefsindex = rand @chiefs;
+        my $chiefs      = $chiefs[$chiefsindex];
+        $chiefs //= q{};
         my $chiefsoutput = q{};
 
     SWITCH: {
