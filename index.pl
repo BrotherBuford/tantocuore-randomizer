@@ -38,22 +38,31 @@ $donate = $h->p('&nbsp;') . Coinwidget::donate() . $h->p('&nbsp;');
 
 Readonly my $CARD_MAX => 10;
 
-Readonly my %COLOR_OF => (
-    '1'   => '#ffccee',
-    '2'   => '#ffddbb',
-    '3'   => '#cceeff',
-    '4'   => '#ddaa88',
-    '5'   => '#5b97ab',
-    '101' => '#ffffaa',
-);
-
-Readonly my %NAME_OF => (
-    '1'   => 'Tanto Cuore',
-    '2'   => 'Expanding the House',
-    '3'   => 'Romantic Vacation',
-    '4'   => 'Oktoberfest',
-    '5'   => 'Winter Romance',
-    '101' => 'Promo Card',
+Readonly my %CARDSET => (
+    '1' => {
+        color => '#ffccee',
+        name  => 'Tanto Cuore',
+    },
+    '2' => {
+        color => '#ffddbb',
+        name  => 'Expanding the House',
+    },
+    '3' => {
+        color => '#cceeff',
+        name  => 'Romantic Vacation',
+    },
+    '4' => {
+        color => '#ddaa88',
+        name  => 'Oktoberfest',
+    },
+    '5' => {
+        color => '#5b97ab',
+        name  => 'Winter Romance',
+    },
+    '101' => {
+        color => '#ffffaa',
+        name  => 'Promo Card',
+    },
 );
 
 my %cgi_param_for = map { $ARG => [ $cgi->multi_param($ARG) ] } $cgi->param();
@@ -123,7 +132,7 @@ my $card_format = sub {
     my $cardnumber      = sprintf '%02d', "$cf_cardnum";
     my $carddesignation = $prgameset . $cardnumber . $gameset;
 
-    my $suboutput = qq{<tr bgcolor='$COLOR_OF{$cf_gameset}' title='};
+    my $suboutput = qq{<tr bgcolor='$CARDSET{$cf_gameset}{'color'}' title='};
 
     my $tooltip = $h->table(
         {   border      => '0',
@@ -1490,15 +1499,15 @@ END_HTML
 
             my $colorkey = q{};
 
-            for my $elem ( sort { $a <=> $b } keys %COLOR_OF ) {
+            for my $elem ( sort { $a <=> $b } keys %CARDSET ) {
                 $colorkey .= $h->tr(
                     [   $h->td(
                             {   width   => '25',
-                                bgcolor => $COLOR_OF{$elem},
+                                bgcolor => $CARDSET{$elem}{'color'},
                             },
                             '&nbsp;'
                         ),
-                        $h->td( $NAME_OF{$elem} ),
+                        $h->td( $CARDSET{$elem}{'name'} ),
                     ]
                 );
             }
