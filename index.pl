@@ -74,6 +74,8 @@ Readonly my %CARDSET => (
     },
 );
 
+Readonly my $ATTACK_COLOR => q{#b00000};
+
 my %cgi_param_for = map { $ARG => [ $cgi->multi_param($ARG) ] } $cgi->param();
 my @all_params    = qw(
     sets      crescent      private events
@@ -174,7 +176,8 @@ my $card_format = sub {
 
     if ( $cf_attack eq '1' ) {
         $display_name
-            = $h->tag( 'font', { color => '#990000' }, "$display_name" );
+            = $h->tag( 'font', { color => "$ATTACK_COLOR" },
+            "$display_name" );
     }
 
     if ( $cf_vp eq '1' ) {
@@ -1544,7 +1547,7 @@ END_HTML
                                 'Red:',
                                 $h->tag(
                                     'font',
-                                    { color => '#990000', },
+                                    { color => "$ATTACK_COLOR", },
                                     'Card can negatively affect other players'
                                 )
                             ),
