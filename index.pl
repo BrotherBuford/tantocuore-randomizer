@@ -665,13 +665,13 @@ my $pagedisplay_randomize = sub {
     }
     else {
 
-        my @sets        = @{ $cgi_param_for{'sets'} };
         my %set_is      = ();
         my @setlist_sql = ();
         my @banlist_sql = ();
         my %options_sql = ( 'attack' => [ q{!=}, undef ], );
         my @chiefs      = ();
-        for my $elem (@sets) {
+
+        for my $elem ( @{ $cgi_param_for{'sets'} } ) {
 
             $cgi->param(
                 -name  => 'sets',
