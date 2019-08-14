@@ -61,7 +61,7 @@ Readonly my %CARDSET => (
         suffix => q{-IV},
     },
     '5' => {
-        color  => '#5b97ab',
+        color  => '#88b4c3',
         name   => 'Winter Romance',
         prefix => q{},
         suffix => q{-V},
