@@ -100,13 +100,14 @@ my $to_page = sub {
 my $card_table_header = sub {
     my ( $color, $header ) = @ARG;
 
+    my $textcolor = q{#ffffff};
     my $suboutput = $h->tr(
         { bgcolor => $color },
         [   $h->th(
-                $h->tag( 'font', { color => '#ffffff', }, 'Card&nbsp;#' )
+                $h->tag( 'font', { color => "$textcolor", }, 'Card&nbsp;#' )
             ),
-            $h->th( $h->tag( 'font', { color => '#ffffff', }, $header ) ),
-            $h->th( $h->tag( 'font', { color => '#ffffff', }, 'Cost' ) ),
+            $h->th( $h->tag( 'font', { color => "$textcolor", }, $header ) ),
+            $h->th( $h->tag( 'font', { color => "$textcolor", }, 'Cost' ) ),
         ]
     );
     return $suboutput;
