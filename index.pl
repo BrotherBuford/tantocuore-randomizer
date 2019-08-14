@@ -899,27 +899,15 @@ END_SQL
         }
         my %costignore_has = ();
         for my $elem (@costlist) {
-        SWITCH: {
-                if ( $elem eq '2' ) {
-                    $costignore_has{'2'} = 1;
-                    last SWITCH;
-                }
-                if ( $elem eq '3' ) {
-                    $costignore_has{'3'} = 1;
-                    last SWITCH;
-                }
-                if ( $elem eq '5' ) {
-                    $costignore_has{'5'} = 1;
-                    last SWITCH;
-                }
-                my $nothing = 0;
+            if ( $elem eq '2' || $elem eq '3' || $elem eq '5' ) {
+                $costignore_has{"$elem"} = '1';
             }
-
             $cgi->param(
                 -name  => 'cost',
                 -value => "$elem"
             );
         }
+
         $suboutput .= hidden( -name => 'cost' );
 
         if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
