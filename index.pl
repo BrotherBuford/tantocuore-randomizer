@@ -9,6 +9,7 @@ use version; our $VERSION = qv(6.01);
 use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser);
 use DBI;
+use SQL::Abstract;
 use File::Basename qw(dirname);
 use Readonly;
 use English qw( -no_match_vars );
@@ -26,6 +27,8 @@ my $dbh = DBI->connect(
         ReadOnly       => 1,
     }
 );
+
+my $sql = SQL::Abstract->new;
 
 my $donate = q{};
 
@@ -199,28 +202,25 @@ my $cardlist_other_query = sub {
 
     my ( $sub_gameset, $sub_cardnumber ) = @ARG;
     my @query_result = ();
-    my $sql          = <<"END_SQL";
-	  SELECT
-   gameset,
-   cardnumber,
-   name,
-   title,
-   description,
-   cost,
-   attack,
-   vp,
-   chambermaid
-	  FROM cardlist_other WHERE cardnumber = '$sub_cardnumber'
-          AND gameset = '$sub_gameset'
-END_SQL
 
-    my $cursor = $dbh->prepare($sql);
+    my @sql_tables = qw{cardlist_other};
+    my @sql_fields
+        = qw{gameset cardnumber name title description cost attack vp chambermaid};
+    my %sql_where = (
+        cardnumber => "$sub_cardnumber",
+        gameset    => "$sub_gameset",
+    );
+    my @sql_order = qw{gameset cardnumber};
+    my ( $stmt, @bind )
+        = $sql->select( \@sql_tables, \@sql_fields, \%sql_where,
+        \@sql_order );
 
-    $cursor->execute;
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
 
-    @query_result = $cursor->fetchrow;
+    @query_result = $sth->fetchrow;
 
-    $cursor->finish;
+    $sth->finish;
 
     return @query_result;
 
@@ -236,22 +236,20 @@ my $pagedisplay_front_page = sub {
     my @list      = ();
     my @fields    = ();
 
-    my $sql = <<'END_SQL';
-	  SELECT
-   ID,
-   name,
-   gameset,
-   title
-	  FROM cardlist order by gameset, name
-END_SQL
+    my @sql_tables = qw{cardlist};
+    my @sql_fields = qw{ID name gameset title};
+    my %sql_where  = ();
+    my @sql_order  = qw{gameset name};
+    my ( $stmt, @bind )
+        = $sql->select( \@sql_tables, \@sql_fields, \%sql_where,
+        \@sql_order );
 
-    my $cursor = $dbh->prepare($sql);
-
-    $cursor->execute;
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@bind);
 
     @fields = ();
 
-    while ( @fields = $cursor->fetchrow ) {
+    while ( @fields = $sth->fetchrow ) {
 
         push @list,
             $h->option(
@@ -262,7 +260,7 @@ END_SQL
             );
     }
 
-    $cursor->finish;
+    $sth->finish;
 
     $suboutput .= $h->h2(
         {   style =>
@@ -659,8 +657,6 @@ my $pagedisplay_randomize = sub {
     my $suboutput = q{};
     my $newbutton = 1;
 
-    my $sql = q{};
-
     if ( !$cgi_param_for{'sets'} ) {
         $suboutput
             .= &{$result_error}(
@@ -671,9 +667,9 @@ my $pagedisplay_randomize = sub {
 
         my @sets        = @{ $cgi_param_for{'sets'} };
         my %set_is      = ();
-        my $setlist_sql = q{};
-        my $banlist_sql = q{};
-        my $options_sql = q{};
+        my @setlist_sql = ();
+        my @banlist_sql = ();
+        my %options_sql = ( 'attack' => [ q{!=}, undef ], );
         my @chiefs      = ();
         for my $elem (@sets) {
 
@@ -682,7 +678,7 @@ my $pagedisplay_randomize = sub {
                 -value => "$elem"
             );
 
-            $setlist_sql .= qq{ or gameset = "$elem"};
+            push @setlist_sql, $elem;
             $set_is{$elem} = 1;
             if ( $elem ne '101' ) {
                 push @chiefs, $elem;
@@ -690,8 +686,6 @@ my $pagedisplay_randomize = sub {
         }
 
         $suboutput .= hidden( -name => 'sets' );
-
-        $setlist_sql =~ s{\A\sor}{}xms;
 
         my @banned = ();
         if ( $cgi_param_for{'banned'}[0] ) {
@@ -707,24 +701,26 @@ my $pagedisplay_randomize = sub {
                 -value => "$elem"
             );
             $ban_for{$elem} = 1;
-            $banlist_sql .= qq{ and ID != "$elem"};
+            push @banlist_sql, $elem;
         }
         $suboutput .= hidden( -name => 'banned' );
-        $banlist_sql =~ s{\A\sand}{}xms;
 
         if ( $cgi_param_for{'attack'}[0] ) {
             $cgi->param(
                 -name  => 'attack',
-                -value => scalar $cgi->param('attack')
+                -value => $cgi_param_for{'attack'}[0],
             );
         SWITCH: {
                 if ( $cgi_param_for{'attack'}[0] eq '1' ) {
-                    $options_sql
-                        .= ' and (attack != "1") and (events != "1")';
+                    %options_sql = (
+                        %options_sql,
+                        'events' => '1',
+                        'attack' => [qw{!= 1}],
+                    );
                     last SWITCH;
                 }
                 if ( $cgi_param_for{'attack'}[0] eq '2' ) {
-                    $options_sql .= ' and (attack = "1")';
+                    $options_sql{'attack'} = [qw{1}];
                     last SWITCH;
                 }
                 my $nothing = 0;
@@ -732,24 +728,22 @@ my $pagedisplay_randomize = sub {
             $suboutput .= hidden( -name => 'attack' );
         }
 
-        my $events_sql = q{};
-
         if ( $cgi_param_for{'events'}[0] ) {
             $cgi->param(
                 -name  => 'events',
-                -value => scalar $cgi->param('events')
+                -value => $cgi_param_for{'events'}[0],
             );
-            $options_sql .= ' and (events != "1")';
-            $suboutput   .= hidden( -name => 'events' );
+            $options_sql{'events'} = '1';
+            $suboutput .= hidden( -name => 'events' );
         }
 
         if ( $cgi_param_for{'beer'}[0] ) {
-            if ( scalar $cgi->param('beer') eq '2' ) {
+            if ( $cgi_param_for{'beer'}[0] eq '2' ) {
                 $cgi->param(
                     -name  => 'beer',
-                    -value => scalar $cgi->param('beer')
+                    -value => $cgi_param_for{'beer'}[0],
                 );
-                $options_sql .= ' and (beer != "1")';
+                $options_sql{'beer'} = '1';
             }
             $suboutput .= hidden( -name => 'beer' );
         }
@@ -757,28 +751,28 @@ my $pagedisplay_randomize = sub {
         if ( $cgi_param_for{'buildings'}[0] ) {
             $cgi->param(
                 -name  => 'buildings',
-                -value => scalar $cgi->param('buildings')
+                -value => $cgi_param_for{'buildings'}[0],
             );
-            $options_sql .= ' and (buildings != "1")';
-            $suboutput   .= hidden( -name => 'buildings' );
+            $options_sql{'buildings'} = '1';
+            $suboutput .= hidden( -name => 'buildings' );
         }
 
         if ( $cgi_param_for{'private'}[0] ) {
             $cgi->param(
                 -name  => 'private',
-                -value => scalar $cgi->param('private')
+                -value => $cgi_param_for{'private'}[0],
             );
-            $options_sql .= ' and (private != "1")';
-            $suboutput   .= hidden( -name => 'private' );
+            $options_sql{'private'} = '1';
+            $suboutput .= hidden( -name => 'private' );
         }
 
         if ( $cgi_param_for{'reminiscences'}[0] ) {
-            if ( scalar $cgi->param('reminiscences') eq '1' ) {
-                $options_sql .= ' and (reminiscences != "1")';
+            if ( $cgi_param_for{'reminiscences'}[0] eq '1' ) {
+                $options_sql{'reminiscences'} = '1';
             }
             $cgi->param(
                 -name  => 'reminiscences',
-                -value => scalar $cgi->param('reminiscences')
+                -value => $cgi_param_for{'reminiscences'}[0],
             );
             $suboutput .= hidden( -name => 'reminiscences' );
         }
@@ -786,10 +780,10 @@ my $pagedisplay_randomize = sub {
         if ( $cgi_param_for{'couples'}[0] ) {
             $cgi->param(
                 -name  => 'couples',
-                -value => scalar $cgi->param('couples')
+                -value => $cgi_param_for{'couples'}[0]
             );
-            $options_sql .= ' and (couples != "1")';
-            $suboutput   .= hidden( -name => 'couples' );
+            $options_sql{'couples'} = '1';
+            $suboutput .= hidden( -name => 'couples' );
         }
 
         my %cost_of = ();
@@ -797,42 +791,44 @@ my $pagedisplay_randomize = sub {
         my @fields   = ();
         my @list     = ();
         my %list_has = ();
-        $sql = <<'END_SQL';
-	  SELECT
-   ID,
-   name,
-   gameset,
-   title,
-   cardnumber,
-   cost,
-   chambermaid,
-   vp,
-   attack,
-   events,
-   buildings,
-   reminiscences,
-   description,
-   private,
-   couples
-	  FROM cardlist WHERE
-END_SQL
 
-        $sql .= '(' . $setlist_sql . ')';
+        my @sql_tables = qw{cardlist};
+        my @sql_fields = qw{
+            ID          name    gameset     title
+            cardnumber  cost    chambermaid vp
+            attack      events  buildings   reminiscences
+            description private couples
+        };
 
-        ($sql) .=
-              ($banlist_sql) ? ( ' and (' . $banlist_sql . ')' )
-            : ($options_sql) ? ($options_sql)
-            :                  (q{});
+        if (@banlist_sql) {
+            @banlist_sql = ( -and => @banlist_sql );
+        }
 
-        my $cursor = $dbh->prepare($sql);
+        my %sql_where = (
+            gameset => \@setlist_sql,
+            events  => { q{!=}, $options_sql{'events'} },
+            attack =>
+                { $options_sql{'attack'}[0], $options_sql{'attack'}[1] },
+            beer          => { q{!=}, $options_sql{'beer'} },
+            buildings     => { q{!=}, $options_sql{'buildings'} },
+            private       => { q{!=}, $options_sql{'private'} },
+            reminiscences => { q{!=}, $options_sql{'reminiscences'} },
+            couples       => { q{!=}, $options_sql{'couples'} },
+            ID            => { q{!=}, \@banlist_sql },
+        );
+        my @sql_order = qw{gameset cardnumber};
+        my ( $stmt, @bind )
+            = $sql->select( \@sql_tables, \@sql_fields, \%sql_where,
+            \@sql_order );
 
-        $cursor->execute;
+        my $sth = $dbh->prepare($stmt);
+        $sth->execute(@bind);
 
         @fields   = ();
         @list     = ();
         %list_has = ();
 
-        while ( @fields = $cursor->fetchrow ) {
+        while ( @fields = $sth->fetchrow ) {
 
             $cost_of{ $fields['0'] } = "$fields['5']";
 
@@ -844,7 +840,7 @@ END_SQL
 
         }
 
-        $cursor->finish;
+        $sth->finish;
 
         my $barmaiderror = q{};
         if (   ( $cgi_param_for{'beer'}[0] eq '1' )
@@ -857,7 +853,7 @@ END_SQL
         if ( $cgi_param_for{'crescent'}[0] ) {
             $cgi->param(
                 -name  => 'crescent',
-                -value => scalar $cgi->param('crescent')
+                -value => $cgi_param_for{'crescent'}[0]
             );
         SWITCH: {
                 if ( $cgi_param_for{'crescent'}[0] eq '1' ) {
@@ -1601,7 +1597,7 @@ my $current_screen = q{};
     'Randomize Again With Same Options' => \&{$pagedisplay_randomize},
 );
 
-$current_screen = scalar $cgi->param('.Page') || 'Default';
+$current_screen = $cgi_param_for{'.Page'}[0] || 'Default';
 
 if ( !$page_is{$current_screen} ) {
     croak "No screen for $current_screen";
