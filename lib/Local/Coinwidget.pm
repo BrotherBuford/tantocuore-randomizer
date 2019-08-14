@@ -1,17 +1,21 @@
 #!/usr/bin/perl
 
-package Coinwidget;
+package Local::Coinwidget;
 
 use warnings;
 use strict;
 use version; our $VERSION = qv(1.00);
 use HTML::Tiny;
 
+use Exporter qw(import);
+
+our @EXPORT_OK = qw(donate);
+
 sub donate {
 
     my $h = HTML::Tiny->new;
 
-    my $output = $h->div(
+    my $output = $h->p('&nbsp;') . $h->div(
         { style => 'display: inline-block;', },
         [   $h->div(
                 {   class => 'boxheader',
@@ -55,7 +59,7 @@ sub donate {
                 ]
             ),
         ]
-    );
+    ) . $h->p('&nbsp;');
 
     return $output;
 }
