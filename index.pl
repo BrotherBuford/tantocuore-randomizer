@@ -580,10 +580,10 @@ END_HTML
 
     $suboutput .= '</select>';
 
-    my $scriptdata = <<"END_HTML";
+    my $scriptdata = <<'END_HTML';
 //<![CDATA[
 document.getElementById('pleaseselect').style.display = 'block';
-\$(".banlistnoscript").remove();
+$(".banlistnoscript").remove();
 //]]>
 END_HTML
 
