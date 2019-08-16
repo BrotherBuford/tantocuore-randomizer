@@ -718,7 +718,7 @@ my $pagedisplay_randomize = sub {
                     last SWITCH;
                 }
                 if ( $cgi_param_for{'attack'}[0] eq '2' ) {
-                    $options_sql{'attack'} = [qw{1}];
+                    $options_sql{'attack'} = [qw{= 1}];
                     last SWITCH;
                 }
                 my $nothing = 0;
