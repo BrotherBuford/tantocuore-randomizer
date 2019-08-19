@@ -1,1 +1,5 @@
 Options -Indexes
+<FilesMatch "\.(pm|t)$">
+Order allow,deny
+Deny from all
+</FilesMatch>
