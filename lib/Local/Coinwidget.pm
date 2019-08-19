@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 package Local::Coinwidget;
 
 use warnings;
