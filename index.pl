@@ -13,6 +13,7 @@ use SQL::Abstract;
 use File::Basename qw(dirname);
 use Readonly;
 use English qw( -no_match_vars );
+use List::MoreUtils qw(any);
 use HTML::Tiny;
 use HTML::Entities;
 
@@ -835,7 +836,6 @@ my $pagedisplay_randomize = sub {
                 $fields['3'], $fields['12'], $fields['5'],
                 $fields['8'], $fields['7'],  $fields['6']
             );
-
         }
 
         $sth->finish;
@@ -911,7 +911,28 @@ my $pagedisplay_randomize = sub {
         }
 
         my $chiefsindex = rand @chiefs;
-        my $chiefs      = $chiefs[$chiefsindex];
+
+# There is a possibility that forcing Reminiscences can lead to a lack of available cards
+# depending on which chiefs are randomly selected as attributes of cards selected outside
+# the general pool must also be taken into account.  The following causes a reselection of
+# the chiefs if specific conditions are met that could cause an error.
+        if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
+            && !( any { $ARG eq '2' } values %cost_of ) )
+        {
+            while ( $chiefs[$chiefsindex] eq '1' ) {
+                $chiefsindex = rand @chiefs;
+            }
+        }
+        if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
+            && !( any { $ARG eq '3' } values %cost_of ) )
+        {
+            $chiefsindex
+                = '0';    # force selection of Tanto Cuore (set 1) chiefs
+        }
+
+        # end
+
+        my $chiefs = $chiefs[$chiefsindex];
         $chiefs //= q{};
         my $chiefsoutput = q{};
 
@@ -923,9 +944,8 @@ my $pagedisplay_randomize = sub {
                 $chiefsoutput
                     .= &{$card_format}( &{$cardlist_other_query}(qw(1 2)) );
 
-                if (   ( $cgi_param_for{'reminiscences'}[0] eq '2' )
-                    && !exists $costignore_has{'2'}
-                    && ( $cgi_param_for{'attack'}[0] ne '1' ) )
+                if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
+                    && !exists $costignore_has{'2'} )
                 {
                     push @costlist, '2';
                 }
