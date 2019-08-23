@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # for locally installed modules - change as necessary
 use lib qw( ../../perl5/lib/perl5 );
