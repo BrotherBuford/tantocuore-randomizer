@@ -1,0 +1,27 @@
+notifications:
+  email: false
+
+language: perl
+perl:
+  - "5.30"
+  - "5.28"
+  - "5.26"
+  - "5.24"
+  - "5.22"
+install:
+  - cpanm --notest Test::More
+  - cpanm --notest Capture::Tiny
+  - cpanm --notest File::Temp
+  - cpanm --notest English
+  - cpanm --notest Carp
+  - cpanm --notest CGI
+  - cpanm --notest CGI::Carp
+  - cpanm --notest DBI
+  - cpanm --notest DBD::SQLite
+  - cpanm --notest SQL::Abstract
+  - cpanm --notest File::Basename
+  - cpanm --notest Readonly
+  - cpanm --notest List::MoreUtils
+  - cpanm --notest HTML::Tiny
+  - cpanm --notest HTML::Entities
+script: prove

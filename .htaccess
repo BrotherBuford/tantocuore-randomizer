@@ -1,5 +1,5 @@
 Options -Indexes
-<FilesMatch "\.(pm|t)$">
+<FilesMatch "\.(pm|t|yml)$">
 Order allow,deny
 Deny from all
 </FilesMatch>
