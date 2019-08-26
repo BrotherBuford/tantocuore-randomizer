@@ -34,7 +34,7 @@ my $dbh = DBI->connect(
 
 my $sql = SQL::Abstract->new;
 
-Readonly my $CARD_MAX => 10;
+Readonly my $BASELINE_CARD_MAX => 10;
 
 Readonly my %CARDSET => (
     '1' => {
@@ -82,7 +82,7 @@ my @all_params    = qw(
     sets      crescent      private events
     buildings reminiscences beer    apprentice
     couples   cost          attack  banned
-    .Page
+    .Page     debug
 );
 
 for my $key (@all_params) {
@@ -125,9 +125,9 @@ my $result_error = sub {
 };
 
 my $card_format = sub {
-    my ($cf_gameset, $cf_cardnum, $cf_name,
-        $cf_title,   $cf_notes,   $cf_cost,
-        $cf_attack,  $cf_vp,      $cf_chambermaid
+    my ($cf_gameset,     $cf_cardnum, $cf_name,   $cf_title,
+        $cf_notes,       $cf_cost,    $cf_attack, $cf_vp,
+        $cf_chambermaid, $cf_isgeneral
     ) = @ARG;
 
     my $cardnumber = sprintf '%02d', "$cf_cardnum";
@@ -189,6 +189,10 @@ my $card_format = sub {
         $display_name = $h->i("$display_name");
     }
 
+    if ( $cf_isgeneral eq '1' ) {
+        $display_name .= qq{<!-- genattack=$cf_attack -->};
+    }
+
     $suboutput
         .= qq{' rel='tooltip' class='tooltip'><td>$carddesignation</td><td>}
         . $display_name
@@ -220,6 +224,8 @@ my $cardlist_other_query = sub {
     @query_result = $sth->fetchrow;
 
     $sth->finish;
+
+    push @query_result, '0';
 
     return @query_result;
 
@@ -832,13 +838,23 @@ my $pagedisplay_randomize = sub {
             $cost_of{ $fields['0'] } = "$fields['5']";
 
             $list_has{"$fields['0']"} = &{$card_format}(
-                $fields['2'], $fields['4'],  $fields['1'],
-                $fields['3'], $fields['12'], $fields['5'],
-                $fields['8'], $fields['7'],  $fields['6']
+                $fields['2'],  $fields['4'], $fields['1'], $fields['3'],
+                $fields['12'], $fields['5'], $fields['8'], $fields['7'],
+                $fields['6'],  '1'
             );
         }
 
         $sth->finish;
+
+        my $set_card_max = $BASELINE_CARD_MAX;
+
+        if (   ( any { $ARG eq 'full_list' } @{ $cgi_param_for{'debug'} } )
+            && ( $BASELINE_CARD_MAX <= scalar keys %list_has ) )
+        {
+            $set_card_max = scalar keys %list_has;
+        }
+
+        Readonly my $CARD_MAX => $set_card_max;
 
         my $barmaiderror = q{};
         if (   ( $cgi_param_for{'beer'}[0] eq '1' )
