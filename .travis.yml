@@ -20,6 +20,7 @@ install:
   - cpanm --notest DBD::SQLite
   - cpanm --notest SQL::Abstract
   - cpanm --notest File::Basename
+  - cpanm --notest File::FindLib
   - cpanm --notest Readonly
   - cpanm --notest List::MoreUtils
   - cpanm --notest HTML::Tiny

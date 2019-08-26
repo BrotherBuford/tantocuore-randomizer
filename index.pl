@@ -11,13 +11,12 @@ use CGI::Carp qw(fatalsToBrowser);
 use DBI;
 use SQL::Abstract;
 use File::Basename qw(dirname);
+use File::FindLib 'lib';
 use Readonly;
 use English qw( -no_match_vars );
 use List::MoreUtils qw(any);
 use HTML::Tiny;
 use HTML::Entities;
-
-use lib dirname(__FILE__) . '/lib';
 use Local::Coinwidget qw(donate);
 
 my $h = HTML::Tiny->new;
