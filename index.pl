@@ -6,7 +6,7 @@ use lib qw( ../../perl5/lib/perl5 );
 use warnings;
 use strict;
 use version; our $VERSION = qv(6.01);
-use CGI qw(:standard);
+use CGI qw(param multi_param header);
 use CGI::Carp qw(fatalsToBrowser);
 use DBI;
 use SQL::Abstract;
@@ -677,9 +677,11 @@ my $pagedisplay_randomize = sub {
 
         for my $elem ( @{ $cgi_param_for{'sets'} } ) {
 
-            $cgi->param(
-                -name  => 'sets',
-                -value => "$elem"
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'sets',
+                    value => $elem,
+                }
             );
 
             push @setlist_sql, $elem;
@@ -688,8 +690,6 @@ my $pagedisplay_randomize = sub {
                 push @chiefs, $elem;
             }
         }
-
-        $suboutput .= hidden( -name => 'sets' );
 
         my @banned = ();
         if ( $cgi_param_for{'banned'}[0] ) {
@@ -700,19 +700,23 @@ my $pagedisplay_randomize = sub {
 
         for my $elem (@banned) {
 
-            $cgi->param(
-                -name  => 'banned',
-                -value => "$elem"
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'banned',
+                    value => $elem,
+                }
             );
+
             $ban_for{$elem} = 1;
             push @banlist_sql, $elem;
         }
-        $suboutput .= hidden( -name => 'banned' );
 
         if ( $cgi_param_for{'attack'}[0] ) {
-            $cgi->param(
-                -name  => 'attack',
-                -value => $cgi_param_for{'attack'}[0],
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'attack',
+                    value => $cgi_param_for{'attack'}[0],
+                }
             );
         SWITCH: {
                 if ( $cgi_param_for{'attack'}[0] eq '1' ) {
@@ -729,65 +733,70 @@ my $pagedisplay_randomize = sub {
                 }
                 my $nothing = 0;
             }
-            $suboutput .= hidden( -name => 'attack' );
         }
 
         if ( $cgi_param_for{'events'}[0] ) {
-            $cgi->param(
-                -name  => 'events',
-                -value => $cgi_param_for{'events'}[0],
-            );
             $options_sql{'events'} = '1';
-            $suboutput .= hidden( -name => 'events' );
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'events',
+                    value => $cgi_param_for{'events'}[0],
+                }
+            );
         }
 
         if ( $cgi_param_for{'beer'}[0] ) {
             if ( $cgi_param_for{'beer'}[0] eq '2' ) {
-                $cgi->param(
-                    -name  => 'beer',
-                    -value => $cgi_param_for{'beer'}[0],
-                );
                 $options_sql{'beer'} = '1';
             }
-            $suboutput .= hidden( -name => 'beer' );
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'beer',
+                    value => $cgi_param_for{'beer'}[0],
+                }
+            );
         }
 
         if ( $cgi_param_for{'buildings'}[0] ) {
-            $cgi->param(
-                -name  => 'buildings',
-                -value => $cgi_param_for{'buildings'}[0],
-            );
             $options_sql{'buildings'} = '1';
-            $suboutput .= hidden( -name => 'buildings' );
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'buildings',
+                    value => $cgi_param_for{'buildings'}[0],
+                }
+            );
         }
 
         if ( $cgi_param_for{'private'}[0] ) {
-            $cgi->param(
-                -name  => 'private',
-                -value => $cgi_param_for{'private'}[0],
-            );
             $options_sql{'private'} = '1';
-            $suboutput .= hidden( -name => 'private' );
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'private',
+                    value => $cgi_param_for{'private'}[0],
+                }
+            );
         }
 
         if ( $cgi_param_for{'reminiscences'}[0] ) {
             if ( $cgi_param_for{'reminiscences'}[0] eq '1' ) {
                 $options_sql{'reminiscences'} = '1';
             }
-            $cgi->param(
-                -name  => 'reminiscences',
-                -value => $cgi_param_for{'reminiscences'}[0],
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'reminiscences',
+                    value => $cgi_param_for{'reminiscences'}[0],
+                }
             );
-            $suboutput .= hidden( -name => 'reminiscences' );
         }
 
         if ( $cgi_param_for{'couples'}[0] ) {
-            $cgi->param(
-                -name  => 'couples',
-                -value => $cgi_param_for{'couples'}[0]
-            );
             $options_sql{'couples'} = '1';
-            $suboutput .= hidden( -name => 'couples' );
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'couples',
+                    value => $cgi_param_for{'couples'}[0]
+                }
+            );
         }
 
         my %cost_of = ();
@@ -864,10 +873,7 @@ my $pagedisplay_randomize = sub {
 
         my $crescenterror = q{};
         if ( $cgi_param_for{'crescent'}[0] ) {
-            $cgi->param(
-                -name  => 'crescent',
-                -value => $cgi_param_for{'crescent'}[0]
-            );
+
         SWITCH: {
                 if ( $cgi_param_for{'crescent'}[0] eq '1' ) {
 
@@ -899,7 +905,12 @@ my $pagedisplay_randomize = sub {
                 my $nothing = 0;
             }
 
-            $suboutput .= hidden( -name => 'crescent' );
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'crescent',
+                    value => $cgi_param_for{'crescent'}[0]
+                }
+            );
         }
 
         my @costlist = ();
@@ -911,13 +922,13 @@ my $pagedisplay_randomize = sub {
             if ( $elem eq '2' || $elem eq '3' || $elem eq '5' ) {
                 $costignore_has{"$elem"} = '1';
             }
-            $cgi->param(
-                -name  => 'cost',
-                -value => "$elem"
+            $suboutput .= $h->input(
+                {   type  => 'hidden',
+                    name  => 'cost',
+                    value => $elem,
+                }
             );
         }
-
-        $suboutput .= hidden( -name => 'cost' );
 
         if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
             && !exists $costignore_has{'5'} )
@@ -1038,7 +1049,12 @@ my $pagedisplay_randomize = sub {
         {
             $apprenticeerror = 1;
         }
-        $suboutput .= hidden( -name => 'apprentice' );
+        $suboutput .= $h->input(
+            {   type  => 'hidden',
+                name  => 'apprentice',
+                value => $cgi_param_for{'apprentice'}[0],
+            }
+        );
 
         my $costerror;
         if ( $cgi_param_for{'cost'}[0]
@@ -1693,7 +1709,13 @@ $output .= <<'END_HTML';
 <div align="center">
 END_HTML
 
-$output .= $cgi->start_form();
+$output .= $h->open(
+    'form',
+    {   method  => 'POST',
+        action  => $cgi->url( -absolute => 1 ),
+        enctype => 'multipart/form-data',
+    }
+);
 
 while ( my ( $screen_name, $function ) = each %page_is ) {
     my $screen = $function->( $screen_name eq $current_screen );
