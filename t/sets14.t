@@ -11,35 +11,35 @@ my @sets      = qw(1 4);
 my @testcases = (
     [
         [qw(beer=1)],
-        [qw(BarMaid PR14)],
+        [qw(PR14)],
     ],
     [
         [qw(beer=1 private=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 events=1)],
-        [qw(BarMaid 20 21 PR14)],
+        [qw(20 21 PR14)],
     ],
     [
         [qw(beer=1 private=1 events=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 buildings=1)],
-        [qw(BarMaid PR14 20-IV)],
+        [qw(PR14 20-IV)],
     ],
     [
         [qw(beer=1 private=1 buildings=1)],
-        [qw(BarMaid 20-IV)],
+        [qw(20-IV)],
     ],
     [
         [qw(beer=1 events=1 buildings=1)],
-        [qw(BarMaid 20 21 PR14)],
+        [qw(20 21 PR14)],
     ],
     [
         [qw(beer=1 private=1 events=1 buildings=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=2)],
@@ -75,23 +75,23 @@ my @testcases = (
     ],
     [
         [qw(beer=1 attack=1)],
-        [qw(BarMaid 19 20 21 25 PR14)],
+        [qw(19 20 21 25 PR14)],
     ],
     [
         [qw(beer=1 private=1 attack=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 events=1 attack=1)],
-        [qw(BarMaid 19 20 21 25 PR14)],
+        [qw(19 20 21 25 PR14)],
     ],
     [
         [qw(beer=1 private=1 events=1 attack=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 buildings=1 attack=1)],
-        [qw(BarMaid 19 20 21 25 PR14)],
+        [qw(19 20 21 25 PR14)],
     ],
     [
         [qw(beer=1 private=1 buildings=1 attack=1)],
@@ -99,11 +99,11 @@ my @testcases = (
     ],
     [
         [qw(beer=1 events=1 buildings=1 attack=1)],
-        [qw(BarMaid 19 20 21 25 PR14)],
+        [qw(19 20 21 25 PR14)],
     ],
     [
         [qw(beer=1 private=1 events=1 buildings=1 attack=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=2 attack=1)],

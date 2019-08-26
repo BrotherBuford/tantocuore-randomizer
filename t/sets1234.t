@@ -15,95 +15,95 @@ my @testcases = (
     ],
     [
         [qw(beer=1 private=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 events=1)],
-        [qw(BarMaid 20 21)],
+        [qw(20 21)],
     ],
     [
         [qw(beer=1 private=1 events=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 buildings=1)],
-        [qw(BarMaid 27-II 20-IV)],
+        [qw(27-II 20-IV)],
     ],
     [
         [qw(beer=1 events=1 buildings=1)],
-        [qw(BarMaid 20 21 27-II)],
+        [qw(20 21 27-II)],
     ],
     [
         [qw(beer=1 private=1 buildings=1)],
-        [qw(BarMaid 20-IV)],
+        [qw(20-IV)],
     ],
     [
         [qw(beer=1 private=1 events=1 buildings=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 reminiscences=2)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 private=1 reminiscences=2)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 events=1 reminiscences=2)],
-        [qw(BarMaid 20 21)],
+        [qw(20 21)],
     ],
     [
         [qw(beer=1 private=1 events=1 reminiscences=2)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 buildings=1 reminiscences=2)],
-        [qw(BarMaid 27-II 20-IV)],
+        [qw(27-II 20-IV)],
     ],
     [
         [qw(beer=1 private=1 buildings=1 reminiscences=2)],
-        [qw(BarMaid 20-IV)],
+        [qw(20-IV)],
     ],
     [
         [qw(beer=1 events=1 buildings=1 reminiscences=2)],
-        [qw(BarMaid 20 21 27-II)],
+        [qw(20 21 27-II)],
     ],
     [
         [qw(beer=1 private=1 events=1 buildings=1 reminiscences=2)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 reminiscences=1)],
-        [qw(BarMaid PR14)],
+        [qw(PR14)],
     ],
     [
         [qw(beer=1 private=1 reminiscences=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 events=1 reminiscences=1)],
-        [qw(BarMaid 20 21 PR14)],
+        [qw(20 21 PR14)],
     ],
     [
         [qw(beer=1 private=1 events=1 reminiscences=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 buildings=1 reminiscences=1)],
-        [qw(BarMaid 27-II PR14 20-IV)],
+        [qw(27-II PR14 20-IV)],
     ],
     [
         [qw(beer=1 private=1 buildings=1 reminiscences=1)],
-        [qw(BarMaid 20-IV)],
+        [qw(20-IV)],
     ],
     [
         [qw(beer=1 events=1 buildings=1 reminiscences=1)],
-        [qw(BarMaid 20 21 27-II PR14)],
+        [qw(20 21 27-II PR14)],
     ],
     [
         [qw(beer=1 private=1 events=1 buildings=1 reminiscences=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=2)],
@@ -203,99 +203,99 @@ my @testcases = (
     ],
     [
         [qw(beer=1 attack=1)],
-        [qw(BarMaid 20 21 19 25 20-II 30-III)],
+        [qw(20 21 19 25 20-II 30-III)],
     ],
     [
         [qw(beer=1 private=1 attack=1)],
-        [qw(BarMaid 30-III)],
+        [qw(30-III)],
     ],
     [
         [qw(beer=1 events=1 attack=1)],
-        [qw(BarMaid 20 21 19 25 20-II 30-III)],
+        [qw(20 21 19 25 20-II 30-III)],
     ],
     [
         [qw(beer=1 private=1 events=1 attack=1)],
-        [qw(BarMaid 30-III)],
+        [qw(30-III)],
     ],
     [
         [qw(beer=1 buildings=1 attack=1)],
-        [qw(BarMaid 20 21 19 25 27-II 20-II 30-III)],
+        [qw(20 21 19 25 27-II 20-II 30-III)],
     ],
     [
         [qw(beer=1 private=1 buildings=1 attack=1)],
-        [qw(BarMaid 30-III)],
+        [qw(30-III)],
     ],
     [
         [qw(beer=1 events=1 buildings=1 attack=1)],
-        [qw(BarMaid 20 21 19 25 27-II 20-II 30-III)],
+        [qw(20 21 19 25 27-II 20-II 30-III)],
     ],
     [
         [qw(beer=1 private=1 events=1 buildings=1 attack=1)],
-        [qw(BarMaid 30-III)],
+        [qw(30-III)],
     ],
     [
         [qw(beer=1 reminiscences=2 attack=1)],
-        [qw(BarMaid 20 21 19 25 20-II 30-III)],
+        [qw(20 21 19 25 20-II 30-III)],
     ],
     [
         [qw(beer=1 private=1 reminiscences=2 attack=1)],
-        [qw(BarMaid 30-III)],
+        [qw(30-III)],
     ],
     [
         [qw(beer=1 events=1 reminiscences=2 attack=1)],
-        [qw(BarMaid 20 21 19 25 20-II 30-III)],
+        [qw(20 21 19 25 20-II 30-III)],
     ],
     [
         [qw(beer=1 private=1 events=1 reminiscences=2 attack=1)],
-        [qw(BarMaid 30-III)],
+        [qw(30-III)],
     ],
     [
         [qw(beer=1 buildings=1 reminiscences=2 attack=1)],
-        [qw(BarMaid 20 21 19 25 27-II 20-II 30-III)],
+        [qw(20 21 19 25 27-II 20-II 30-III)],
     ],
     [
         [qw(beer=1 private=1 buildings=1 reminiscences=2 attack=1)],
-        [qw(BarMaid 30-III)],
+        [qw(30-III)],
     ],
     [
         [qw(beer=1 events=1 buildings=1 reminiscences=2 attack=1)],
-        [qw(BarMaid 20 21 19 25 27-II 20-II 30-III)],
+        [qw(20 21 19 25 27-II 20-II 30-III)],
     ],
     [
         [qw(beer=1 private=1 events=1 buildings=1 reminiscences=2 attack=1)],
-        [qw(BarMaid 30-III)],
+        [qw(30-III)],
     ],
     [
         [qw(beer=1 reminiscences=1 attack=1)],
-        [qw(BarMaid 20 21 19 25 20-II PR14)],
+        [qw(20 21 19 25 20-II PR14)],
     ],
     [
         [qw(beer=1 private=1 reminiscences=1 attack=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 events=1 reminiscences=1 attack=1)],
-        [qw(BarMaid 20 21 19 25 20-II PR14)],
+        [qw(20 21 19 25 20-II PR14)],
     ],
     [
         [qw(beer=1 private=1 events=1 reminiscences=1 attack=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 buildings=1 reminiscences=1 attack=1)],
-        [qw(BarMaid 20 21 19 25 27-II 20-II PR14)],
+        [qw(20 21 19 25 27-II 20-II PR14)],
     ],
     [
         [qw(beer=1 private=1 buildings=1 reminiscences=1 attack=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=1 events=1 buildings=1 reminiscences=1 attack=1)],
-        [qw(BarMaid 20 21 19 25 27-II 20-II PR14)],
+        [qw(20 21 19 25 27-II 20-II PR14)],
     ],
     [
         [qw(beer=1 private=1 events=1 buildings=1 reminiscences=1 attack=1)],
-        [qw(BarMaid)],
+        [qw()],
     ],
     [
         [qw(beer=2 attack=1)],

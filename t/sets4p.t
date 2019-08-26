@@ -11,35 +11,35 @@ my @sets      = qw(4 101);
 my @testcases = (
     [
         [qw(beer=1)],
-        [qw(BarMaid PR14)],
+        [qw(PR14)],
     ],
     [
         [qw(events=1 beer=1)],
-        [qw(BarMaid PR14)],
+        [qw(PR14)],
     ],
     [
         [qw(buildings=1 beer=1)],
-        [qw(BarMaid 20-IV PR14)],
+        [qw(20-IV PR14)],
     ],
     [
         [qw(events=1 buildings=1 beer=1)],
-        [qw(BarMaid PR14)],
+        [qw(PR14)],
     ],
     [
         [qw(attack=1 beer=1)],
-        [qw(BarMaid PR14)],
+        [qw(PR14)],
     ],
     [
         [qw(attack=1 events=1 beer=1)],
-        [qw(BarMaid PR14)],
+        [qw(PR14)],
     ],
     [
         [qw(buildings=1 attack=1 beer=1)],
-        [qw(BarMaid PR14)],
+        [qw(PR14)],
     ],
     [
         [qw(events=1 buildings=1 attack=1 beer=1)],
-        [qw(BarMaid PR14)],
+        [qw(PR14)],
     ],
     [
         [qw(attack=2 beer=1)],

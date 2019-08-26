@@ -8,7 +8,7 @@ use Test::More 0.88;
 use File::Temp qw(tempdir);
 use English qw( -no_match_vars );
 use Carp qw(croak);
-use List::MoreUtils qw(any);
+use List::MoreUtils qw(any none);
 
 use Exporter qw(import);
 
@@ -37,26 +37,43 @@ sub _post_submit {
 }
 
 sub _page_content_tests {
-    my ( $out, $resultlist ) = @ARG;
+    my ( $out, $resultlist, $params ) = @ARG;
 
     my %result_tests = (
-        'Error'   => [ qr{Error:}xms,          'error message' ],
-        'BarMaid' => [ qr{Bar\s+Maid}xms,      'Bar Maid' ],
-        '19'      => [ qr{<td>19</td>}xms,     'card 19' ],
-        '20'      => [ qr{<td>20</td>}xms,     'card 20' ],
-        '21'      => [ qr{<td>21</td>}xms,     'card 21' ],
-        '25'      => [ qr{<td>25</td>}xms,     'card 25' ],
-        '20-II'   => [ qr{<td>20-II</td>}xms,  'card 20-II' ],
-        '27-II'   => [ qr{<td>27-II</td>}xms,  'card 27-II' ],
-        '30-III'  => [ qr{<td>30-III</td>}xms, 'card 30-III' ],
-        '20-IV'   => [ qr{<td>20-IV</td>}xms,  'card 20-IV' ],
-        '21-IV'   => [ qr{<td>21-IV</td>}xms,  'card 21-IV' ],
-        '20-V'    => [ qr{<td>20-V</td>}xms,   'card 20-V' ],
-        'PR14'    => [ qr{<td>PR14</td>}xms,   'card PR14' ],
-        'PR19'    => [ qr{<td>PR19</td>}xms,   'card PR19' ],
-        'PR34'    => [ qr{<td>PR34</td>}xms,   'card PR34' ],
-        'PR43'    => [ qr{<td>PR43</td>}xms,   'card PR43' ],
+        'Error'  => [ qr{Error:}xms,          'error message' ],
+        '19'     => [ qr{<td>19</td>}xms,     'card 19' ],
+        '20'     => [ qr{<td>20</td>}xms,     'card 20' ],
+        '21'     => [ qr{<td>21</td>}xms,     'card 21' ],
+        '25'     => [ qr{<td>25</td>}xms,     'card 25' ],
+        '20-II'  => [ qr{<td>20-II</td>}xms,  'card 20-II' ],
+        '27-II'  => [ qr{<td>27-II</td>}xms,  'card 27-II' ],
+        '30-III' => [ qr{<td>30-III</td>}xms, 'card 30-III' ],
+        '20-IV'  => [ qr{<td>20-IV</td>}xms,  'card 20-IV' ],
+        '21-IV'  => [ qr{<td>21-IV</td>}xms,  'card 21-IV' ],
+        '20-V'   => [ qr{<td>20-V</td>}xms,   'card 20-V' ],
+        'PR14'   => [ qr{<td>PR14</td>}xms,   'card PR14' ],
+        'PR19'   => [ qr{<td>PR19</td>}xms,   'card PR19' ],
+        'PR34'   => [ qr{<td>PR34</td>}xms,   'card PR34' ],
+        'PR43'   => [ qr{<td>PR43</td>}xms,   'card PR43' ],
     );
+
+    if ( any { $ARG =~ m{beer=}xms } @{$params} ) {
+        $result_tests{BarMaid} = [ qr{[(]Bar\s+Maid[)]}xms, 'Bar Maid' ];
+        if (   ( none { $ARG eq 'Error' } @{$resultlist} )
+            && ( any { $ARG =~ m{beer=1}xms } @{$params} ) )
+        {
+            push @{$resultlist}, q{BarMaid};
+        }
+    }
+
+    if ( any { $ARG eq 'attack=1' } @{$params} ) {
+        $result_tests{AttackCard} = [ qr{genattack=1}xms, 'attack cards' ];
+    }
+
+    if ( any { $ARG eq 'attack=2' } @{$params} ) {
+        $result_tests{NonAttackCard}
+            = [ qr{genattack=0}xms, 'non-attack cards' ];
+    }
 
     my $removelist = q{};
     my $addlist    = q{};
@@ -71,7 +88,7 @@ sub _page_content_tests {
                 $removelist .= $elem . q{ };
             }
         }
-        elsif ( $elem ne ('BarMaid') ) {
+        else {
             if (!(  unlike $out,
                     $result_tests{"$elem"}[0],
                     $result_tests{"$elem"}[1] . ' disallowed'
@@ -102,15 +119,19 @@ sub _standard_tests {
 sub _get_test_result {
     my ( $sets, $params, $cardlist ) = @ARG;
 
+    my @all_params = @{$params};
     for my $elem ( @{$sets} ) {
-        push @{$params} => "sets=$elem";
+        push @all_params => "sets=$elem";
     }
-    push @{$params} => '.Page=Randomize';
+    push @all_params => '.Page=Randomize';
 
     my $formed_parameters = q{};
-    for my $elem ( @{$params} ) {
+    for my $elem (@all_params) {
         if ( defined $elem ) {
             $formed_parameters .= q{&} . $elem;
+            if ( $elem =~ m{(attack|beer=2)}mxs ) {
+                $formed_parameters .= q{&debug=full_list};
+            }
         }
     }
     $formed_parameters =~ s{\A&}{}mxs;
@@ -118,7 +139,7 @@ sub _get_test_result {
     my ( $out, $err, $exit ) = _post_submit($formed_parameters);
 
     _standard_tests( $err, $exit );
-    _page_content_tests( $out, \@{$cardlist} );
+    _page_content_tests( $out, \@{$cardlist}, \@{$params} );
 
     return 0;
 }
