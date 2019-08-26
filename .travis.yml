@@ -24,4 +24,4 @@ install:
   - cpanm --notest List::MoreUtils
   - cpanm --notest HTML::Tiny
   - cpanm --notest HTML::Entities
-script: prove
+script: prove -l -j9
