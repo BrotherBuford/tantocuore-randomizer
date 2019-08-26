@@ -6,7 +6,7 @@ use lib qw( ../../perl5/lib/perl5 );
 use warnings;
 use strict;
 use version; our $VERSION = qv(6.01);
-use CGI qw(param multi_param header);
+use CGI ();
 use CGI::Carp qw(fatalsToBrowser);
 use DBI;
 use SQL::Abstract;
@@ -1653,7 +1653,7 @@ if ( !$page_is{$current_screen} ) {
 }
 
 my $output
-    = header()
+    = $cgi->header()
     . qq {<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n}
     . qq {<html xmlns="http://www.w3.org/1999/xhtml">\n};
 
