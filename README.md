@@ -11,12 +11,6 @@ the card game Tanto Cuore and its expansions.</p>
 
 <p>SQLite is used to store card information.</p>
 
-<p><b>Branch naming conventions:</b></p>
-<ul>
-<li>master - main trunk for development, VM testing, and testing on a hosted staging version of the site <i>(NOTE: bleeding edge commits - this may include breaking changes)</i></li>
-<li>production - the stable version used on the live site</li>
-</ul>
-
 <p>Automated testing is done on each branch with Travis-CI using Perl versions 5.30, 5.28, 5.26, 5.24, and 5.22.  Many but not <i>all</i> conditions are tested; conditions involving specific card removals, Bar Maid inclusion (if required), and attack/non-attack card conditions are part of the tests.</p>
 
 <p><i>This uses CGI.pm and not a newer framework due to being a very old project that receives occasional updates and improvements.  The history of this repository only goes back to when version control was changed to git; much of the earlier revision history was in a long-lost CVS repository.</i></p>
