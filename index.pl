@@ -624,7 +624,7 @@ END_HTML
             . $h->img(
             {   alt => 'GitHub last commit (branch)',
                 src =>
-                    'https://img.shields.io/github/last-commit/brotherbuford/tantocuore-randomizer/production?label=last%20update',
+                    'https://img.shields.io/github/last-commit/brotherbuford/tantocuore-randomizer/master?label=last%20update',
             }
             ),
         { style => 'font-size: 0.55em', },
