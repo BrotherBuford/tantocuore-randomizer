@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use version; our $VERSION = qv(1.00);
 use Capture::Tiny qw(capture);
-use Test::More 0.88;
+use Test2::Bundle::More;
 use File::Temp qw(tempdir);
 use English qw( -no_match_vars );
 use Carp qw(croak);
