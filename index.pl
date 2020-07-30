@@ -936,27 +936,34 @@ my $pagedisplay_randomize = sub {
             push @costlist, '5';
         }
 
-        my $chiefsindex = rand @chiefs;
+        my $chiefsindex;
 
 # There is a possibility that forcing Reminiscences can lead to a lack of available cards
 # depending on which chiefs are randomly selected as attributes of cards selected outside
-# the general pool must also be taken into account.  The following causes a reselection of
+# the general pool must also be taken into account.  The following causes a selection of
 # the chiefs if specific conditions are met that could cause an error.
-        if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
-            && !( any { $ARG eq '2' } values %cost_of ) )
-        {
-            while ( $chiefs[$chiefsindex] eq '1' ) {
-                $chiefsindex = rand @chiefs;
-            }
-        }
-        if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
-            && !( any { $ARG eq '3' } values %cost_of ) )
-        {
-            $chiefsindex
-                = '0';    # force selection of Tanto Cuore (set 1) chiefs
-        }
 
-        # end
+    SWITCH: {
+
+            if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
+                && !( any { $ARG eq '2' } values %cost_of ) )
+            {
+                # force selection of any chiefs but Tanto Cuore (set 1)
+                $chiefsindex = rand @chiefs;
+                while ( $chiefs[$chiefsindex] eq '1' ) {
+                    $chiefsindex = rand @chiefs;
+                }
+                last SWITCH;
+            }
+            if ( ( $cgi_param_for{'reminiscences'}[0] eq '2' )
+                && !( any { $ARG eq '3' } values %cost_of ) )
+            {
+                $chiefsindex
+                    = '0';    # force selection of Tanto Cuore (set 1) chiefs
+                last SWITCH;
+            }
+            $chiefsindex = rand @chiefs;
+        }
 
         my $chiefs = $chiefs[$chiefsindex];
         $chiefs //= q{};
