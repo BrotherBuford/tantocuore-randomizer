@@ -949,9 +949,9 @@ my $pagedisplay_randomize = sub {
                 && !( any { $ARG eq '2' } values %cost_of ) )
             {
                 # force selection of any chiefs but Tanto Cuore (set 1)
-                $chiefsindex = rand @chiefs;
+                $chiefsindex = int rand @chiefs;
                 while ( $chiefs[$chiefsindex] eq '1' ) {
-                    $chiefsindex = rand @chiefs;
+                    $chiefsindex = int rand @chiefs;
                 }
                 last SWITCH;
             }
@@ -962,7 +962,7 @@ my $pagedisplay_randomize = sub {
                     = '0';    # force selection of Tanto Cuore (set 1) chiefs
                 last SWITCH;
             }
-            $chiefsindex = rand @chiefs;
+            $chiefsindex = int rand @chiefs;
         }
 
         my $chiefs = $chiefs[$chiefsindex];
@@ -1162,11 +1162,11 @@ my $pagedisplay_randomize = sub {
                                 push @costcache, $elem;
                             }
                         }
-                        $num = $costcache[ rand @costcache ];
+                        $num = $costcache[ int rand @costcache ];
 
                     }
                     else {
-                        $num = $id_numbers[ rand @id_numbers ];
+                        $num = $id_numbers[ int rand @id_numbers ];
 
                     }
                 }
@@ -1208,7 +1208,7 @@ my $pagedisplay_randomize = sub {
                     )
                 {
                     my @barmaid_ids = qw(55 56);
-                    my $newnum      = $barmaid_ids[ rand @barmaid_ids ];
+                    my $newnum      = $barmaid_ids[ int rand @barmaid_ids ];
                     if (   !( exists $cache_has{"$newnum"} )
                         && !( exists $ban_for{"$newnum"} ) )
                     {
@@ -1224,7 +1224,7 @@ my $pagedisplay_randomize = sub {
                         && ( $counter != $CARD_MAX + 1 ) )
                     {
                         my @crescent_ids = qw(15 16);
-                        my $newnum = $crescent_ids[ rand @crescent_ids ];
+                        my $newnum = $crescent_ids[ int rand @crescent_ids ];
                         if ( !( exists $cache_has{"$newnum"} ) ) {
                             redo CRESCENT if exists $ban_for{"$newnum"};
                             $cache_has{"$newnum"} = 1;
